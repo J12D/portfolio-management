@@ -1,0 +1,56 @@
+\documentclass{scrartcl}
+
+\begin{document}
+<<include=FALSE>>=
+library(knitr)
+opts_chunk$set(
+  concordance = TRUE,
+  fig.path = 'figure/graphics-', 
+  cache.path = 'cache/graphics-', 
+  fig.align = 'center',
+  dev = 'tikz',
+  external = TRUE,
+  echo = FALSE,
+  fig.width= 6,
+  fig.height = 4
+)
+
+percent <- function(x, digits = 2, format = "f", ...) 
+{ 
+  paste(formatC(100 * x, format = format, digits = digits, ...), " \%", sep = "") 
+} 
+@
+
+<<include=F,echo=F>>=
+library(quantmod)
+library(magrittr)
+library(reshape2)
+library(ggplot2)
+source("0-helper.R")
+@
+
+
+\title{Portfolio Recommendation}
+\author{Group X}
+\maketitle
+
+\section{Asset Universe}
+
+<<include=F,echo=F>>=
+#getSymbols(c("^GDAXI","^DJI","^N225","VXX"))
+assets <- readRDS("assets")
+GDAXI <- assets[["GDAXI"]]
+@
+
+
+<<echo=F >>=
+plotXTS(GDAXI$GDAXI.Close)
+@
+
+<<echo=F>>=
+dax_return <- GDAXI$GDAXI.Close %>% na.locf %>% ROC %>% na.omit %>% mean * 252
+@
+
+The return of the DAX is \Sexpr{dax_return %>% percent}
+
+\end{document}
