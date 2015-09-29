@@ -32,10 +32,12 @@ models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
 ## ---- Portfolio Analytics -----------
 library(PortfolioAnalytics)
 library(DEoptim)
+library(ROI)
 
 pspec <- portfolio.spec(assets = colnames(returns)[1:4])
 pspec %<>% add.constraint(type = "weight_sum", min_sum = 0.99, max_sum = 1.01)
 pspec %<>% add.constraint(type = "box", min = 0.05, max = 0.4)
 pspec %<>% add.constraint(type = "turnover", turnover_target = 0.1)
 pspec %<>% add.objective(type = "risk", name = "StdDev")
-optimize.portfolio(returns, pspec)
+result <- optimize.portfolio(returns, pspec)
+create.EfficientFrontier(returns, pspec, type = "mean-var") %>% chart.EfficientFrontier
