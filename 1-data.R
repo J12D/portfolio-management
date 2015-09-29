@@ -1,3 +1,4 @@
+library(magrittr)
 library(quantmod)
 library(Quandl)
 library(lubridate)
@@ -36,4 +37,4 @@ returns <- merge.xts(asset_returns,euribor)["2009-02-02/"] %>% na.omit
 factors <- factors["2009-02-02/"] %>% na.omit
 
 rm(list = c("GDAXI", "DJI", "N225", "VXX", "asset_returns", "euribor"))
-cat("Imported data ---------------")
+cat("> Imported data ---------------")
