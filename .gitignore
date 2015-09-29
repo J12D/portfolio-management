@@ -1,3 +1,11 @@
 *.Rproj
 .Rproj.user
 figure
+cache
+report-knitr-concordance.tex
+report-knitr-tikzDictionary
+report-knitr.log
+report-knitr.pdf
+report-knitr.synctex.gz
+report-knitr.tex
+documents
