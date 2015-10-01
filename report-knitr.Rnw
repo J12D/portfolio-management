@@ -11,9 +11,9 @@ opts_chunk$set(
   fig.path = 'figure/graphics-', 
   cache.path = 'cache/graphics-', 
   fig.align = 'center',
-  dev = 'tikz',
+  #dev = 'tikz',
   external = TRUE,
-  cache = TRUE,
+  cache = F,
   echo = FALSE,
   fig.width = 6,
   fig.height = 4
@@ -37,10 +37,10 @@ source("2-analysis.R")
 
 <<testplot>>=
 magic <- function(x)(cumprod(1 + x) - 1)*100
-multiplot(returns$DAX %>% magic %>% plotXTS(ylab = "Return (\\%)", title = "DAX"),
-          returns$Dow.Jones %>% magic %>% plotXTS(ylab = "Return (\\%)", title = "Dow Jones"),
-          returns$Nikkei %>% magic %>% plotXTS(ylab = "Return (\\%)", title = "Nikkei"),
-          returns$VIX %>% magic %>% plotXTS(ylab = "Return (\\%)", title = "VIX"),
+multiplot(returns[,"DAX"] %>% magic %>% plotXTS(ylab = "Return (\\%)", title = "DAX"),
+          returns[,"Dow Jones"] %>% magic %>% plotXTS(ylab = "Return (\\%)", title = "Dow Jones"),
+          returns[,"Nikkei"] %>% magic %>% plotXTS(ylab = "Return (\\%)", title = "Nikkei"),
+          returns[,"VIX"] %>% magic %>% plotXTS(ylab = "Return (\\%)", title = "VIX"),
           cols = 2
           )
 @
@@ -54,6 +54,6 @@ out_table %>% xtable() %>%
   print(sanitize.text.function = function(x)str_replace(x,"\\."," "), booktabs = T)
 @
 
-The return of the DAX is \Sexpr{percent(asset_returns[["DAX"]])}
+The return of the DAX is \Sexpr{percent(mu[["DAX"]])}
 
 \end{document}

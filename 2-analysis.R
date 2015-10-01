@@ -1,5 +1,6 @@
 library(reshape2)
 library(ggplot2)
+library(corrplot)
 
 source("0-helper.R")
 source("1-data.R")
@@ -23,8 +24,6 @@ mean_variance <- function(mu,sigma) {
   (information_matrix %*% mu)/as.numeric(rep(1,length(mu)) %*% information_matrix %*% mu)
 }
 mean_variance(mu,cov(returns))
-
-mean_variance()
 
 ## ---- Massage -----------------------
 # shrink
@@ -93,10 +92,10 @@ library(PortfolioAnalytics)
 library(DEoptim)
 library(ROI)
 
-pspec <- portfolio.spec(assets = colnames(returns))
-pspec %<>% add.constraint(type = "weight_sum", min_sum = 0.99, max_sum = 1.01)
-pspec %<>% add.constraint(type = "box", min = 0.05, max = 1.0)
-pspec %<>% add.constraint(type = "turnover", turnover_target = 0.1)
-pspec %<>% add.objective(type = "risk", name = "StdDev")
-result <- optimize.portfolio(returns, pspec)
-create.EfficientFrontier(returns, pspec, type = "mean-var") %>% chart.EfficientFrontier
+# pspec <- portfolio.spec(assets = colnames(returns))
+# pspec %<>% add.constraint(type = "weight_sum", min_sum = 0.99, max_sum = 1.01)
+# pspec %<>% add.constraint(type = "box", min = 0.05, max = 1.0)
+# pspec %<>% add.constraint(type = "turnover", turnover_target = 0.1)
+# pspec %<>% add.objective(type = "risk", name = "StdDev")
+# result <- optimize.portfolio(returns, pspec)
+# create.EfficientFrontier(returns, pspec, type = "mean-var") %>% chart.EfficientFrontier
