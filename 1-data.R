@@ -45,12 +45,14 @@ assets <- merge.xts(GDAXI, DJI, N225, VXX)["2009-01-30/"] %>% na.locf
 colnames(assets) <- c("DAX", "Dow Jones", "Nikkei", "VIX")
 
 asset_returns <- assets %>% ROC(type = "discrete")
-returns <- merge.xts(asset_returns, Euribor = euribor)["2009-02-02/"] %>% na.omit
+returns <- asset_returns["2009-02-02/"] %>% na.omit
+
+euribor <- euribor["2009-02-02/"] %>% na.omit
 
 factors <- factors["2009-02-02/"] %>% na.omit
 
 fx <- fx["2009-02-02/"]
 
-rm(list = c("GDAXI", "DJI", "N225", "VXX", "asset_returns", "euribor"))
+rm(list = c("GDAXI", "DJI", "N225", "VXX", "asset_returns"))
 
-cat("> Imported data ---------------")
+message("> Imported data ---------------")

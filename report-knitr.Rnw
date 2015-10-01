@@ -48,12 +48,12 @@ multiplot(returns$DAX %>% magic %>% plotXTS(ylab = "Return (\\%)", title = "DAX"
 <<testtable, results='asis'>>=
 library(xtable)
 library(stringr)
-out_table <- rbind(asset_returns*100)
-rownames(out_table) <- c("Return (\\%)")
+out_table <- rbind(mu, sigma) * 100
+rownames(out_table) <- c("Return (\\%)", "Volatility (\\%)")
 out_table %>% xtable() %>%
   print(sanitize.text.function = function(x)str_replace(x,"\\."," "), booktabs = T)
 @
 
-The return of the DAX is \Sexpr{asset_returns[["DAX"]] %>% percent}
+The return of the DAX is \Sexpr{percent(asset_returns[["DAX"]])}
 
 \end{document}
