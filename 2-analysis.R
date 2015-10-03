@@ -19,17 +19,17 @@ var(factors)
 cor(returns) %T>% print %>% corrplot
 cor(factors) %T>% print %>% corrplot
 
-mean_variance <- function(mu,sigma) {
+mean_variance_base <- function(mu, sigma) {
   information_matrix <- sigma %>% solve
   (information_matrix %*% mu)/as.numeric(rep(1,length(mu)) %*% information_matrix %*% mu)
 }
-mean_variance(mu,cov(returns))
+mean_variance_base(mu,cov(returns))
 
 ## ---- Massage -----------------------
 # shrink
 library(tawny)
 cov.shrink(returns)
-mean_variance(mu,cov.shrink(returns))
+mean_variance_base(mu,cov.shrink(returns))
 
 # compute hayashi-yoshida adjustment for two timeseries
 hayashi_yoshida <- function(ts_fixing_pre, ts_fixing_post) {
@@ -48,7 +48,9 @@ addCross <- function(m,vec,pos) {
 }
 
 # compute hayashi-yoshida adjustment between DAX, Dow Jones, VIX and Nikkei
-hayashi_results <- list(returns[,"DAX"], returns[,"Dow Jones"], returns[,"VIX"]) %>% lapply(function(x)hayashi_yoshida(returns$Nikkei,x)) %>% unlist
+hayashi_results <- list(returns[,"DAX"], returns[,"Dow Jones"], returns[,"VIX"]) %>%
+  lapply(function(x)hayashi_yoshida(returns$Nikkei,x)) %>%
+  unlist
 adjustment <- c(hayashi_results[1], hayashi_results[2], 0, hayashi_results[3])
 
 # add adjustment onto covariance matrix
@@ -59,7 +61,7 @@ standard_devs <- returns %>% apply(2,sd)
 adjusted_cor <- adjusted_cov / outer(standard_devs,standard_devs)
 adjusted_cor %>% corrplot
 
-mean_variance(mu,adjusted_cov)
+mean_variance_base(mu,adjusted_cov)
 
 ## ----
 # t_0: generate weights
@@ -69,11 +71,6 @@ generate_random_weight <- function(rand_gen, ntimes, nassets, sum=1) {
   m <- matrix(rand_gen(ntimes * nassets), ncol = nassets)
   apply(m,2,function(x)x/sum(x))
 }
-
-a <- matrix(rnorm(20),ncol=5)
-a*(1+0.2)-1
-
-1e6 * a * 1.2
 
 ## ---- linear-regression --------------------
 d <- merge.xts(returns,factors) %>% na.omit
@@ -87,15 +84,18 @@ models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei", VIX = "VIX") %>%
 models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
 
 
-## ---- Portfolio Analytics -----------
-library(PortfolioAnalytics)
-library(DEoptim)
-library(ROI)
+## ---- Base Wrapper ------------------
 
-# pspec <- portfolio.spec(assets = colnames(returns))
-# pspec %<>% add.constraint(type = "weight_sum", min_sum = 0.99, max_sum = 1.01)
-# pspec %<>% add.constraint(type = "box", min = 0.05, max = 1.0)
-# pspec %<>% add.constraint(type = "turnover", turnover_target = 0.1)
-# pspec %<>% add.objective(type = "risk", name = "StdDev")
-# result <- optimize.portfolio(returns, pspec)
-# create.EfficientFrontier(returns, pspec, type = "mean-var") %>% chart.EfficientFrontier
+## 2012-12-31
+## 2013-01-31 -- 2015-06-30
+require(tawny)
+
+# take vector of returns, return vector of weights
+model <- function(returns) mean_variance_base(apply(returns, 2, mean), cov(returns) %>% denoise())
+
+# select an expanding window of returns, starting end of 2012 and feed it into the model
+months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"],"months")]
+months_calibration %>%
+  lapply(function(x) returns[paste0("/", x)]) %T>%
+  lapply(function(x) index(x)[c(1, dim(x)[1])]) %>%
+  lapply(mean_variance)
