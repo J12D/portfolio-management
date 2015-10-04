@@ -33,7 +33,6 @@ mean_variance_base(mu,cov(returns))
 # shrink
 library(tawny)
 cov.shrink(returns)
-mean_variance_base(mu,cov.shrink(returns))
 
 # compute hayashi-yoshida adjustment for two timeseries
 hayashi_yoshida <- function(ts_fixing_pre, ts_fixing_post) {
@@ -59,6 +58,7 @@ adjustment <- c(hayashi_results[1], hayashi_results[2], 0, hayashi_results[3])
 
 # add adjustment onto covariance matrix
 adjusted_cov <- returns %>% cov %>% addCross(adjustment,3)
+
 
 # calculate correlation from adjusted covariance matrix (not perfect)
 standard_devs <- returns %>% apply(2,sd)
@@ -107,24 +107,32 @@ mean_variance_optimal <- function(mu, information_matrix, phi) {
 
 # take vector of returns, return vector of weights
 model <- function(returns) {
-  weights <- mean_variance_optimal(apply(returns, 2, mean), cov(returns) %>% solve, 1)
+  mu <- apply(returns, 2, mean) * 252
+  sigma <- (cov(returns) * 252)
+  weights <- mean_variance_optimal(mu, sigma %>% solve, Inf)
   xts(weights %>% t, index(returns) %>% last)
 }
 
 # select an expanding window of returns, starting end of 2012 and feed it into the model
 months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"],"months")]
 
+my_assets <- assets[,1:3]
+my_returns <- returns[,1:3]
+
 # returns for decision months
-months_returns <- lag(assets[months_calibration],-1) / assets[months_calibration] - 1
+months_returns <- lag(my_assets[months_calibration],-1) / my_assets[months_calibration] - 1
 
 weights <- months_calibration %>%
-            lapply(function(x) returns[paste0("/", x)])  %>% # matrix of returns, expanding in time
+            lapply(function(x) my_returns[paste0("/", x)])  %>% # matrix of returns, expanding in time
             lapply(model) %>% # apply model to growing matrix timeseries
             Reduce(rbind,.) %>% # summarize weights vectors in one object
             .[-dim(.)[1],] # discard last row for now
 
-# weights' * monthly_returns
-rowSums(months_returns * weights, na.rm = T) %>%
+portfolio_returns <- rowSums(months_returns * weights, na.rm = T) %>%
   xts(index(weights)) %>%
-  (function(x) cumprod(1 + x) - 1) %>%
-  plotXTS
+  (function(x) cumprod(1 + x))
+
+vals <- apply(my_assets['/2012'],1,function(x)x/as.numeric(my_assets[1,])) %>% t
+my_asset_returns <- xts(vals,index(my_assets['/2012']))
+
+merge.xts(portfolio_returns,my_asset_returns) %>% na.omit %>% plotXTS
