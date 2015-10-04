@@ -75,3 +75,7 @@ df2xts <- function(df) {
   stopifnot(is.data.frame(df))
   xts(df[,("time" != colnames(df))],df[,("time" == colnames(df))])
 }
+
+ones <- function(num) {
+  rep(1,num)
+}
