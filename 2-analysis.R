@@ -107,7 +107,7 @@ mean_variance_optimal <- function(mu, information_matrix, phi) {
 
 # take vector of returns, return vector of weights
 model <- function(returns) {
-  weights <- mean_variance_optimal(apply(returns, 2, mean), cov(returns), Inf)
+  weights <- mean_variance_optimal(apply(returns, 2, mean), cov(returns) %>% solve, 1)
   xts(weights %>% t, index(returns) %>% last)
 }
 
