@@ -46,6 +46,7 @@ colnames(assets) <- c("DAX", "Dow Jones", "Nikkei", "VIX")
 
 asset_returns <- assets %>% ROC(type = "discrete")
 returns <- asset_returns["2009-02-02/"] %>% na.omit
+colnames(returns) <- c("DAX", "Dow Jones", "Nikkei", "VIX")
 
 euribor <- euribor["2009-02-02/"] %>% na.omit
 

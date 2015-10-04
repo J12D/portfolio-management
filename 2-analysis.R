@@ -58,7 +58,7 @@ hayashi_yoshida_estimate <- function(ts_matrix) {
 }
 
 # compute hayashi-yoshida adjustment between DAX, Dow Jones, VIX and Nikkei
-hayashi_results <- list(returns[,"DAX"], returns[,"Dow Jones"], returns[,"VIX"]) %>%
+hayashi_results <- list(returns[,"DAX"], returns[,"Dow.Jones"], returns[,"VIX"]) %>%
   lapply(function(x)hayashi_yoshida(returns$Nikkei,x)) %>%
   unlist
 adjustment <- c(hayashi_results[1], hayashi_results[2], 0, hayashi_results[3])
