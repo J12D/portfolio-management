@@ -87,7 +87,7 @@ generate_random_weight <- function(rand_gen, ntimes, nassets, sum=1) {
 d <- merge.xts(returns,factors) %>% na.omit
 
 # build functions of linear models where we regress each asset on all factors
-models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei", VIX = "VIX") %>%
+models <- list(DAX = "DAX", DJI = "Dow Jones", NKK = "Nikkei", VIX = "VIX") %>%
   lapply(function(col)paste(col,"~ Mkt.RF + SMB + HML + RF") %>% as.formula) %>%
   lapply(function(formula)lm(formula,data = d))
 
