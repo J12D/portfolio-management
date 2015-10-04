@@ -68,7 +68,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 xts2df <- function(xts) {
   stopifnot(is.xts(xts))
-  data.frame(time = index(xts),drop(coredata(xts)))
+  data.frame(time = index(xts), drop(coredata(xts)))
 }
 
 df2xts <- function(df) {

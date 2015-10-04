@@ -97,10 +97,6 @@ models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
 
 ## ---- Base Wrapper ------------------
 
-## 2012-12-31
-## 2013-01-31 -- 2015-06-30
-require(tawny)
-
 mean_variance_optimal <- function(mu, information_matrix, phi) {
   n <- length(mu)
   a3 <- sum(information_matrix %*% ones(n)) #1'S^(-1)1
@@ -126,14 +122,16 @@ months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"],"months
 my_assets <- assets[,1:3]
 my_returns <- returns[,1:3]
 
-# returns for decision months
-months_returns <- lag(my_assets[months_calibration],-1) / my_assets[months_calibration] - 1
-
 weights <- months_calibration %>%
             lapply(function(x) my_returns[paste0("/", x)])  %>% # matrix of returns, expanding in time
             lapply(model) %>% # apply model to growing matrix timeseries
             Reduce(rbind,.) %>% # summarize weights vectors in one object
             .[-dim(.)[1],] # discard last row for now
+
+## ---- Performance Calculation
+
+# returns for decision months
+months_returns <- lag(my_assets[months_calibration],-1) / my_assets[months_calibration] - 1
 
 portfolio_returns <- rowSums(months_returns * weights, na.rm = T) %>%
   xts(index(weights)) %>%
@@ -144,3 +142,17 @@ my_asset_returns <- xts(vals,index(my_assets['/2012']))
 
 merge.xts(portfolio_returns,my_asset_returns) %>% na.omit %>% plotXTS
 
+
+## ---- Turnover -----------------------
+
+turnover <- function(weights) {
+  to <- year(weights %>% index) %>% unique %>% lapply(function(year){
+    t <- weights %>% diff %>% .[paste(year)] %>% abs %>% na.omit %>% sum(.)/2
+    xts(t, as.Date(paste0(year,"-01-01")))
+  }
+  ) %>% Reduce(rbind,.)
+  colnames(to) <- c("weights")
+  to
+}
+
+turnover(weights)
