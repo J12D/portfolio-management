@@ -43,11 +43,18 @@ hayashi_yoshida <- function(ts_fixing_pre, ts_fixing_post) {
 }
 
 # add a vector at a given position to a square matrix, both on row and on column (for hayashi)
+# 0 0 0                   0 1 0
+# 0 0 0 + {1,2,3} @ 2 ==> 1 4 3
+# 0 0 0                   0 3 0
 addCross <- function(m,vec,pos) {
   l <- dim(m)[1]
   row <- c(rep(0, (pos - 1) * l), vec, rep(0, (l - pos) * l)) %>% matrix(nrow = l, byrow = T)
   col <- c(rep(0, (pos - 1) * l), vec, rep(0, (l - pos) * l)) %>% matrix(ncol = l)
   m + row + col
+}
+
+hayashi_yoshida_estimate <- function(ts_matrix) {
+  
 }
 
 # compute hayashi-yoshida adjustment between DAX, Dow Jones, VIX and Nikkei
@@ -136,3 +143,4 @@ vals <- apply(my_assets['/2012'],1,function(x)x/as.numeric(my_assets[1,])) %>% t
 my_asset_returns <- xts(vals,index(my_assets['/2012']))
 
 merge.xts(portfolio_returns,my_asset_returns) %>% na.omit %>% plotXTS
+
