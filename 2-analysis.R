@@ -58,7 +58,7 @@ hayashi_yoshida_estimate <- function(ts_matrix) {
 }
 
 # compute hayashi-yoshida adjustment between DAX, Dow Jones, VIX and Nikkei
-hayashi_results <- list(returns[,"DAX"], returns[,"Dow.Jones"], returns[,"VIX"]) %>%
+hayashi_results <- list(returns[,"DAX"], returns[,"Dow Jones"], returns[,"VIX"]) %>%
   lapply(function(x)hayashi_yoshida(returns$Nikkei,x)) %>%
   unlist
 adjustment <- c(hayashi_results[1], hayashi_results[2], 0, hayashi_results[3])
@@ -87,7 +87,7 @@ generate_random_weight <- function(rand_gen, ntimes, nassets, sum=1) {
 d <- merge.xts(returns,factors) %>% na.omit
 
 # build functions of linear models where we regress each asset on all factors
-models <- list(DAX = "DAX", DJI = "Dow Jones", NKK = "Nikkei", VIX = "VIX") %>%
+models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei", VIX = "VIX") %>%
   lapply(function(col)paste(col,"~ Mkt.RF + SMB + HML + RF") %>% as.formula) %>%
   lapply(function(formula)lm(formula,data = d))
 
