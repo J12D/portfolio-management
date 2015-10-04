@@ -19,10 +19,14 @@ var(factors)
 cor(returns) %T>% print %>% corrplot
 cor(factors) %T>% print %>% corrplot
 
-mean_variance_base <- function(mu, sigma) {
-  information_matrix <- sigma %>% solve
+mean_variance_ibase <- function(mu, information_matrix) {
   (information_matrix %*% mu)/as.numeric(rep(1,length(mu)) %*% information_matrix %*% mu)
 }
+
+mean_variance_base <- function(mu, sigma) {
+  mean_variance_ibase(mu, sigma %>% solve)
+}
+
 mean_variance_base(mu,cov(returns))
 
 ## ---- Massage -----------------------
@@ -90,12 +94,37 @@ models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
 ## 2013-01-31 -- 2015-06-30
 require(tawny)
 
+mean_variance_optimal <- function(mu, information_matrix, phi) {
+  n <- length(mu)
+  a3 <- sum(information_matrix %*% ones(n)) #1'S^(-1)1
+  weights <- (information_matrix %*% ones(n)) / a3 + 
+                1 / phi * (
+                  a3 * information_matrix %*% mu -
+                  sum(information_matrix %*% mu) * information_matrix %*% ones(n)
+                ) / a3
+  weights
+}
+
 # take vector of returns, return vector of weights
-model <- function(returns) mean_variance_base(apply(returns, 2, mean), cov(returns) %>% denoise())
+model <- function(returns) {
+  weights <- mean_variance_optimal(apply(returns, 2, mean), cov(returns), Inf)
+  xts(weights %>% t, index(returns) %>% last)
+}
 
 # select an expanding window of returns, starting end of 2012 and feed it into the model
 months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"],"months")]
-months_calibration %>%
-  lapply(function(x) returns[paste0("/", x)]) %T>%
-  lapply(function(x) index(x)[c(1, dim(x)[1])]) %>%
-  lapply(mean_variance)
+
+# returns for decision months
+months_returns <- lag(assets[months_calibration],-1) / assets[months_calibration] - 1
+
+weights <- months_calibration %>%
+            lapply(function(x) returns[paste0("/", x)])  %>% # matrix of returns, expanding in time
+            lapply(model) %>% # apply model to growing matrix timeseries
+            Reduce(rbind,.) %>% # summarize weights vectors in one object
+            .[-dim(.)[1],] # discard last row for now
+
+# weights' * monthly_returns
+rowSums(months_returns * weights, na.rm = T) %>%
+  xts(index(weights)) %>%
+  (function(x) cumprod(1 + x) - 1) %>%
+  plotXTS
