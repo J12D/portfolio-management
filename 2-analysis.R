@@ -137,8 +137,8 @@ portfolio_returns <- rowSums(months_returns * weights, na.rm = T) %>%
   xts(index(weights)) %>%
   (function(x) cumprod(1 + x))
 
-vals <- apply(my_assets['/2012'],1,function(x)x/as.numeric(my_assets[1,])) %>% t
-my_asset_returns <- xts(vals,index(my_assets['/2012']))
+vals <- apply(my_assets['2012/'],1,function(x)x/as.numeric(my_assets['2012/'][1,])) %>% t
+my_asset_returns <- xts(vals,index(my_assets['2012/']))
 
 merge.xts(portfolio_returns,my_asset_returns) %>% na.omit %>% plotXTS
 

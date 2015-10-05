@@ -77,5 +77,9 @@ df2xts <- function(df) {
 }
 
 ones <- function(num) {
-  rep(1,num)
+  rep.int(1, num)
+}
+
+zeros <- function(num) {
+  rep.int(0, num)
 }
