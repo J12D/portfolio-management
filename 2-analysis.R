@@ -27,12 +27,25 @@ mean_variance_base <- function(mu, sigma) {
   mean_variance_ibase(mu, sigma %>% solve)
 }
 
-mean_variance_base(mu,cov(returns))
+
+mean_variance_optimal <- function(mu, information_matrix, phi) {
+  n <- length(mu)
+  a3 <- sum(information_matrix %*% ones(n)) #1'S^(-1)1
+  weights <- (information_matrix %*% ones(n)) / a3 + 
+    1 / phi * (
+      a3 * information_matrix %*% mu -
+        sum(information_matrix %*% mu) * information_matrix %*% ones(n)
+    ) / a3
+  weights
+}
+
+min_variance <- function(mu, sigma) mean_variance_optimal(mu, sigma %>% solve, Inf)
+max_sharpe <- function(mu, sigma) mean_variance_base(mu, sigma)
 
 ## ---- massage -----------------------
 # shrink
-library(tawny)
-cov.shrink(returns)
+# library(tawny)
+# cov.shrink(returns)
 
 # compute hayashi-yoshida adjustment for two timeseries
 hayashi_yoshida <- function(ts_fixing_pre, ts_fixing_post) {
@@ -91,42 +104,31 @@ models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei", VIX = "VIX") %>%
   lapply(function(formula)lm(formula,data = d))
 
 # p values of all regressions for all factors
-models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
+res2 <- models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
 
 
 ## ---- base-wrapper --------------------------
 
-mean_variance_optimal <- function(mu, information_matrix, phi) {
-  n <- length(mu)
-  a3 <- sum(information_matrix %*% ones(n)) #1'S^(-1)1
-  weights <- (information_matrix %*% ones(n)) / a3 + 
-                1 / phi * (
-                  a3 * information_matrix %*% mu -
-                  sum(information_matrix %*% mu) * information_matrix %*% ones(n)
-                ) / a3
-  weights
-}
 
 # take vector of returns, return vector of weights
 model <- function(returns) {
   mu <- apply(returns, 2, mean) * 252
   sigma <- (cov(returns) * 252)
-  weights <- mean_variance_optimal(mu, sigma %>% solve, Inf)
+  weights <- min_variance(mu, sigma)
   xts(weights %>% t, index(returns) %>% last)
 }
 
 # select an expanding window of returns, starting end of 2012 and feed it into the model
 months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"],"months")]
 
-my_assets <- assets[,1:3]
-my_returns <- returns[,1:3]
+my_assets <- assets#[,1:3]
+my_returns <- returns#[,1:3]
 
 weights <- months_calibration %>%
             lapply(function(x) my_returns[paste0("/", x)])  %>% # matrix of returns, expanding in time
             lapply(model) %>% # apply model to growing matrix timeseries
             Reduce(rbind,.) %>% # summarize weights vectors in one object
             .[-dim(.)[1],] # discard last row for now
-
 
 ## ---- performance-calculation --------------------------
 
@@ -142,6 +144,49 @@ my_asset_returns <- xts(vals,index(my_assets['2012/']))
 
 merge.xts(portfolio_returns,my_asset_returns) %>% na.omit %>% plotXTS
 
+weight_development <- function(initial_weights, asset_evolution, amt = 1) {
+  units <- amt / as.numeric(asset_evolution[1,]) * as.numeric(initial_weights)
+  vals <- apply(asset_evolution, 1, function(x) x * units) %>% t
+  xts(coredata(vals),index(asset_evolution))
+}
+
+relative_weights <- function(x) {
+  x/rowSums(x)
+}
+
+# first month
+# weight_development(weights[1,], assets['2012-01-31/2012-02-29'], 100) %>% rowSums
+# weight_development(weights[2,], assets['2012-02-29/2012-03-30'], 101.42630) %>% rowSums
+
+periods <- paste0(months_calibration[1:(length(index(months_calibration)) - 1)], "/", months_calibration[2:length(index(months_calibration))])
+period_assets <- periods %>% sapply(function(x)assets[x])
+
+p <- vector(mode = "list", length = dim(weights)[1])
+for (i in 1:dim(weights)[1]) {
+  p[[i]] <- list(weights = weights[i], assets = period_assets[[i]])
+}
+
+pf <- Reduce(function(carry, period_slice) {
+  if (is.null(carry)) {
+    value <- 100
+  } else {
+    value <- rowSums(carry) %>% last
+  }
+  assets <- period_slice$assets
+  weights <- period_slice$weights
+  res <- weight_development(weights, assets, value)
+  if (!is.null(carry)) {
+    res <- rbind(carry,res)
+  }
+  res
+}, p, NULL)
+
+
+# merge.xts(weights, assets['2012-01-31/']) %>%
+#   .[,c("DAX","DAX.1")] %>%
+#   cbind(.,ROC(.[,"DAX.1"])) %>%
+#   xts2df %>%
+#   head
 
 ## ---- turnover -----------------------
 ## INCORRECT - consider change over infinitesimal time horizon over rebalancing
