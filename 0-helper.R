@@ -3,30 +3,30 @@ gg_color_hue <- function(n) {
   hcl(h = hues, l = 65, c = 100)[1:n]
 }
 
-# Erstelle den gg-Plot eines XTS Objekts 
-plotXTS <- function(xtsObject, title, xlab = "time", ylab = "value"){
+# convenience function for ggploting xts objects
+plotXTS <- function(xtsObject, title, xlab = "time", ylab = "value", size = 0.5){
   d <- data.frame(time = index(xtsObject), value = drop(coredata(xtsObject)))
   if (dim(xtsObject)[2]) {
     d <- melt(d, id.vars = "time", varnames = names(dimnames(xtsObject)))
   }
-  temp <- ggplot(d, aes(time, value)) +
+  res_plot <- ggplot(d, aes(time, value)) +
     xlab(xlab) +
     ylab(ylab) + 
     scale_colour_hue() +
     theme(plot.title = element_text(lineheight = .8, face = "bold"), text = element_text(size = 14))
   
   if (dim(xtsObject)[2] > 1) {
-    temp <- temp + geom_line(aes(colour = variable))
+    res_plot <- res_plot + geom_line(aes(colour = variable), size = size)
   }
   else {
-    temp <- temp + geom_line(colour = gg_color_hue(1))
+    res_plot <- res_plot + geom_line(colour = gg_color_hue(1), size = size)
   }
   
   if (!missing(title)) {
-    temp + ggtitle(title)
+    res_plot + ggtitle(title)
   }
   else {
-    temp
+    res_plot
   }
 }
 
@@ -47,9 +47,8 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
                      ncol = cols, nrow = ceiling(numPlots/cols))
   }
   
-  if (numPlots==1) {
+  if (numPlots == 1) {
     print(plots[[1]])
-    
   } else {
     # Set up the page
     grid.newpage()
