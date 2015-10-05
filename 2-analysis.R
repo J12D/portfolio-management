@@ -29,7 +29,7 @@ mean_variance_base <- function(mu, sigma) {
 
 mean_variance_base(mu,cov(returns))
 
-## ---- Massage -----------------------
+## ---- massage -----------------------
 # shrink
 library(tawny)
 cov.shrink(returns)
@@ -74,9 +74,8 @@ adjusted_cor %>% corrplot
 
 mean_variance_base(mu,adjusted_cov)
 
-## ----
-# t_0: generate weights
-# t_1: observe weights & generate new weights
+
+## ---- random-weights -----------------------
 
 generate_random_weight <- function(rand_gen, ntimes, nassets, sum=1) {
   m <- matrix(rand_gen(ntimes * nassets), ncol = nassets)
@@ -95,7 +94,7 @@ models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei", VIX = "VIX") %>%
 models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
 
 
-## ---- Base Wrapper ------------------
+## ---- base-wrapper --------------------------
 
 mean_variance_optimal <- function(mu, information_matrix, phi) {
   n <- length(mu)
@@ -128,7 +127,8 @@ weights <- months_calibration %>%
             Reduce(rbind,.) %>% # summarize weights vectors in one object
             .[-dim(.)[1],] # discard last row for now
 
-## ---- Performance Calculation
+
+## ---- performance-calculation --------------------------
 
 # returns for decision months
 months_returns <- lag(my_assets[months_calibration],-1) / my_assets[months_calibration] - 1
@@ -143,7 +143,8 @@ my_asset_returns <- xts(vals,index(my_assets['2012/']))
 merge.xts(portfolio_returns,my_asset_returns) %>% na.omit %>% plotXTS
 
 
-## ---- Turnover -----------------------
+## ---- turnover -----------------------
+## INCORRECT - consider change over infinitesimal time horizon over rebalancing
 
 turnover <- function(weights) {
   to <- year(weights %>% index) %>% unique %>% lapply(function(year){
