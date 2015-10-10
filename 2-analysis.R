@@ -192,19 +192,15 @@ rowSums.xts <- function(x) {
   xts(rowSums(x), index(x))
 }
 
-min_variance(cov = cov_returns(lag_adjustment = 3)) %>%
+## ---- Pipelines ------------------
+
+min_variance() %>%
   evaluate_model %>%
   drop_last %>%
   return_with_weights %>%
   rowSums.xts %>% 
   plotXTS
 
-
-# merge.xts(weights, assets['2012-01-31/']) %>%
-#   .[,c("DAX","DAX.1")] %>%
-#   cbind(.,ROC(.[,"DAX.1"])) %>%
-#   xts2df %>%
-#   head
 
 ## ---- turnover -----------------------
 ## INCORRECT - consider change over infinitesimal time horizon over rebalancing
