@@ -1,6 +1,7 @@
 library(reshape2)
 library(ggplot2)
 library(corrplot)
+library(tawny)
 
 source("0-helper.R")
 source("1-data.R")
@@ -34,7 +35,8 @@ addCross <- function(m,vec,pos) {
 
 cov_returns <- function(lag_adjustment = F, shrink = F, annualize = 252) {
   function(returns) {
-    c <- cov(returns)
+    cov_func <- if (shrink) cov.shrink else cov
+    c <- cov_func(returns)
     
     if (lag_adjustment != F) {
       hayashi_results <- returns[,-lag_adjustment] %>% 
@@ -124,14 +126,14 @@ evaluate_model <- function(model, lookback = "1 year", subset = "2012/", period 
   vars
 }
 
-min_variance() %>% evaluate_model %>% plotXTS
+# min_variance() %>% evaluate_model %>% plotXTS
 
 # Max Sharpe with shrunken means
-max_sharpe(mean = mean_returns(shrink = 1)) %>% evaluate_model %>% plotXTS
+# max_sharpe(mean = mean_returns(shrink = 1)) %>% evaluate_model %>% plotXTS
 
 # Min Variance with hayashi yoshida adjustment
-w <- min_variance(cov = cov_returns(lag_adjustment = 3)) %>% evaluate_model
-w %>% plotXTS + ylim(c(-1,1.5))
+# w <- min_variance(cov = cov_returns(lag_adjustment = 3)) %>% evaluate_model
+# w %>% plotXTS + ylim(c(-1,1.5))
 
 
 ## ---- performance-calculation --------------------------
@@ -212,9 +214,12 @@ performance_plot <- function(model) {
     plotXTS
 }
 
-min_variance() %>% performance_plot
+min_variance(cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% performance_plot
 
-max_sharpe(mean = mean_returns(shrink = 0.9)) %>% performance_plot
+max_sharpe() %>% performance_plot
+
+max_sharpe(cov = cov_returns(shrink = T, lag_adjustment = 3),
+           mean = mean_returns(shrink = 0.9)) %>% performance_plot
 
 fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% performance_plot
 
