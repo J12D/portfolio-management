@@ -62,7 +62,7 @@ cor(returns) %>% corrplot
 returns %>% (cov_returns(lag_adjustment = 3)) %>% adjusted_cor(returns) %>% corrplot
 
 
-## ---- Markowitz ------------------------
+## ---- Models ------------------------
 
 mean_variance_ibase <- function(mu, information_matrix) {
   (information_matrix %*% mu)/as.numeric(rep(1,length(mu)) %*% information_matrix %*% mu)
@@ -100,6 +100,11 @@ max_sharpe <- function(mean = mean_returns(), cov = cov_returns()) {
   }
 }
 
+fixed_weights <- function(weights) {
+  function(returns) {
+    t(weights)
+  }
+}
 
 ## ---- base-wrapper --------------------------
 
@@ -194,7 +199,14 @@ rowSums.xts <- function(x) {
 
 ## ---- Pipelines ------------------
 
-min_variance() %>%
+max_sharpe(mean = mean_returns(shrink = 0.9)) %>%
+  evaluate_model %>%
+  drop_last %>%
+  return_with_weights %>%
+  rowSums.xts %>% 
+  plotXTS
+
+fixed_weights(c(1/3, 1/3, 1/3, 0)) %>%
   evaluate_model %>%
   drop_last %>%
   return_with_weights %>%
