@@ -5,49 +5,13 @@ library(corrplot)
 source("0-helper.R")
 source("1-data.R")
 
-# Mean
-mu <- returns["/2012"] %>% apply(2,mean) * 252
-mu
-
-# Standard Deviation
-sigma <- returns["/2012"] %>% apply(2,sd) * sqrt(252)
-sigma
-
-# Variance & Correlation
-var(returns)
-var(factors)
-cor(returns) %T>% print %>% corrplot
-cor(factors) %T>% print %>% corrplot
-
-mean_variance_ibase <- function(mu, information_matrix) {
-  (information_matrix %*% mu)/as.numeric(rep(1,length(mu)) %*% information_matrix %*% mu)
+## ---- Mean ----------
+mean_returns <- function(returns, shrink = 0, annualize = 252) {
+  r <- returns %>% apply(2, mean) * annualize
+  r * (1 - shrink) + Reduce(mean, r) * shrink
 }
 
-mean_variance_base <- function(mu, sigma) {
-  mean_variance_ibase(mu, sigma %>% solve)
-}
-
-
-mean_variance_optimal <- function(mu, information_matrix, phi) {
-  n <- length(mu)
-  a3 <- sum(information_matrix %*% ones(n)) #1'S^(-1)1
-  weights <- (information_matrix %*% ones(n)) / a3 + 
-    1 / phi * (
-      a3 * information_matrix %*% mu -
-        sum(information_matrix %*% mu) * information_matrix %*% ones(n)
-    ) / a3
-  weights
-}
-
-min_variance <- function(mu, sigma) mean_variance_optimal(mu, sigma %>% solve, Inf)
-max_sharpe <- function(mu, sigma) mean_variance_base(mu, sigma)
-
-## ---- massage -----------------------
-# shrink
-# library(tawny)
-# cov.shrink(returns)
-
-# compute hayashi-yoshida adjustment for two timeseries
+## ---- Covariance -----------
 hayashi_yoshida <- function(ts_fixing_pre, ts_fixing_post) {
   ts_fixing_post %>% lag %>% head
   aligned <- merge.xts(ts_fixing_pre,ts_fixing_post)
@@ -66,27 +30,57 @@ addCross <- function(m,vec,pos) {
   m + row + col
 }
 
-hayashi_yoshida_estimate <- function(ts_matrix) {
+cov_returns <- function(returns, lag_adjustment = F, shrink = F, annualize = 252) {
+  c <- cov(returns)
   
+  if (lag_adjustment != F) {
+    hayashi_results <- returns[,-lag_adjustment] %>% 
+      apply(2, function(x) hayashi_yoshida(returns[,lag_adjustment],x))
+    
+    adjustment <- c(hayashi_results[1:(lag_adjustment - 1)],
+                    0,
+                    hayashi_results[(lag_adjustment:length(hayashi_results))])
+    
+    # add adjustment onto covariance matrix
+    c %<>% addCross(adjustment,3)
+  }
+  c
 }
 
-# compute hayashi-yoshida adjustment between DAX, Dow Jones, VIX and Nikkei
-hayashi_results <- list(returns[,"DAX"], returns[,"Dow Jones"], returns[,"VIX"]) %>%
-  lapply(function(x)hayashi_yoshida(returns$Nikkei,x)) %>%
-  unlist
-adjustment <- c(hayashi_results[1], hayashi_results[2], 0, hayashi_results[3])
-
-# add adjustment onto covariance matrix
-adjusted_cov <- returns %>% cov %>% addCross(adjustment,3)
-
-
 # calculate correlation from adjusted covariance matrix (not perfect)
-standard_devs <- returns %>% apply(2,sd)
-adjusted_cor <- adjusted_cov / outer(standard_devs,standard_devs)
-adjusted_cor %>% corrplot
+adjusted_cor <- function(adjusted_cov, returns) {
+  standard_devs <- returns %>% apply(2,sd)
+  adjusted_cov / outer(standard_devs,standard_devs)
+}
 
-mean_variance_base(mu,adjusted_cov)
 
+cor(returns) %T>% print %>% corrplot
+cor(factors) %T>% print %>% corrplot
+
+
+## ---- Markowitz ------------------------
+
+mean_variance_ibase <- function(mu, information_matrix) {
+  (information_matrix %*% mu)/as.numeric(rep(1,length(mu)) %*% information_matrix %*% mu)
+}
+
+mean_variance_base <- function(mu, sigma) {
+  mean_variance_ibase(mu, sigma %>% solve)
+}
+
+mean_variance_optimal <- function(mu, information_matrix, phi) {
+  n <- length(mu)
+  a3 <- sum(information_matrix %*% ones(n)) #1'S^(-1)1
+  weights <- (information_matrix %*% ones(n)) / a3 + 
+    1 / phi * (
+      a3 * information_matrix %*% mu -
+        sum(information_matrix %*% mu) * information_matrix %*% ones(n)
+    ) / a3
+  weights
+}
+
+min_variance <- function(mu, sigma) mean_variance_optimal(mu, sigma %>% solve, Inf)
+max_sharpe <- function(mu, sigma) mean_variance_base(mu, sigma)
 
 ## ---- random-weights -----------------------
 
@@ -108,7 +102,6 @@ res2 <- models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
 
 
 ## ---- base-wrapper --------------------------
-
 
 # take vector of returns, return vector of weights
 model <- function(returns) {
