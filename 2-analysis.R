@@ -47,7 +47,7 @@ cov_returns <- function(lag_adjustment = F, shrink = F, annualize = 252) {
       # add adjustment onto covariance matrix
       c %<>% addCross(adjustment,3)
     }
-    c
+    c * annualize
   }
 }
 
@@ -136,6 +136,14 @@ w %>% plotXTS + ylim(c(-1,1.5))
 
 ## ---- performance-calculation --------------------------
 
+drop_first <- function(x) {
+  x[-1,]
+}
+
+drop_last <- function(x) {
+  x[-dim(x)[1],]
+}
+
 portfolio_return <- function(weights, subset = "2012/", period = "months") {
   dates <- index(returns[subset])[endpoints(returns[subset], period)] 
   # returns for decision months
@@ -148,7 +156,7 @@ portfolio_return <- function(weights, subset = "2012/", period = "months") {
   vals <- apply(assets[subset], 1, function(x) x/as.numeric(assets[subset][1,])) %>% t
   my_asset_returns <- xts(vals, index(assets[subset]))
   
-  merge.xts(portfolio_returns, my_asset_returns) %>% na.omit %>% plotXTS
+  #merge.xts(portfolio_returns, my_asset_returns) %>% na.omit %>% plotXTS
   
   weight_development <- function(initial_weights, asset_evolution, amt = 1) {
     units <- amt / as.numeric(asset_evolution[1,]) * as.numeric(initial_weights)
@@ -165,7 +173,7 @@ portfolio_return <- function(weights, subset = "2012/", period = "months") {
   # weight_development(weights[2,], assets['2012-02-29/2012-03-30'], 101.42630) %>% rowSums
   
   periods <- paste0(dates[1:(length(index(dates)) - 1)], "/", dates[2:length(index(dates))])
-  period_assets <- periods %>% sapply(function(x)assets[x])
+  period_assets <- periods %>% sapply(function(x)assets[x] %>% drop_first)
   
   p <- vector(mode = "list", length = dim(weights)[1])
   for (i in 1:dim(weights)[1]) {
@@ -189,30 +197,32 @@ portfolio_return <- function(weights, subset = "2012/", period = "months") {
   pf
 }
 
-drop_last <- function(x) {
-  x[-dim(x)[1],]
-}
-
 rowSums.xts <- function(x) {
   xts(rowSums(x), index(x))
 }
 
 ## ---- Pipelines ------------------
 
-max_sharpe(mean = mean_returns(shrink = 0.9)) %>%
-  evaluate_model %>%
-  drop_last %>%
-  return_with_weights %>%
-  rowSums.xts %>% 
-  plotXTS
+performance_plot <- function(model) {
+  model %>%
+    evaluate_model %>%
+    drop_last %>%
+    portfolio_return %>%
+    rowSums.xts %>% 
+    plotXTS
+}
 
-fixed_weights(c(1/3, 1/3, 1/3, 0)) %>%
-  evaluate_model %>%
-  drop_last %>%
-  return_with_weights %>%
-  rowSums.xts %>% 
-  plotXTS
+min_variance() %>% performance_plot
 
+max_sharpe(mean = mean_returns(shrink = 0.9)) %>% performance_plot
+
+fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% performance_plot
+
+# We can step through each step separately
+min_variance() %>% evaluate_model %>% drop_last %>% portfolio_return
+
+test_weights <- fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% evaluate_model %>% drop_last
+test_returns <- test_weights %>% portfolio_return
 
 ## ---- turnover -----------------------
 ## INCORRECT - consider change over infinitesimal time horizon over rebalancing
