@@ -17,4 +17,4 @@ calcMDD <- function(asset) {
   mdd
 }
 
-assets[,1] %>% apply.monthly(calcMDD) %>% mean
+assets["2012-01-31/"] %>% rowSums.xts %>% apply.monthly(calcMDD) %>% mean
