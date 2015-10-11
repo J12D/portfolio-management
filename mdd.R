@@ -1,5 +1,6 @@
 calcMDD <- function(asset) {
   asset <- rev(asset)
+  if (length(asset) < 2) return(0)
   maxDiffPortVal <- as.numeric(asset[2]) - as.numeric(asset[1])
   minPortVal <- as.numeric(asset[1])
   for (i in 1:(length(asset))) {
@@ -16,31 +17,4 @@ calcMDD <- function(asset) {
   mdd
 }
 
-
-rollingWindow <- function(asset) {
-  indexMonthlyEndpoints <- endpoints(asset, on = "months", k = 1)
-  indexMonthlyEndpoints <-
-    indexMonthlyEndpoints[2:length(indexMonthlyEndpoints)] #throw away index of 0
-  indexMonthlyEndpoints
-}
-
-calcMDDRollingWindow <- function(asset) {
-  indexMonthlyEndpoints <- rollingWindow(asset)
-  
-  countRollingWindow <- 12
-  helper <- 1
-  mdd <- 0
-  for (countRollingWindow in length(indexMonthlyEndpoints)) {
-    if (countRollingWindow != 12) {
-      helper <- (indexMonthlyEndpoints[countRollingWindow - 12] + 1)
-    }
-    dataRollingWindow <-
-      asset[helper:indexMonthlyEndpoints[countRollingWindow]]
-    mdd <- mdd + calcMDD(dataRollingWindow)
-  }
-  mdd <- mdd / (length(indexMonthlyEndpoints) - 13)
-  mdd
-}
-
-asset <- assets[,2]
-calcMDDRollingWindow(asset)
+assets[,1] %>% apply.monthly(calcMDD) %>% mean
