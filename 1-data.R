@@ -1,6 +1,7 @@
 library(magrittr)
 library(quantmod)
 library(Quandl)
+library(readxl)
 library(lubridate)
 
 Sys.setenv(TZ = "UTC")
@@ -57,3 +58,4 @@ fx <- fx["2009-02-02/"]
 rm(list = c("GDAXI", "DJI", "N225", "VXX", "asset_returns"))
 
 message("> Imported data ---------------")
+

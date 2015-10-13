@@ -98,7 +98,7 @@ max_sharpe <- function(mean = mean_returns(), cov = cov_returns()) {
   function(returns) {
     mu <- returns %>% mean
     c <- returns %>% cov
-    mean_variance_base(mu, c %>% solve) %>% t
+    mean_variance_base(mu, c) %>% t
   }
 }
 
@@ -221,7 +221,9 @@ max_sharpe() %>% performance_plot
 max_sharpe(cov = cov_returns(shrink = T, lag_adjustment = 3),
            mean = mean_returns(shrink = 0.9)) %>% performance_plot
 
-fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% performance_plot
+fixed_weights(c(1, 0.5, 0.5, -1)) %>% performance_plot
+
+eff_portfolio(mean = mean_returns(shrink = 0.3), max.allocation = 1) %>% performance_plot
 
 # We can step through each step separately
 min_variance() %>% evaluate_model %>% drop_last %>% portfolio_return
