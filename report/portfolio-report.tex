@@ -1,0 +1,66 @@
+\documentclass[roman]{scrreprt}
+
+\usepackage{jdcommands}
+\jdfontsetup{}
+
+\usepackage[USenglish]{babel}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepgfplotslibrary{dateplot}
+
+
+\newenvironment{performanceplot}[1][]{
+\begin{tikzpicture}
+\begin{axis}[
+		no marks,
+		date coordinates in=x,
+		xticklabel=\year,
+		%xticklabel style={/pgf/number format/.cd,fixed,precision=2},
+    %yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
+    yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
+		ylabel=Performance,
+		xlabel=Time,
+    legend pos = north west,
+    every axis plot/.append style={thick, smooth},
+    width=\textwidth,
+    height=0.5\textwidth,
+    #1]
+}{%
+\end{axis}
+\end{tikzpicture}
+}
+
+\title{Portfolios for a safe future}
+\author{JD POWER}
+\begin{document}
+\maketitle
+
+
+\chapter*{Asset Universe}
+We're looking at 4 assets.
+
+\begin{performanceplot}[ylabel=Asset value]
+  \addplot table[x=time, y=value.DAX] {plot-data/assets.txt};
+  \addplot table[x=time, y=value.Dow.Jones] {plot-data/assets.txt};
+  \addplot table[x=time, y=value.Nikkei] {plot-data/assets.txt};
+  \addplot table[x=time, y=value.VIX] {plot-data/assets.txt};
+\end{performanceplot}
+
+
+\chapter*{Investment Opportunities}
+\section*{Max Sharpe Ratio}
+\begin{performanceplot}
+  \addplot table[x=time, y=value] {plot-data/max_sharpe.txt};
+\end{performanceplot}
+
+\section*{Equal-Weighted}
+\begin{performanceplot}
+  \addplot table[x=time, y=value] {plot-data/equal.txt};
+\end{performanceplot}
+
+\section*{Portfolio 3}
+
+\chapter*{Performance Evaluation}
+
+\end{document}

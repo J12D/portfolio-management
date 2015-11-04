@@ -213,24 +213,33 @@ zero_killer <- function(x) {
 
 ## ---- Pipelines ------------------
 
-performance_plot <- function(model) {
+pipeline <- function(model) {
   model %>%
     evaluate_model %>%
     drop_last %>%
     portfolio_return %>%
     rowSums.xts %>%
-    zero_killer %>%
+    zero_killer
+}
+
+performance_plot <- function(model) {
+   model %>%
+    pipeline %>%
     plotXTS(size = 1)
+}
+
+pgfplot <- function(model, name) {
+  model %>% pipeline %>% plotTable(name)
 }
 
 min_variance(cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% performance_plot
 
-max_sharpe() %>% performance_plot
+max_sharpe() %>% pgfplot("max_sharpe")
 
 max_sharpe(cov = cov_returns(lag_adjustment = 3),
            mean = mean_returns(shrink = 0.5)) %>% performance_plot
 
-fixed_weights(c(1/2, 1/2, 1/2, -1/2)) %>% performance_plot
+fixed_weights(c(1/2, 1/2, 1/2, -1/2)) %>% pgfplot("equal")
 
 eff_portfolio(mean = mean_returns(shrink = 0.3), max.allocation = 1) %>% performance_plot
 
