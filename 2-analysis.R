@@ -5,6 +5,7 @@ library(tawny)
 
 source("0-helper.R")
 source("1-data.R")
+source("3-analysis2.R")
 
 ## ---- Mean ----------
 mean_returns <- function(shrink = 0, annualize = 252) {
@@ -120,6 +121,7 @@ evaluate_model <- function(model, lookback = "2 years", subset = "2012/", period
       date <- index(returns) %>% last %>% as.Date
       returns <- returns %>% xts::last(lookback)
       val <- model(returns)
+      print(val)
       xts(val, date)
     }) %>%
     Reduce(rbind,.)
@@ -256,7 +258,7 @@ fixed_weights(c(1/2, 1/2, 1/2, -1/2)) %>%
   compute_kpis %>%
   pgfplot("equal")
 
-eff_portfolio(mean = mean_returns(shrink = 0.3), max.allocation = 1) %>% performance_plot
+eff_portfolio(mean = mean_returns(shrink=0.5), cov = cov_returns(shrink=0.5), T, 3, 0.01, 0.4) %>% performance_plot
 
 
 test_weights <- fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% evaluate_model %>% drop_last

@@ -1,8 +1,7 @@
 #http://economistatlarge.com/portfolio-theory/r-optimized-portfolio
 library(quadprog)
-
 eff_portfolio <- function(mean = mean_returns(), cov = cov_returns(),
-                         short = F, risk.premium.up = 3, risk.increment = 0.01,
+                         short = F, risk.premium.up = 3, risk.increment = 0.1,
                          max.allocation = NULL) {
   function(returns) {
     mu <- returns %>% mean
@@ -55,6 +54,6 @@ eff_portfolio <- function(mean = mean_returns(), cov = cov_returns(),
     eff <- as.data.frame(eff)
     eff <- eff[eff$sharpe == max(eff$sharpe), 1:n]
     rownames(eff) <- NULL
-    eff
+    eff[1,]
   }
 }
