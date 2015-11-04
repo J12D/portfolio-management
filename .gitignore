@@ -9,3 +9,8 @@ report-knitr.pdf
 report-knitr.synctex.gz
 report-knitr.tex
 documents
+*.gz
+*.log
+*.swp
+*.aux
+.RData
