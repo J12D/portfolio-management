@@ -9,6 +9,8 @@
 \pgfplotsset{compat=1.12}
 \usepgfplotslibrary{dateplot}
 
+%xtick={2008-01-01,2009-01-01,2010-01-01,2001-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
+
 
 \newenvironment{performanceplot}[1][]{
 \begin{tikzpicture}
@@ -16,6 +18,7 @@
 		no marks,
 		date coordinates in=x,
 		xticklabel=\year,
+    xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
 		%xticklabel style={/pgf/number format/.cd,fixed,precision=2},
     %yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
     yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
@@ -38,13 +41,17 @@
 
 
 \chapter*{Asset Universe}
-We're looking at 4 assets.
+We're looking at 4 assets: DAX
 
 \begin{performanceplot}[ylabel=Asset value]
   \addplot table[x=time, y=value.DAX] {plot-data/assets.txt};
+  \addlegendentry{DAX}
   \addplot table[x=time, y=value.Dow.Jones] {plot-data/assets.txt};
+  \addlegendentry{Dow Jones}
   \addplot table[x=time, y=value.Nikkei] {plot-data/assets.txt};
+  \addlegendentry{Nikkei}
   \addplot table[x=time, y=value.VIX] {plot-data/assets.txt};
+  \addlegendentry{!VIX}
 \end{performanceplot}
 
 
