@@ -113,7 +113,7 @@ fixed_weights <- function(weights) {
 # select an expanding window of returns, starting end of 2012 and feed it into the model
 months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"],"months")]
 
-evaluate_model <- function(model, lookback = "1 year", subset = "2012/", period = "months") {
+evaluate_model <- function(model, lookback = "2 years", subset = "2012/", period = "months") {
   vars <- index(returns[subset])[endpoints(returns[subset], period)] %>% 
     lapply(function(date) returns[paste0("/", date)]) %>%
     lapply(function(returns) {
@@ -158,8 +158,6 @@ portfolio_return <- function(weights, subset = "2012/", period = "months") {
   vals <- apply(assets[subset], 1, function(x) x/as.numeric(assets[subset][1,])) %>% t
   my_asset_returns <- xts(vals, index(assets[subset]))
   
-  #merge.xts(portfolio_returns, my_asset_returns) %>% na.omit %>% plotXTS
-  
   weight_development <- function(initial_weights, asset_evolution, amt = 1) {
     units <- amt / as.numeric(asset_evolution[1,]) * as.numeric(initial_weights)
     vals <- apply(asset_evolution, 1, function(x) x * units) %>% t
@@ -169,11 +167,7 @@ portfolio_return <- function(weights, subset = "2012/", period = "months") {
   relative_weights <- function(x) {
     x/rowSums(x)
   }
-  
-  # first month
-  # weight_development(weights[1,], assets['2012-01-31/2012-02-29'], 100) %>% rowSums
-  # weight_development(weights[2,], assets['2012-02-29/2012-03-30'], 101.42630) %>% rowSums
-  
+
   periods <- paste0(dates[1:(length(index(dates)) - 1)], "/", dates[2:length(index(dates))])
   period_assets <- periods %>% sapply(function(x)assets[x] %>% drop_first)
   
@@ -234,27 +228,41 @@ pgfplot <- function(model, name) {
 
 compute_kpis <- function(model) {
   weights <- model %>% evaluate_model %>% drop_last
-  returns <- weights %>% portfolio_return %>% rowSums.xts %>% zero_killer %>% ROC(type = "discrete") %>% na.omit
-  sharpe <- mean(returns - euribor)/sd(returns)
-  sharpe
+  returns <- weights %>%
+    portfolio_return %>%
+    rowSums.xts %>%
+    zero_killer %>% ROC(type = "discrete") %>% na.omit
+  print(returns-euribor)
+  hist(returns-euribor)
+  excess_mu <- mean(returns - euribor)
+  standard_dev <- sd(returns)
+  sharpe <- excess_mu / standard_dev
+  list("sharpe" = sharpe, "mu" = excess_mu, "sigma" = standard_dev)
 }
 
 min_variance(cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% performance_plot
 
 max_sharpe() %>% pgfplot("max_sharpe")
 
-max_sharpe(cov = cov_returns(lag_adjustment = 3),
-           mean = mean_returns(shrink = 0.5)) %>% performance_plot
+max_sharpe(cov = cov_returns(shrink = T, lag_adjustment = 3),
+           mean = mean_returns(shrink = 0.9)) %>%
+  performance_plot
 
-fixed_weights(c(1/2, 1/2, 1/2, -1/2)) %>% pgfplot("equal")
+max_sharpe(mean = mean_returns(shrink = 0.5),
+           cov = cov_returns(shrink = T, lag_adjustment = 3)) %>%
+  evaluate_model
+
+fixed_weights(c(1/2, 1/2, 1/2, -1/2)) %>%
+  compute_kpis %>%
+  pgfplot("equal")
 
 eff_portfolio(mean = mean_returns(shrink = 0.3), max.allocation = 1) %>% performance_plot
 
-# We can step through each step separately
-min_variance() %>% evaluate_model %>% drop_last %>% portfolio_return
 
 test_weights <- fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% evaluate_model %>% drop_last
 test_returns <- test_weights %>% portfolio_return
+
+
 
 ## ---- turnover -----------------------
 ## INCORRECT - consider change over infinitesimal time horizon over rebalancing

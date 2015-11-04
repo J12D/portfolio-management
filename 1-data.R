@@ -59,3 +59,4 @@ rm(list = c("GDAXI", "DJI", "N225", "VXX", "asset_returns"))
 
 message("> Imported data ---------------")
 
+#apply(assets,2,function(x)x/drop(coredata(x[1]))*100) %>% as.xts %>% plotTable("assets")
