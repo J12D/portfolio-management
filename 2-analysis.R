@@ -203,6 +203,14 @@ rowSums.xts <- function(x) {
   xts(rowSums(x), index(x))
 }
 
+zero_killer <- function(x) {
+  pf_idx <- which(x < 0) %>% first
+  if(!is.na(pf_idx)) {
+    x[pf_idx:dim(x)[1]] <- 0 
+  }
+  x
+}
+
 ## ---- Pipelines ------------------
 
 performance_plot <- function(model) {
@@ -210,18 +218,19 @@ performance_plot <- function(model) {
     evaluate_model %>%
     drop_last %>%
     portfolio_return %>%
-    rowSums.xts %>% 
-    plotXTS
+    rowSums.xts %>%
+    zero_killer %>%
+    plotXTS(size = 1)
 }
 
 min_variance(cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% performance_plot
 
 max_sharpe() %>% performance_plot
 
-max_sharpe(cov = cov_returns(shrink = T, lag_adjustment = 3),
-           mean = mean_returns(shrink = 0.9)) %>% performance_plot
+max_sharpe(cov = cov_returns(lag_adjustment = 3),
+           mean = mean_returns(shrink = 0.5)) %>% performance_plot
 
-fixed_weights(c(1, 0.5, 0.5, -1)) %>% performance_plot
+fixed_weights(c(1/2, 1/2, 1/2, -1/2)) %>% performance_plot
 
 eff_portfolio(mean = mean_returns(shrink = 0.3), max.allocation = 1) %>% performance_plot
 
