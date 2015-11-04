@@ -5,6 +5,7 @@ library(tawny)
 
 source("0-helper.R")
 source("1-data.R")
+source("3-analysis2.R")
 
 ## ---- Mean ----------
 mean_returns <- function(shrink = 0, annualize = 252) {
@@ -120,6 +121,7 @@ evaluate_model <- function(model, lookback = "1 year", subset = "2012/", period 
       date <- index(returns) %>% last %>% as.Date
       returns <- returns %>% xts::last(lookback)
       val <- model(returns)
+      print(val)
       xts(val, date)
     }) %>%
     Reduce(rbind,.)
@@ -232,7 +234,7 @@ max_sharpe(cov = cov_returns(lag_adjustment = 3),
 
 fixed_weights(c(1/2, 1/2, 1/2, -1/2)) %>% performance_plot
 
-eff_portfolio(mean = mean_returns(shrink = 0.3), max.allocation = 1) %>% performance_plot
+eff_portfolio(mean = mean_returns(shrink=0.5), cov = cov_returns(shrink=0.5), T, 3, 0.01, 0.4) %>% performance_plot
 
 # We can step through each step separately
 min_variance() %>% evaluate_model %>% drop_last %>% portfolio_return
