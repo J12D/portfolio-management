@@ -232,6 +232,13 @@ pgfplot <- function(model, name) {
   model %>% pipeline %>% plotTable(name)
 }
 
+compute_kpis <- function(model) {
+  weights <- model %>% evaluate_model %>% drop_last
+  returns <- weights %>% portfolio_return %>% rowSums.xts %>% zero_killer %>% ROC(type = "discrete") %>% na.omit
+  sharpe <- mean(returns - euribor)/sd(returns)
+  sharpe
+}
+
 min_variance(cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% performance_plot
 
 max_sharpe() %>% pgfplot("max_sharpe")
