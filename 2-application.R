@@ -27,3 +27,7 @@ fixed_weights(w) %>% performance_plot
 ## ---- Other Optimization ---------------
 eff_portfolio(mean = mean_returns(shrink = 0.5),
               cov = cov_returns(shrink = 0.5), T, 3, 0.01, 0.4) %>% performance_plot
+
+
+## ---- Fixed allocation, No rebalance ---------------
+evaluate_fix(c(0.5,0.5,0.5,-0.5)) %>% plotXTS(size = 1)
