@@ -2,6 +2,7 @@ library(reshape2)
 library(ggplot2)
 library(corrplot)
 library(tawny)
+library(PortfolioAnalytics)
 
 source("0-helper.R")
 source("1-data.R")
@@ -100,6 +101,16 @@ max_sharpe <- function(mean = mean_returns(), cov = cov_returns()) {
   function(returns) {
     mu <- returns %>% mean
     c <- returns %>% cov
+    mean_variance_base(mu, c) %>% t
+  }
+}
+
+max_sharpe_blacklitterman <- function() {
+  function(returns) {
+    P <- t(matrix(c(1,0,0,-1, 0,0,1,0, 0,1,0,0, 0,0,0,1), nrow = 4, ncol = 4))
+    v <- matrix(c(0.1,0.02,0.03,0.3))
+    mu <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLMu
+    c <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLSigma
     mean_variance_base(mu, c) %>% t
   }
 }
@@ -268,8 +279,10 @@ fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% performance_plot #decompose_plot("fixed_
   compute_kpis %>%
   pgfplot("equal")
 
-eff_portfolio(mean = mean_returns(shrink = 0.5),
-              cov = cov_returns(shrink = 0.5), T, 3, 0.01, 0.25001) %>% performance_plot
+bl <- max_sharpe_blacklitterman()(returns)
+fixed_weights(t(bl)) %>% performance_model
+
+eff_portfolio(mean = mean_returns(shrink=0.5), cov = cov_returns(shrink=0.5), T, 3, 0.01, 0.4) %>% performance_plot
 
 test_weights <- fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% evaluate_model %>% drop_last
 test_returns <- test_weights %>% portfolio_return
