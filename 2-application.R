@@ -22,6 +22,7 @@ fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% performance_plot #decompose_plot("fixed_
 ## ---- Black Litterman ---------------
 w <- returns %>% (max_sharpe_blacklitterman()) %>% t
 fixed_weights(w) %>% performance_plot
+evaluate_fix(w) %>% plotXTS(size = 1)
 
 
 ## ---- Other Optimization ---------------
