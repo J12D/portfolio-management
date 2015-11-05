@@ -22,9 +22,10 @@ calcMDD <- function(asset) {
   mdd
 }
 
-assets["2012-12-31/"][,"DAX"] %>%
-  (function(x)
+getMDD <- function(returns) {
+  returns %>% (function(x)
     x[endpoints(x),]) %>%
-  rollapply(12, calcMDD) %>% na.omit %>%
-  (function(x)
-    sum(x) / (length(x) - 13))
+    rollapply(12, calcMDD) %>% na.omit %>%
+    (function(x)
+      sum(x) / (length(x) - 13))
+}

@@ -78,4 +78,26 @@ We're looking at 4 assets: DAX
 
 \chapter*{Performance Evaluation}
 
+\begin{performanceplot}[legend pos = north east, ylabel=Asset value,stack plots=y,area style]
+  \addplot table[x=time, y=value.DAX] {plot-data/max_sharpe_decomposed.txt}\closedcycle;
+  \addlegendentry{DAX}
+  \addplot table[x=time, y=value.Dow.Jones] {plot-data/max_sharpe_decomposed.txt}\closedcycle;
+  \addlegendentry{Dow Jones}
+  \addplot table[x=time, y=value.Nikkei] {plot-data/max_sharpe_decomposed.txt}\closedcycle;
+  \addlegendentry{Nikkei}
+  \addplot table[x=time, y=value.VIX] {plot-data/max_sharpe_decomposed.txt}\closedcycle;
+  \addlegendentry{!VIX}
+\end{performanceplot}
+
+\section*{Fixed}
+\begin{performanceplot}[legend pos = north west, ylabel=Asset value,stack plots=y]
+  \addplot table[x=time, y=value.VIX] {plot-data/fixed_decomposed.txt}\closedcycle;
+  \addlegendentry{!VIX}
+  \addplot table[x=time, y=value.DAX] {plot-data/fixed_decomposed.txt}\closedcycle;
+  \addlegendentry{DAX}
+  \addplot table[x=time, y=value.Dow.Jones] {plot-data/fixed_decomposed.txt}\closedcycle;
+  \addlegendentry{Dow Jones}
+  \addplot table[x=time, y=value.Nikkei] {plot-data/fixed_decomposed.txt}\closedcycle;
+  \addlegendentry{Nikkei}
+\end{performanceplot}
 \end{document}

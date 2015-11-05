@@ -5,6 +5,7 @@ library(tawny)
 
 source("0-helper.R")
 source("1-data.R")
+source("mdd.R")
 source("3-analysis2.R")
 
 ## ---- Mean ----------
@@ -201,7 +202,7 @@ rowSums.xts <- function(x) {
 
 zero_killer <- function(x) {
   pf_idx <- which(x < 0) %>% first
-  if(!is.na(pf_idx)) {
+  if (!is.na(pf_idx)) {
     x[pf_idx:dim(x)[1]] <- 0 
   }
   x
@@ -228,42 +229,50 @@ pgfplot <- function(model, name) {
   model %>% pipeline %>% plotTable(name)
 }
 
-compute_kpis <- function(model) {
-  weights <- model %>% evaluate_model %>% drop_last
-  returns <- weights %>%
-    portfolio_return %>%
-    rowSums.xts %>%
-    zero_killer %>% ROC(type = "discrete") %>% na.omit
-  print(returns-euribor)
-  hist(returns-euribor)
-  excess_mu <- mean(returns - euribor)
-  standard_dev <- sd(returns)
-  sharpe <- excess_mu / standard_dev
-  list("sharpe" = sharpe, "mu" = excess_mu, "sigma" = standard_dev)
+decompose_plot <- function(model, name) {
+  model %>% evaluate_model %>% drop_last %>% portfolio_return %>% plotTable(name)
 }
 
-min_variance(cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% performance_plot
+compute_kpis <- function(model) {
+  weights <- model %>% evaluate_model %>% drop_last
+  value <- weights %>%
+    portfolio_return %>%
+    rowSums.xts %>%
+    zero_killer 
+  returns <- value %>% ROC(type = "discrete") %>% na.omit
+  
+  max_dd <- getMDD(value)
+  excess_mu <- mean(returns - euribor) * 252
+  standard_dev <- sd(returns) * sqrt(252)
+  sharpe <- excess_mu / standard_dev
+  
+  list("sharpe" = sharpe,
+       "mu" = excess_mu,
+       "sigma" = standard_dev,
+       "max_draw_down" = max_dd)
+}
 
-max_sharpe() %>% pgfplot("max_sharpe")
+min_variance(cov = cov_returns(shrink = T)) %>% performance_plot
+
+max_sharpe() %>% performance_plot #pgfplot("max_sharpe")
 
 max_sharpe(cov = cov_returns(shrink = T, lag_adjustment = 3),
            mean = mean_returns(shrink = 0.9)) %>%
   performance_plot
 
-max_sharpe(mean = mean_returns(shrink = 0.5),
-           cov = cov_returns(shrink = T, lag_adjustment = 3)) %>%
+max_sharpe(mean = mean_returns(shrink = 0.9),
+           cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% compute_kpis#performance_plot
   evaluate_model
 
-fixed_weights(c(1/2, 1/2, 1/2, -1/2)) %>%
+fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% performance_plot #decompose_plot("fixed_decomposed")
   compute_kpis %>%
   pgfplot("equal")
 
-eff_portfolio(mean = mean_returns(shrink=0.5), cov = cov_returns(shrink=0.5), T, 3, 0.01, 0.4) %>% performance_plot
-
+eff_portfolio(mean = mean_returns(shrink = 0.5),
+              cov = cov_returns(shrink = 0.5), T, 3, 0.01, 0.25001) %>% performance_plot
 
 test_weights <- fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% evaluate_model %>% drop_last
 test_returns <- test_weights %>% portfolio_return
-
 
 
 ## ---- turnover -----------------------
