@@ -133,7 +133,6 @@ evaluate_model <- function(model, lookback = "2 years", subset = "2012/", period
       date <- index(returns) %>% last %>% as.Date
       returns <- returns %>% xts::last(lookback)
       val <- model(returns)
-      print(val)
       xts(val, date)
     }) %>%
     Reduce(rbind,.)
@@ -280,7 +279,7 @@ fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% performance_plot #decompose_plot("fixed_
   pgfplot("equal")
 
 bl <- max_sharpe_blacklitterman()(returns)
-fixed_weights(t(bl)) %>% performance_model
+fixed_weights(t(bl)) %>% performance_plot
 
 eff_portfolio(mean = mean_returns(shrink=0.5), cov = cov_returns(shrink=0.5), T, 3, 0.01, 0.4) %>% performance_plot
 
