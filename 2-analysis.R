@@ -62,9 +62,9 @@ adjusted_cor <- function(adjusted_cov, returns) {
   adjusted_cov / outer(standard_devs,standard_devs)
 }
 
-# Compare correlation with and without Hayashi-Yoshida adjustment
-cor(returns) %>% corrplot
-returns %>% (cov_returns(lag_adjustment = 3)) %>% adjusted_cor(returns) %>% corrplot
+## Compare correlation with and without Hayashi-Yoshida adjustment
+#cor(returns) %>% corrplot
+#returns %>% (cov_returns(lag_adjustment = 3)) %>% adjusted_cor(returns) %>% corrplot
 
 
 ## ---- Models ------------------------
@@ -269,63 +269,38 @@ evaluate_fix <- function(weights, ass = assets, from = "2012-01-01") {
   xts(a %*% weights, index(a))
 }
 
-min_variance(cov = cov_returns(shrink = T)) %>% performance_plot
 
-max_sharpe() %>% performance_plot #pgfplot("max_sharpe")
-
-max_sharpe(cov = cov_returns(shrink = T, lag_adjustment = 3),
-           mean = mean_returns(shrink = 0.9)) %>%
-  performance_plot
-
-max_sharpe(mean = mean_returns(shrink = 0.9),
-           cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% compute_kpis#performance_plot
-  evaluate_model
-
-fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% performance_plot #decompose_plot("fixed_decomposed")
-  compute_kpis %>%
-  pgfplot("equal")
-
-w <- returns %>% (max_sharpe_blacklitterman()) %>% t
-fixed_weights(w) %>% performance_plot
-
-
-eff_portfolio(mean = mean_returns(shrink=0.5), cov = cov_returns(shrink=0.5), T, 3, 0.01, 0.4) %>% performance_plot
-
-test_weights <- fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% evaluate_model %>% drop_last
-test_returns <- test_weights %>% portfolio_return
-
-
-## ---- turnover -----------------------
-## INCORRECT - consider change over infinitesimal time horizon over rebalancing
-
-turnover <- function(weights) {
-  to <- year(weights %>% index) %>% unique %>% lapply(function(year){
-    t <- weights %>% diff %>% .[paste(year)] %>% abs %>% na.omit %>% sum(.)/2
-    xts(t, as.Date(paste0(year,"-01-01")))
-  }
-  ) %>% Reduce(rbind,.)
-  colnames(to) <- c("weights")
-  to
-}
-
-turnover(weights)
-
-
-## ---- random-weights -----------------------
-
-generate_random_weight <- function(rand_gen, ntimes, nassets, sum=1) {
-  m <- matrix(rand_gen(ntimes * nassets), ncol = nassets)
-  apply(m,2,function(x)x/sum(x))
-}
-
-
-## ---- linear-regression --------------------
-d <- merge.xts(returns,factors) %>% na.omit
-
-# build functions of linear models where we regress each asset on all factors
-models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei", VIX = "VIX") %>%
-  lapply(function(col)paste(col,"~ Mkt.RF + SMB + HML + RF") %>% as.formula) %>%
-  lapply(function(formula)lm(formula,data = d))
-
-# p values of all regressions for all factors
-res2 <- models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
+# ## ---- turnover -----------------------
+# ## INCORRECT - consider change over infinitesimal time horizon over rebalancing
+# 
+# turnover <- function(weights) {
+#   to <- year(weights %>% index) %>% unique %>% lapply(function(year){
+#     t <- weights %>% diff %>% .[paste(year)] %>% abs %>% na.omit %>% sum(.)/2
+#     xts(t, as.Date(paste0(year,"-01-01")))
+#   }
+#   ) %>% Reduce(rbind,.)
+#   colnames(to) <- c("weights")
+#   to
+# }
+# 
+# turnover(weights)
+# 
+# 
+# ## ---- random-weights -----------------------
+# 
+# generate_random_weight <- function(rand_gen, ntimes, nassets, sum=1) {
+#   m <- matrix(rand_gen(ntimes * nassets), ncol = nassets)
+#   apply(m,2,function(x)x/sum(x))
+# }
+# 
+# 
+# ## ---- linear-regression --------------------
+# d <- merge.xts(returns,factors) %>% na.omit
+# 
+# # build functions of linear models where we regress each asset on all factors
+# models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei", VIX = "VIX") %>%
+#   lapply(function(col)paste(col,"~ Mkt.RF + SMB + HML + RF") %>% as.formula) %>%
+#   lapply(function(formula)lm(formula,data = d))
+# 
+# # p values of all regressions for all factors
+# res2 <- models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
