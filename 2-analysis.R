@@ -262,6 +262,13 @@ compute_kpis <- function(model) {
        "max_draw_down" = max_dd)
 }
 
+evaluate_fix <- function(weights, ass = assets, from = "2012-01-01") {
+  a <- ass[paste0(from,"/")]
+  a %<>% apply(2, function(x) x*100/(coredata(x[1]))) %>% as.xts
+  
+  xts(a %*% weights, index(a))
+}
+
 min_variance(cov = cov_returns(shrink = T)) %>% performance_plot
 
 max_sharpe() %>% performance_plot #pgfplot("max_sharpe")
