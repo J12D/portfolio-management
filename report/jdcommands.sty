@@ -1,0 +1,122 @@
+\usepackage{xparse}
+\usepackage{tabularx}
+
+
+%% ---- Shorthands
+\newcommand{\gq}[1]{\glqq #1\grqq} %German Quotes
+\newcommand{\eq}[1]{``#1''}        %English Quotes
+
+\newcommand{\fsfm}{Frankfurt School of Finance \& Management}
+
+\newcommand{\pro}{\item[$+$]}
+\newcommand{\con}{\item[$-$]}
+
+
+%% ---- Structure
+\newcommand{\g}[1]{\begin{minipage}{\textwidth}#1\end{minipage}}
+
+
+%% ---- General
+\newcommand{\myparagraph}[1]{\paragraph{#1}\nopagebreak\mbox{}\nopagebreak\\[-2em]}
+
+
+%% ---- Short lists
+\usepackage{paralist}
+\setlength{\pltopsep}{-0.5em}
+
+\DeclareDocumentEnvironment{sit}{o}
+{\IfNoValueTF{#1}{}{\myparagraph{#1}}%
+  \begin{compactitem}
+}{
+  \end{compactitem}
+}
+
+\DeclareDocumentEnvironment{snu}{oo}
+{\IfNoValueTF{#1}{}{\myparagraph{#1}}%
+  \begin{compactenum}
+}{
+  \end{compactenum}
+}
+
+
+%% ---- Definitions
+\newif\ifingdefi
+
+% Single Definitions
+\newcommand{\ld}[1]{\textbf{#1}:&}
+\newcommand{\sld}[1]{~~~\textsl{#1}:&}
+
+\newcommand{\defi}[2]{%
+\ifingdefi
+	\ld{#1}#2\\
+\else
+	\begin{tabularx}{\textwidth}{@{}l@{~}X@{}}
+	\ld{#1}#2\\
+	\end{tabularx}%
+\fi
+}
+
+\newcommand{\subdefi}[2]{%
+\ifingdefi
+	\sld{#1}#2\\
+\else
+	\begin{tabularx}{\textwidth}{@{}l@{~}X@{}}
+	\sld{#1}#2\\
+	\end{tabularx}%
+\fi
+}
+
+% Group of Definitions
+\DeclareDocumentEnvironment{gdefi}{o}
+{	\ingdefitrue%
+	\IfNoValueTF{#1}{}{\myparagraph{#1}\nopagebreak}
+    
+	\tabularx{\textwidth}{@{}l@{~}X@{}}
+}{
+	\endtabularx
+	\ingdefifalse%
+}
+
+
+%% ---- MISC
+\newcommand{\callout}[1]{
+\fbox{#1}
+}
+
+\newcommand{\conclusion}[1]{
+\callout{\textrightarrow #1}
+}
+
+
+%% ---- Fonts
+
+% Stellt die Konstruktion \ifxetexorluatex ... \else .. \fi zur Verfügung
+\newcommand{\xeluabool}{
+	\usepackage{ifxetex}
+	\usepackage{ifluatex}
+	
+	\usepackage{ifxetex,ifluatex}
+	\newif\ifxetexorluatex
+	\ifxetex
+	  \xetexorluatextrue
+	\else
+	  \ifluatex
+	    \xetexorluatextrue
+	  \else
+	    \xetexorluatexfalse
+	  \fi
+	\fi
+}
+
+% Lädt die Kodierungs-/Schriftpakete für die verwendete Engine
+\newcommand{\jdfontsetup}{
+	\xeluabool
+	
+	\ifxetexorluatex
+	  \usepackage{fontspec}
+	\else
+	  \usepackage[T1]{fontenc}
+	  \usepackage[utf8]{inputenc}
+	  \usepackage{lmodern}
+	\fi
+}
