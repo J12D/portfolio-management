@@ -42,14 +42,18 @@ euribor <- assets[["euribor"]]/252
 factors <- assets[["factors"]]
 fx <- assets[["fx"]]
 
-assets <- merge.xts(GDAXI, DJI, N225, VXX)["2009-01-30/"] %>% na.locf
-colnames(assets) <- c("DAX", "Dow Jones", "Nikkei", "VIX")
+assets <- merge.xts(GDAXI, DJI, N225)["2009-01-30/"] %>% na.locf
+colnames(assets) <- c("DAX", "Dow Jones", "Nikkei")
 
 asset_returns <- assets %>% ROC(type = "discrete")
 returns <- asset_returns["2009-02-02/"] %>% na.omit
-colnames(returns) <- c("DAX", "Dow Jones", "Nikkei", "VIX")
+colnames(returns) <- c("DAX", "Dow Jones", "Nikkei")
 
-euribor <- euribor["2009-02-02/"] %>% na.omit
+#euribor <- euribor["2009-02-02/"] %>% na.omit
+#returns <- merge.xts(returns,euribor) %>% na.omit
+
+#assets <- merge.xts(assets, euribor = cumprod(1 + euribor)) %>% na.omit
+#assets[1,"euribor"] <- 1
 
 factors <- factors["2009-02-02/"] %>% na.omit
 
