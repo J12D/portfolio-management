@@ -264,7 +264,7 @@ compute_kpis <- function(model) {
   returns <- value %>% ROC(type = "discrete") %>% na.omit
   
   max_dd <- getMDD(value)
-  excess_mu <- mean(returns - euribor) * 252
+  excess_mu <- mean(returns) * 252
   standard_dev <- sd(returns) * sqrt(252)
   sharpe <- excess_mu / standard_dev
   
@@ -309,13 +309,35 @@ evaluate_fix <- function(weights, ass = assets, from = "2012-01-01") {
 # }
 # 
 # 
-# ## ---- linear-regression --------------------
-# d <- merge.xts(returns,factors) %>% na.omit
-# 
-# # build functions of linear models where we regress each asset on all factors
-# models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei", VIX = "VIX") %>%
+## ---- linear-regression --------------------
+timepoints <- index(assets[endpoints(assets["/2015-09-30"],"months")])
+eu_factors <- eu_factors["2009-02-01/"]
+index(eu_factors) <- timepoints
+us_factors <- us_factors["2009-02-01/"]
+index(us_factors) <- timepoints
+jp_factors <- jp_factors["2009-02-01/"]
+index(jp_factors) <- timepoints
+
+returns_monthly <- assets[timepoints] %>% ROC(type = "discrete") %>% na.omit
+
+us_d <- merge.xts(returns_monthly["/2012-01-01"]$Dow.Jones %>% lag(-1), us_factors) %>% na.omit
+eu_d <- merge.xts(returns_monthly["/2012-01-01"]$DAX %>% lag(-1), eu_factors) %>% na.omit
+jp_d <- merge.xts(returns_monthly["/2012-01-01"]$Nikkei %>% lag(-1), jp_factors) %>% na.omit
+
+models <- list(EU = list("DAX", eu_d),
+               US = list("Dow.Jones", us_d),
+               JP = list("Nikkei", jp_d)) %>%
+            lapply(function(li) {
+              f <- paste(li[[1]], "~ Mkt.RF + SMB + HML + WML + RF") %>% as.formula
+              lm(f, data = li[[2]])
+            })
+model_res <- models %>% lapply(function(x)x %>% summary %>% coef)
+model_res
+
+# build functions of linear models where we regress each asset on all factors
+#models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei") %>%
 #   lapply(function(col)paste(col,"~ Mkt.RF + SMB + HML + RF") %>% as.formula) %>%
 #   lapply(function(formula)lm(formula,data = d))
 # 
-# # p values of all regressions for all factors
-# res2 <- models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
+## p values of all regressions for all factors
+#res2 <- models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]

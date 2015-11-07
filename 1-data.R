@@ -19,6 +19,17 @@ Sys.setenv(TZ = "UTC")
 # factors$X %<>% parse_date_time("%Y%m%d")
 # factors <- xts(factors[,-1]/100,factors[,1])["1995/"]
 
+read_factors <- function(filename) {
+  f <- read.csv(filename)
+  f[f == -99.99] = NA
+  f$X %<>% parse_date_time("%Y%m")
+  f <- xts(f[,-1]/100, f[,1])
+}
+
+us_factors <- read_factors("data/North_America_Factors_1.csv")
+eu_factors <- read_factors("data/Europe_Factors_1.csv")
+jp_factors <- read_factors("data/Japan_Factors_1.csv")
+
 # -- FX -------------------
 # eurusd_0 <- getFX("EUR/USD", from = "2008-01-01", to = "2011-01-01", auto.assign = F)
 # eurusd_1 <- getFX("EUR/USD", from = "2011-01-02", auto.assign = F)
@@ -30,7 +41,7 @@ Sys.setenv(TZ = "UTC")
 # 
 # fx <- merge.xts(eurusd, eurjpy)
 
-# saveRDS(list(GDAXI=GDAXI, DJI=DJI, N225=N225, VXX=VXX, euribor=euribor, factors=factors, fx=fx),"data/assets")
+# saveRDS(list(GDAXI=GDAXI, DJI=DJI, N225=N225, VXX=VXX, euribor=euribor, factors=factors, fx=fx, us_factors=us_factors, eu_factors=eu_factors, jp_factors=jp_factors),"data/assets")
 
 assets <- readRDS("data/assets")
 
@@ -40,6 +51,9 @@ N225 <- assets[["N225"]][,"N225.Adjusted"]
 VXX <- assets[["VXX"]][,"VXX.Adjusted"]
 euribor <- assets[["euribor"]]/252
 factors <- assets[["factors"]]
+us_factors <- assets[["us_factors"]]
+eu_factors <- assets[["eu_factors"]]
+jp_factors <- assets[["jp_factors"]]
 fx <- assets[["fx"]]
 
 assets <- merge.xts(GDAXI, DJI, N225)["2009-01-30/"] %>% na.locf
@@ -49,11 +63,11 @@ asset_returns <- assets %>% ROC(type = "discrete")
 returns <- asset_returns["2009-02-02/"] %>% na.omit
 colnames(returns) <- c("DAX", "Dow Jones", "Nikkei")
 
-#euribor <- euribor["2009-02-02/"] %>% na.omit
-#returns <- merge.xts(returns,euribor) %>% na.omit
+euribor <- euribor["2009-02-02/"] %>% na.omit
+returns <- merge.xts(returns,euribor) %>% na.omit
 
-#assets <- merge.xts(assets, euribor = cumprod(1 + euribor)) %>% na.omit
-#assets[1,"euribor"] <- 1
+assets <- merge.xts(assets, euribor = cumprod(1 + euribor)) %>% na.omit
+assets[1,"euribor"] <- 1
 
 factors <- factors["2009-02-02/"] %>% na.omit
 
