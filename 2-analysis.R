@@ -3,6 +3,7 @@ library(ggplot2)
 library(corrplot)
 library(tawny)
 library(PortfolioAnalytics)
+library(FRAPO)
 
 source("0-helper.R")
 source("1-data.R")
@@ -118,6 +119,15 @@ fixed_weights <- function(weights) {
   }
 }
 
+equal_risk_contribution <- function(cov = cov_returns()){
+  function(returns){
+    c <- returns %>% cov
+    ERC <- PERC(c)
+    w <- Weights(ERC)/100
+    t(w)
+  }
+}
+
 ## ---- base-wrapper --------------------------
 
 # select an expanding window of returns, starting end of 2012 and feed it into the model
@@ -130,7 +140,7 @@ evaluate_model <- function(model, lookback = "2 years", subset = "2012/", period
       date <- index(returns) %>% last %>% as.Date
       returns <- returns %>% xts::last(lookback)
       val <- model(returns)
-      xts(val, date)
+      xts::xts(val, date)
     }) %>%
     Reduce(rbind,.)
   vars
