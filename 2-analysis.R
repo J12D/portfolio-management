@@ -227,7 +227,7 @@ evaluate_turnover <- function(weights) {
     differences %>% sum
   }) %>% unlist %>% (function(weight_changes){
     sum(weight_changes)/(length(weight_changes)/12)
-    })
+    }) %>% (function(turnover)turnover/2)
 }
 
 rowSums.xts <- function(x) {
