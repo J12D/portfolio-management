@@ -46,12 +46,9 @@ cov_returns <- function(lag_adjustment = F, shrink = F, annualize = 252) {
       hayashi_results <- returns[,-lag_adjustment] %>% 
         apply(2, function(x) hayashi_yoshida(returns[,lag_adjustment],x))
       
-      adjustment <- c(hayashi_results[1:(lag_adjustment - 1)],
-                      0,
-                      hayashi_results[(lag_adjustment:length(hayashi_results))])
-      
+      adjustment <- append(hayashi_results, 0, after = lag_adjustment)
       # add adjustment onto covariance matrix
-      c %<>% addCross(adjustment,3)
+      c %<>% addCross(adjustment, lag_adjustment)
     }
     c * annualize
   }
@@ -106,8 +103,8 @@ max_sharpe <- function(mean = mean_returns(), cov = cov_returns()) {
   }
 }
 
-BL_P <- t(matrix(c(1,0,0,-1, 0,0,1,0, 0,1,0,0, 0,0,0,1), nrow = 4, ncol = 4))
-BL_v <- matrix(c(0.3,0.08,0.1,-0.2))
+BL_P <- t(matrix(c(1,0,0, 0,1,0, 0,0,1), nrow = 3, ncol = 3))
+BL_v <- matrix(c(0.0539,0.0351,0.0117))
 max_sharpe_blacklitterman <- function(P = BL_P, v = BL_v) {
   function(returns) {
     mu <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLMu
@@ -216,6 +213,17 @@ portfolio_return <- function(weights, subset = "2012/", period = "months") {
   pf
 }
 
+evaluate_turnover <- function(weights) {
+  performance <- portfolio_return(weights)
+  index(weights) %>% lapply(function(date){
+    idx <- which(index(performance) == date)
+    differences <- abs(performance[idx] - as.numeric(performance[idx + 1]))
+    differences %>% sum
+  }) %>% unlist %>% (function(weight_changes){
+    sum(weight_changes)/(length(weight_changes)/12)
+    })
+}
+
 rowSums.xts <- function(x) {
   xts(rowSums(x), index(x))
 }
@@ -253,6 +261,10 @@ decompose_plot <- function(model, name) {
   model %>% evaluate_model %>% drop_last %>% portfolio_return %>% plotTable(name)
 }
 
+decompose <- function(model) {
+  model %>% evaluate_model %>% drop_last %>% portfolio_return
+}
+
 compute_kpis <- function(model) {
   weights <- model %>% evaluate_model %>% drop_last
   value <- weights %>%
@@ -262,14 +274,17 @@ compute_kpis <- function(model) {
   returns <- value %>% ROC(type = "discrete") %>% na.omit
   
   max_dd <- getMDD(value)
-  excess_mu <- mean(returns - euribor) * 252
+  excess_mu <- mean(returns) * 252
   standard_dev <- sd(returns) * sqrt(252)
   sharpe <- excess_mu / standard_dev
+  
+  turnover <- evaluate_turnover(weights)
   
   list("sharpe" = sharpe,
        "mu" = excess_mu,
        "sigma" = standard_dev,
-       "max_draw_down" = max_dd)
+       "max_draw_down" = max_dd,
+       "turnover" = turnover)
 }
 
 evaluate_fix <- function(weights, ass = assets, from = "2012-01-01") {
@@ -304,13 +319,35 @@ evaluate_fix <- function(weights, ass = assets, from = "2012-01-01") {
 # }
 # 
 # 
-# ## ---- linear-regression --------------------
-# d <- merge.xts(returns,factors) %>% na.omit
-# 
-# # build functions of linear models where we regress each asset on all factors
-# models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei", VIX = "VIX") %>%
+## ---- linear-regression --------------------
+timepoints <- index(assets[endpoints(assets["/2015-09-30"],"months")])
+eu_factors <- eu_factors["2009-02-01/"]
+index(eu_factors) <- timepoints
+us_factors <- us_factors["2009-02-01/"]
+index(us_factors) <- timepoints
+jp_factors <- jp_factors["2009-02-01/"]
+index(jp_factors) <- timepoints
+
+returns_monthly <- assets[timepoints] %>% ROC(type = "discrete") %>% na.omit
+
+us_d <- merge.xts(returns_monthly["/2012-01-01"]$Dow.Jones %>% lag(-1), us_factors) %>% na.omit
+eu_d <- merge.xts(returns_monthly["/2012-01-01"]$DAX %>% lag(-1), eu_factors) %>% na.omit
+jp_d <- merge.xts(returns_monthly["/2012-01-01"]$Nikkei %>% lag(-1), jp_factors) %>% na.omit
+
+models <- list(EU = list("DAX", eu_d),
+               US = list("Dow.Jones", us_d),
+               JP = list("Nikkei", jp_d)) %>%
+            lapply(function(li) {
+              f <- paste(li[[1]], "~ Mkt.RF + SMB + HML + WML + RF") %>% as.formula
+              lm(f, data = li[[2]])
+            })
+model_res <- models %>% lapply(function(x)x %>% summary %>% coef)
+model_res
+
+# build functions of linear models where we regress each asset on all factors
+#models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei") %>%
 #   lapply(function(col)paste(col,"~ Mkt.RF + SMB + HML + RF") %>% as.formula) %>%
 #   lapply(function(formula)lm(formula,data = d))
 # 
-# # p values of all regressions for all factors
-# res2 <- models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
+## p values of all regressions for all factors
+#res2 <- models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]

@@ -11,7 +11,8 @@ max_sharpe() %>% performance_plot #pgfplot("max_sharpe")
 
 max_sharpe(mean = mean_returns(shrink = 0.9),
            cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% performance_plot
-
+max_sharpe(mean = mean_returns(shrink = 0.9),
+           cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% compute_kpis
 
 ## ---- Fixed Weights ---------------
 fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% performance_plot #decompose_plot("fixed_decomposed")
@@ -22,8 +23,10 @@ fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% performance_plot #decompose_plot("fixed_
 ## ---- Black Litterman ---------------
 w <- returns %>% (max_sharpe_blacklitterman()) %>% t
 fixed_weights(w) %>% performance_plot
-evaluate_fix(w) %>% plotXTS(size = 1)
 
+
+
+evaluate_fix(w) %>% plotXTS(size = 1)
 
 ## ---- Other Optimization ---------------
 eff_portfolio(mean = mean_returns(shrink = 0.5),
@@ -34,4 +37,12 @@ equal_risk_contribution(cov = cov_returns(shrink = 0.5, lag_adjustment = 3)) %>%
 
 ## ---- Fixed allocation, No rebalance ---------------
 evaluate_fix(c(0.5,0.5,0.5,-0.5)) %>% plotXTS(size = 1)
+<<<<<<< HEAD
 
+=======
+evaluate_fix(c(0.5,0.5,0.5,-0.5)) %>% compute_kpis
+
+########
+
+fixed_weights(c(1/4,1/4,1/4,1/4)) %>% compute_kpis
+>>>>>>> 0eb2ca648ce412cb0786813869a94281a277bd74

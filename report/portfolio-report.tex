@@ -100,4 +100,14 @@ We're looking at 4 assets: DAX
   \addplot table[x=time, y=value.Nikkei] {plot-data/fixed_decomposed.txt}\closedcycle;
   \addlegendentry{Nikkei}
 \end{performanceplot}
+
+\section*{Mean No Short}
+\begin{performanceplot}[legend pos = north west, ylabel=Asset value,stack plots=y,area style]
+  \addplot table[x=time, y=value.DAX] {plot-data/msr_noshort.txt}\closedcycle;
+  \addlegendentry{DAX}
+  \addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_noshort.txt}\closedcycle;
+  \addlegendentry{Dow Jones}
+  \addplot table[x=time, y=value.Nikkei] {plot-data/msr_noshort.txt}\closedcycle;
+  \addlegendentry{Nikkei}
+\end{performanceplot}
 \end{document}
