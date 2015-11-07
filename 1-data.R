@@ -45,16 +45,16 @@ jp_factors <- read_factors("data/Japan_Factors_1.csv")
 
 assets <- readRDS("data/assets")
 
+fx <- assets[["fx"]]
 GDAXI <- assets[["GDAXI"]][,"GDAXI.Adjusted"]
-DJI <- assets[["DJI"]][,"DJI.Adjusted"]
-N225 <- assets[["N225"]][,"N225.Adjusted"]
+DJI <- assets[["DJI"]][,"DJI.Adjusted"]/fx$EUR.USD
+N225 <- assets[["N225"]][,"N225.Adjusted"]/fx$EUR.JPY
 VXX <- assets[["VXX"]][,"VXX.Adjusted"]
 euribor <- assets[["euribor"]]/252
 factors <- assets[["factors"]]
 us_factors <- assets[["us_factors"]]
 eu_factors <- assets[["eu_factors"]]
 jp_factors <- assets[["jp_factors"]]
-fx <- assets[["fx"]]
 
 assets <- merge.xts(GDAXI, DJI, N225)["2009-01-30/"] %>% na.locf
 colnames(assets) <- c("DAX", "Dow Jones", "Nikkei")
