@@ -3,7 +3,7 @@ library(ggplot2)
 library(corrplot)
 library(tawny)
 library(PortfolioAnalytics)
-library(FRAPO)
+#library(FRAPO)
 
 source("0-helper.R")
 source("1-data.R")
@@ -115,7 +115,9 @@ max_sharpe_blacklitterman <- function(P = BL_P, v = BL_v) {
 
 fixed_weights <- function(weights) {
   function(returns) {
-    t(weights)
+    w <- t(weights)
+    colnames(w) <- colnames(returns)
+    w
   }
 }
 
@@ -289,11 +291,16 @@ compute_kpis <- function(model) {
   
   turnover <- evaluate_turnover(weights)
   
-  list("sharpe" = sharpe,
-       "mu" = excess_mu,
-       "sigma" = standard_dev,
+  f_returns <- fact[,c("DAX", "Dow.Jones", "Nikkei")] * weights[,c("DAX", "Dow.Jones", "Nikkei")]
+
+  alpha <- sum(f_returns)/(NROW(f_returns)/12)
+  
+  list("sharpe"        = sharpe,
+       "mu"            = excess_mu,
+       "sigma"         = standard_dev,
        "max_draw_down" = max_dd,
-       "turnover" = turnover)
+       "turnover"      = turnover,
+       "alpha"         = alpha)
 }
 
 evaluate_fix <- function(weights, ass = assets, from = "2012-01-01") {
@@ -352,6 +359,14 @@ models <- list(EU = list("DAX", eu_d),
             })
 model_res <- models %>% lapply(function(x)x %>% summary %>% coef)
 model_res
+
+eu_factor_return <- predict(models$EU, eu_factors) %>% as.xts
+us_factor_return <- predict(models$US, us_factors) %>% as.xts
+jp_factor_return <- predict(models$JP, jp_factors) %>% as.xts
+factor_returns <- merge.xts(eu_factor_return, us_factor_return, jp_factor_return)
+fact <- merge.xts(returns_monthly[,1:3] - (factor_returns %>% lag(1)))
+fact <- fact/(NROW(fact)/12)
+factor_alpha <- apply(fact, 2, sum)
 
 # build functions of linear models where we regress each asset on all factors
 #models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei") %>%
