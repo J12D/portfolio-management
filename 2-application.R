@@ -31,10 +31,20 @@ evaluate_fix(w) %>% plotXTS(size = 1)
 ## ---- Other Optimization ---------------
 eff_portfolio(mean = mean_returns(shrink = 0.5),
               cov = cov_returns(shrink = 0.5), T, 3, 0.01, 0.4) %>% performance_plot
+eff_portfolio(mean = mean_returns(shrink = 0.5),
+              cov = cov_returns(shrink = 0.5), T, 3, 0.01, 0.4) %>% compute_kpis
 
 ## ---- Equal Risk Contribution ---------------
 equal_risk_contribution(cov = cov_returns(shrink = 0.5, lag_adjustment = 3)) %>% performance_plot
+equal_risk_contribution(cov = cov_returns(shrink = 0.5, lag_adjustment = 3)) %>% compute_kpis
 
 ## ---- Fixed allocation, No rebalance ---------------
 evaluate_fix(c(0.5,0.5,0.5,-0.5)) %>% plotXTS(size = 1)
 evaluate_fix(c(0.5,0.5,0.5,-0.5)) %>% compute_kpis
+
+## ---- Robust Optimization ---------------
+max_sharpe_robust() %>% performance_plot
+max_sharpe_robust() %>% compute_kpis
+
+min_variance_robust() %>% performance_plot
+min_variance_robust() %>% compute_kpis
