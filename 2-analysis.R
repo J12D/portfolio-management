@@ -251,6 +251,15 @@ decompose_plot <- function(model, name) {
   model %>% evaluate_model %>% drop_last %>% portfolio_return %>% plotTable(name)
 }
 
+decompose_relw_plot <- function(model, name) {
+  model %>%
+    evaluate_model %>%
+    drop_last %>%
+    portfolio_return %>%
+    apply(2,function(x)x/as.numeric(rowSums.xts(a))) %>% as.xts %>%
+    plotTable(name)
+}
+
 decompose <- function(model) {
   model %>% evaluate_model %>% drop_last %>% portfolio_return
 }

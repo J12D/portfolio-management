@@ -34,6 +34,87 @@
 \end{tikzpicture}
 }
 
+\newcommand{\portfolioperformanceplot}[2]{
+\begin{tikzpicture}
+\begin{axis}[
+		no marks,
+		date coordinates in=x,
+		xticklabel=\year,
+    xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
+		%xticklabel style={/pgf/number format/.cd,fixed,precision=2},
+    %yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
+    yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
+		ylabel=Performance,
+		xlabel=Time,
+    legend pos = north west,
+    every axis plot/.append style={thick, smooth},
+    width=\textwidth,
+    height=0.5\textwidth,
+    #2]
+  \addplot table[x=time, y=value] {plot-data/#1.txt};
+\end{axis}
+\end{tikzpicture}
+}
+
+\newcommand{\decomposeplot}[2]{
+\begin{tikzpicture}
+\begin{axis}[
+		no marks,
+		date coordinates in=x,
+		xticklabel=\year,
+    xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
+    yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
+    ylabel=Asset value,
+    ymin=0,
+		xlabel=Time,
+    legend pos = north west,
+    every axis plot/.append style={thick, smooth},
+    width=\textwidth,
+    height=0.5\textwidth,
+    legend pos = north west,
+    stack plots=y,area style,
+    #2]
+  \addplot table[x=time, y=value.DAX] {plot-data/#1.txt}\closedcycle;
+  \addlegendentry{DAX}
+  \addplot table[x=time, y=value.Dow.Jones] {plot-data/#1.txt}\closedcycle;
+  \addlegendentry{Dow Jones}
+  \addplot table[x=time, y=value.Nikkei] {plot-data/#1.txt}\closedcycle;
+  \addlegendentry{Nikkei}
+\end{axis}
+\end{tikzpicture}
+}
+
+\newcommand{\decomposerelplot}[2]{
+\begin{tikzpicture}
+\begin{axis}[
+		no marks,
+		date coordinates in=x,
+		xticklabel=\year,
+    xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
+    yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
+    ylabel=Asset value,
+    ymin=0,
+		xlabel=Time,
+    legend pos = north west,
+    every axis plot/.append style={thick, smooth},
+    width=\textwidth,
+    height=0.5\textwidth,
+    legend pos = north west,
+    stack plots=y,area style,
+    yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
+    ylabel=Weights,
+    #2]
+  \addplot table[x=time, y=value.DAX] {plot-data/#1.txt}\closedcycle;
+  \addlegendentry{DAX}
+  \addplot table[x=time, y=value.Dow.Jones] {plot-data/#1.txt}\closedcycle;
+  \addlegendentry{Dow Jones}
+  \addplot table[x=time, y=value.Nikkei] {plot-data/#1.txt}\closedcycle;
+  \addlegendentry{Nikkei}
+\end{axis}
+\end{tikzpicture}
+}
+
+
 \title{Portfolios for a safe future}
 \author{JD POWER}
 \begin{document}
@@ -65,49 +146,20 @@ We're looking at 4 assets: DAX
 
 \chapter*{Investment Opportunities}
 \section*{Max Sharpe Ratio}
-\begin{performanceplot}
-  \addplot table[x=time, y=value] {plot-data/max_sharpe.txt};
-\end{performanceplot}
+\portfolioperformanceplot{max_sharpe}{}
 
 \section*{Equal-Weighted}
-\begin{performanceplot}
-  \addplot table[x=time, y=value] {plot-data/equal.txt};
-\end{performanceplot}
 
 \section*{Portfolio 3}
 
 \chapter*{Performance Evaluation}
 
-\begin{performanceplot}[legend pos = north east, ylabel=Asset value,stack plots=y,area style]
-  \addplot table[x=time, y=value.DAX] {plot-data/max_sharpe_decomposed.txt}\closedcycle;
-  \addlegendentry{DAX}
-  \addplot table[x=time, y=value.Dow.Jones] {plot-data/max_sharpe_decomposed.txt}\closedcycle;
-  \addlegendentry{Dow Jones}
-  \addplot table[x=time, y=value.Nikkei] {plot-data/max_sharpe_decomposed.txt}\closedcycle;
-  \addlegendentry{Nikkei}
-  \addplot table[x=time, y=value.VIX] {plot-data/max_sharpe_decomposed.txt}\closedcycle;
-  \addlegendentry{!VIX}
-\end{performanceplot}
-
-\section*{Fixed}
-\begin{performanceplot}[legend pos = north west, ylabel=Asset value,stack plots=y]
-  \addplot table[x=time, y=value.VIX] {plot-data/fixed_decomposed.txt}\closedcycle;
-  \addlegendentry{!VIX}
-  \addplot table[x=time, y=value.DAX] {plot-data/fixed_decomposed.txt}\closedcycle;
-  \addlegendentry{DAX}
-  \addplot table[x=time, y=value.Dow.Jones] {plot-data/fixed_decomposed.txt}\closedcycle;
-  \addlegendentry{Dow Jones}
-  \addplot table[x=time, y=value.Nikkei] {plot-data/fixed_decomposed.txt}\closedcycle;
-  \addlegendentry{Nikkei}
-\end{performanceplot}
-
 \section*{Mean No Short}
-\begin{performanceplot}[legend pos = north west, ylabel=Asset value,stack plots=y,area style]
-  \addplot table[x=time, y=value.DAX] {plot-data/msr_noshort.txt}\closedcycle;
-  \addlegendentry{DAX}
-  \addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_noshort.txt}\closedcycle;
-  \addlegendentry{Dow Jones}
-  \addplot table[x=time, y=value.Nikkei] {plot-data/msr_noshort.txt}\closedcycle;
-  \addlegendentry{Nikkei}
-\end{performanceplot}
+\decomposeplot{msr_noshort}{}
+
+\section*{1/N}
+\decomposeplot{equal}{}
+
+\decomposerelplot{equal_relw}{}
+
 \end{document}

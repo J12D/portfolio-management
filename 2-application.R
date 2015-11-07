@@ -15,7 +15,11 @@ max_sharpe(mean = mean_returns(shrink = 0.9),
            cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% compute_kpis
 
 ## ---- Fixed Weights ---------------
-fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% performance_plot #decompose_plot("fixed_decomposed")
+fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% performance_plot
+fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% decompose_plot("equal")
+fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% decompose_relw_plot("equal_relw")
+fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% compute_kpis
+#decompose_plot("fixed_decomposed")
 #fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% pgfplot("equal")
 #fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% compute_kpis
 
