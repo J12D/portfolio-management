@@ -136,8 +136,8 @@ equal_risk_contribution <- function(cov = cov_returns()){
 # select an expanding window of returns, starting end of 2012 and feed it into the model
 months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"],"months")]
 
-evaluate_model <- function(model, assets = assets, lookback = "2 years", subset = "2012/", period = "months") {
-  returns <- assets %>% ROC(type = "discrete") %>% na.omit
+evaluate_model <- function(model, ass = assets, lookback = "2 years", subset = "2012/", period = "months") {
+  returns <- ass %>% ROC(type = "discrete") %>% na.omit
   vars <- index(returns[subset])[endpoints(returns[subset], period)] %>% 
     lapply(function(date) returns[paste0("/", date)]) %>%
     lapply(function(returns) {
@@ -170,19 +170,19 @@ drop_last <- function(x) {
   x[-dim(x)[1],]
 }
 
-portfolio_return <- function(weights, assets = assets, subset = "2012/", period = "months") {
-  returns <- assets %>% ROC(type = "discrete") %>% na.omit
+portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "months") {
+  returns <- ass %>% ROC(type = "discrete") %>% na.omit
   
   dates <- index(returns[subset])[endpoints(returns[subset], period)] 
   # returns for decision months
-  periodical_returns <- lag(assets[dates],-1) / assets[dates] - 1
+  periodical_returns <- lag(ass[dates],-1) / ass[dates] - 1
   
   portfolio_returns <- rowSums(periodical_returns * weights, na.rm = T) %>%
     xts(index(weights)) %>%
     (function(x) cumprod(1 + x))
   
-  vals <- apply(assets[subset], 1, function(x) x/as.numeric(assets[subset][1,])) %>% t
-  my_asset_returns <- xts(vals, index(assets[subset]))
+  vals <- apply(assets[subset], 1, function(x) x/as.numeric(ass[subset][1,])) %>% t
+  my_asset_returns <- xts(vals, index(ass[subset]))
   
   weight_development <- function(initial_weights, asset_evolution, amt = 1) {
     units <- amt / as.numeric(asset_evolution[1,]) * as.numeric(initial_weights)
@@ -195,7 +195,7 @@ portfolio_return <- function(weights, assets = assets, subset = "2012/", period 
   }
 
   periods <- paste0(dates[1:(length(index(dates)) - 1)], "/", dates[2:length(index(dates))])
-  period_assets <- periods %>% sapply(function(x)assets[x] %>% drop_first)
+  period_assets <- periods %>% sapply(function(x)ass[x] %>% drop_first)
   
   p <- vector(mode = "list", length = dim(weights)[1])
   for (i in 1:dim(weights)[1]) {
@@ -244,46 +244,46 @@ zero_killer <- function(x) {
 
 
 ## ---- Pipelines ------------------
-pipeline <- function(model) {
+pipeline <- function(model, ass = assets) {
   model %>%
-    evaluate_model %>%
+    evaluate_model(ass = ass) %>%
     drop_last %>%
-    portfolio_return %>%
+    portfolio_return(ass = ass) %>%
     rowSums.xts %>%
     zero_killer
 }
 
-performance_plot <- function(model) {
+performance_plot <- function(model, ass = assets) {
    model %>%
-    pipeline %>%
+    pipeline(ass) %>%
     plotXTS(size = 1)
 }
 
-pgfplot <- function(model, name) {
-  model %>% pipeline %>% plotTable(name)
+pgfplot <- function(model, name, ass = assets) {
+  model %>% pipeline(ass) %>% plotTable(name)
 }
 
-decompose_plot <- function(model, name) {
-  model %>% evaluate_model %>% drop_last %>% portfolio_return %>% plotTable(name)
+decompose_plot <- function(model, name, ass = assets) {
+  model %>% evaluate_model(ass = assets) %>% drop_last %>% portfolio_return(ass = assets) %>% plotTable(name)
 }
 
-decompose_relw_plot <- function(model, name) {
+decompose_relw_plot <- function(model, name, ass = assets) {
   model %>%
-    evaluate_model %>%
+    evaluate_model(ass = assets) %>%
     drop_last %>%
-    portfolio_return %>%
-    apply(2,function(x)x/as.numeric(rowSums.xts(a))) %>% as.xts %>%
+    portfolio_return(ass = assets) %>%
+    apply(2,function(x)x/as.numeric(rowSums.xts(.))) %>% as.xts %>%
     plotTable(name)
 }
 
-decompose <- function(model) {
-  model %>% evaluate_model %>% drop_last %>% portfolio_return
+decompose <- function(model, ass = assets) {
+  model %>% evaluate_model(ass = assets) %>% drop_last %>% portfolio_return
 }
 
-compute_kpis <- function(model) {
-  weights <- model %>% evaluate_model %>% drop_last
+compute_kpis <- function(model, ass = assets) {
+  weights <- model %>% evaluate_model(ass = assets) %>% drop_last
   value <- weights %>%
-    portfolio_return %>%
+    portfolio_return(ass = assets) %>%
     rowSums.xts %>%
     zero_killer 
   returns <- value %>% ROC(type = "discrete") %>% na.omit
@@ -295,7 +295,8 @@ compute_kpis <- function(model) {
   
   turnover <- evaluate_turnover(weights)
   
-  f_returns <- fact[,c("DAX", "Dow.Jones", "Nikkei")] * weights[,c("DAX", "Dow.Jones", "Nikkei")]
+  factor_merge <- merge.xts(fact[,c("DAX", "Dow.Jones", "Nikkei")], weights[,c("DAX", "Dow.Jones", "Nikkei")]) %>% na.omit
+  f_returns <- factor_merge[,c("DAX", "Dow.Jones", "Nikkei")] * factor_merge[,c("DAX", "Dow.Jones", "Nikkei")]
 
   alpha <- sum(f_returns)/(NROW(f_returns)/12)
   

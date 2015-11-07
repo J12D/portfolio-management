@@ -1,34 +1,30 @@
 source("2-analysis.R")
 
+portfolio_party <- function(model, name) {
+  model %>% performance_plot
+  model %>% compute_kpis
+  model %>% decompose_plot(name)
+  model %>% decompose_relw_plot(paste(name,"_relw"))
+}
 
 ## ---- Minimum Variance ---------------
 min_variance(cov = cov_returns(shrink = T)) %>% performance_plot
 
 
 ## ---- Maximum Sharpe ---------------
-max_sharpe() %>% performance_plot #pgfplot("max_sharpe")
-#max_sharpe() %>% pgfplot("max_sharpe")
-
-max_sharpe(mean = mean_returns(shrink = 0.9),
-           cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% performance_plot
-max_sharpe(mean = mean_returns(shrink = 0.9),
-           cov = cov_returns(shrink = T, lag_adjustment = 3)) %>% compute_kpis
+ms <-  max_sharpe(mean = mean_returns(shrink = 0.65),
+           cov = cov_returns(shrink = T, lag_adjustment = 3))
+ms %>% performance_plot
+ms %>% compute_kpis
 
 ## ---- Fixed Weights ---------------
-fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% performance_plot
-fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% decompose_plot("equal")
-fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% decompose_relw_plot("equal_relw")
-fixed_weights(c(1/3, 1/3, 1/3, 0)) %>% compute_kpis
-#decompose_plot("fixed_decomposed")
-#fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% pgfplot("equal")
-#fixed_weights(c(2/3, 2/3, 2/3, -1)) %>% compute_kpis
-
+fw <- fixed_weights(c(1/3, 1/3, 1/3))
+portfolio_party(fw, "equal")
 
 ## ---- Black Litterman ---------------
 w <- returns %>% (max_sharpe_blacklitterman()) %>% t
-fixed_weights(w) %>% performance_plot
-
-
+bl <- fixed_weights(w)
+portfolio_party(bl, "black_littie")
 
 evaluate_fix(w) %>% plotXTS(size = 1)
 
