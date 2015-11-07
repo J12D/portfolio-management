@@ -10,6 +10,7 @@ source("1-data.R")
 source("mdd.R")
 source("3-analysis2.R")
 
+
 ## ---- Mean ----------
 mean_returns <- function(shrink = 0, annualize = 252) {
   function(returns) {
@@ -17,6 +18,7 @@ mean_returns <- function(shrink = 0, annualize = 252) {
     r * (1 - shrink) + Reduce(mean, r) * shrink
   }
 }
+
 
 ## ---- Covariance -----------
 hayashi_yoshida <- function(ts_fixing_pre, ts_fixing_post) {
@@ -66,7 +68,6 @@ adjusted_cor <- function(adjusted_cov, returns) {
 
 
 ## ---- Models ------------------------
-
 mean_variance_ibase <- function(mu, information_matrix) {
   (information_matrix %*% mu)/as.numeric(rep(1,length(mu)) %*% information_matrix %*% mu)
 }
@@ -130,12 +131,13 @@ equal_risk_contribution <- function(cov = cov_returns()){
   }
 }
 
-## ---- base-wrapper --------------------------
 
+## ---- base-wrapper --------------------------
 # select an expanding window of returns, starting end of 2012 and feed it into the model
 months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"],"months")]
 
-evaluate_model <- function(model, lookback = "2 years", subset = "2012/", period = "months") {
+evaluate_model <- function(model, assets = assets, lookback = "2 years", subset = "2012/", period = "months") {
+  returns <- assets %>% ROC(type = "discrete") %>% na.omit
   vars <- index(returns[subset])[endpoints(returns[subset], period)] %>% 
     lapply(function(date) returns[paste0("/", date)]) %>%
     lapply(function(returns) {
@@ -158,8 +160,8 @@ evaluate_model <- function(model, lookback = "2 years", subset = "2012/", period
 # w %>% plotXTS + ylim(c(-1,1.5))
 
 
-## ---- performance-calculation --------------------------
 
+## ---- performance-calculation --------------------------
 drop_first <- function(x) {
   x[-1,]
 }
@@ -168,7 +170,9 @@ drop_last <- function(x) {
   x[-dim(x)[1],]
 }
 
-portfolio_return <- function(weights, subset = "2012/", period = "months") {
+portfolio_return <- function(weights, assets = assets, subset = "2012/", period = "months") {
+  returns <- assets %>% ROC(type = "discrete") %>% na.omit
+  
   dates <- index(returns[subset])[endpoints(returns[subset], period)] 
   # returns for decision months
   periodical_returns <- lag(assets[dates],-1) / assets[dates] - 1
@@ -238,8 +242,8 @@ zero_killer <- function(x) {
   x
 }
 
-## ---- Pipelines ------------------
 
+## ---- Pipelines ------------------
 pipeline <- function(model) {
   model %>%
     evaluate_model %>%
@@ -311,32 +315,8 @@ evaluate_fix <- function(weights, ass = assets, from = "2012-01-01") {
 }
 
 
-# ## ---- turnover -----------------------
-# ## INCORRECT - consider change over infinitesimal time horizon over rebalancing
-# 
-# turnover <- function(weights) {
-#   to <- year(weights %>% index) %>% unique %>% lapply(function(year){
-#     t <- weights %>% diff %>% .[paste(year)] %>% abs %>% na.omit %>% sum(.)/2
-#     xts(t, as.Date(paste0(year,"-01-01")))
-#   }
-#   ) %>% Reduce(rbind,.)
-#   colnames(to) <- c("weights")
-#   to
-# }
-# 
-# turnover(weights)
-# 
-# 
-# ## ---- random-weights -----------------------
-# 
-# generate_random_weight <- function(rand_gen, ntimes, nassets, sum=1) {
-#   m <- matrix(rand_gen(ntimes * nassets), ncol = nassets)
-#   apply(m,2,function(x)x/sum(x))
-# }
-# 
-# 
 ## ---- linear-regression --------------------
-timepoints <- index(assets[endpoints(assets["/2015-09-30"],"months")])
+timepoints <- index(assets[endpoints(assets["2009-02-01/2015-09-30"],"months")])
 eu_factors <- eu_factors["2009-02-01/"]
 index(eu_factors) <- timepoints
 us_factors <- us_factors["2009-02-01/"]
@@ -346,9 +326,9 @@ index(jp_factors) <- timepoints
 
 returns_monthly <- assets[timepoints] %>% ROC(type = "discrete") %>% na.omit
 
-us_d <- merge.xts(returns_monthly["/2012-01-01"]$Dow.Jones %>% lag(-1), us_factors) %>% na.omit
-eu_d <- merge.xts(returns_monthly["/2012-01-01"]$DAX %>% lag(-1), eu_factors) %>% na.omit
-jp_d <- merge.xts(returns_monthly["/2012-01-01"]$Nikkei %>% lag(-1), jp_factors) %>% na.omit
+us_d <- merge.xts(returns_monthly["/2012-01-01"][,"Dow Jones"] %>% lag(-1), us_factors) %>% na.omit
+eu_d <- merge.xts(returns_monthly["/2012-01-01"][,"DAX"] %>% lag(-1), eu_factors) %>% na.omit
+jp_d <- merge.xts(returns_monthly["/2012-01-01"][,"Nikkei"] %>% lag(-1), jp_factors) %>% na.omit
 
 models <- list(EU = list("DAX", eu_d),
                US = list("Dow.Jones", us_d),
@@ -368,10 +348,4 @@ fact <- merge.xts(returns_monthly[,1:3] - (factor_returns %>% lag(1)))
 fact <- fact/(NROW(fact)/12)
 factor_alpha <- apply(fact, 2, sum)
 
-# build functions of linear models where we regress each asset on all factors
-#models <- list(DAX = "DAX", DJI = "Dow.Jones", NKK = "Nikkei") %>%
-#   lapply(function(col)paste(col,"~ Mkt.RF + SMB + HML + RF") %>% as.formula) %>%
-#   lapply(function(formula)lm(formula,data = d))
-# 
-## p values of all regressions for all factors
-#res2 <- models %>% lapply(function(x)x %>% summary %>% coef) #%>% .[,4]
+rm(list = c("eu_factor_return", "us_factor_return", "jp_factor_return", "factor_returns", "us_d", "eu_d", "jp_d"))
