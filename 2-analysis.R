@@ -3,6 +3,7 @@ library(ggplot2)
 library(corrplot)
 library(tawny)
 library(PortfolioAnalytics)
+library(covRobust)
 #library(FRAPO)
 
 source("0-helper.R")
@@ -113,6 +114,23 @@ max_sharpe_blacklitterman <- function(P = BL_P, v = BL_v) {
     mean_variance_base(mu, c) %>% t
   }
 }
+
+max_sharpe_robust <- function() {
+  function(returns) {
+    mu <- cov.nnve(returns, k=12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$mu
+    c <- cov.nnve(returns, k=12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$cov
+    mean_variance_base(mu, c) %>% t
+  }
+}
+
+min_variance_robust <- function() {
+  function(returns) {
+    mu <- cov.nnve(returns, k=12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$mu
+    c <- cov.nnve(returns, k=12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$cov
+    mean_variance_optimal(mu, c %>% solve, Inf) %>% t
+  }
+}
+
 
 fixed_weights <- function(weights) {
   function(returns) {
