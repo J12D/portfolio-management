@@ -358,7 +358,7 @@ evaluate_fix_components <- function(weights, ass = assets, subset = "2013/2015-0
   a <- ass[subset]
   a %<>% apply(2, function(x) x * 100 / (coredata(x[1]))) %>% as.xts
   
-  xts(apply(a,1,function(x)x * weights) %>% t, index(a))
+  t(t(a) * drop(weights)) %>% as.xts
 }
 
 evaluate_fix <- function(weights, ass = assets, subset = "2013/2015-06-30") {
