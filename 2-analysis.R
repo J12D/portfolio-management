@@ -109,12 +109,12 @@ max_sharpe <- function(mean = mean_returns(), cov = cov_returns()) {
 }
 
 BL_P <- t(matrix(c(1,0,0, 0,1,0, 0,0,1), nrow = 3, ncol = 3))
-BL_v <- matrix(c(0.0539,0.0351,0.0117))
+BL_v <- matrix(c(0.042,0.035,0.02))
 max_sharpe_blacklitterman <- function(P = BL_P, v = BL_v) {
   function(returns) {
     mu <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLMu
     c <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLSigma
-    mean_variance_base(mu, c) %>% t
+    mean_variance_base(mu, c)
   }
 }
 
@@ -159,7 +159,7 @@ equal_risk_contribution <- function(cov = cov_returns()) {
 # select an expanding window of returns, starting end of 2012 and feed it into the model
 months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"], "months")]
 
-evaluate_model <- function(model, ass = assets, lookback = "2 years", subset = "2012/", period = "months") {
+evaluate_model <- function(model, ass = assets, lookback = "3 years", subset = "2012/", period = "months") {
   returns <- ass %>% ROC(type = "discrete") %>% na.omit
   vars <- index(returns[subset])[endpoints(returns[subset], period)] %>% 
     lapply(function(date) returns[paste0("/", date)]) %>%
@@ -349,8 +349,10 @@ model_res
 eu_factor_return <- predict(models$EU, eu_factors) %>% as.xts
 us_factor_return <- predict(models$US, us_factors) %>% as.xts
 jp_factor_return <- predict(models$JP, jp_factors) %>% as.xts
-factor_returns <- merge.xts(eu_factor_return, us_factor_return, jp_factor_return)
-fact <- merge.xts(returns_monthly[,1:3] - (factor_returns %>% lag(1)))
+factor_returns <- merge.xts(eu_factor_return, us_factor_return, jp_factor_return) %>% lag(1) %>% na.omit %>% as.xts
+index(factor_returns) <- returns_monthly %>% index
+
+fact <- returns_monthly[,1:3] - factor_returns
 fact <- fact / (NROW(fact) / 12)
 factor_alpha <- apply(fact, 2, sum)
 

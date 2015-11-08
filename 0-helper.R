@@ -65,7 +65,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-plotTable <- function(object, name, sep = "") {
+plotTable <- function(object, name, sep = " ") {
   if (is.xts(object)) {
     object <- data.frame(time = index(object), value = drop(coredata(object)))
   }
