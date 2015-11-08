@@ -15,7 +15,7 @@ portfolio_party(minv, "minv")
 
 ## ---- Maximum Sharpe ---------------
 ms <-  max_sharpe(mean = mean_returns(shrink = 0.65),
-           cov = cov_returns(lag_adjustment = 3))
+           cov = cov_returns(lag_adjustment = 3, shrink = T))
 ms %>% performance_plot
 ms %>% compute_kpis
 portfolio_party(ms, "ms")
@@ -39,9 +39,16 @@ evaluate_fix(w) %>% plotXTS(size = 1)
 
 ## ---- Other Optimization ---------------
 eff_portfolio(mean = mean_returns(shrink = 0.65),
-              cov = cov_returns(shrink = T), F, 3, 0.01, 0.4) %>% performance_plot
+              cov = cov_returns(shrink = T), F, 3, 0.01, 0.5) %>% performance_plot
+
 eff_portfolio(mean = mean_returns(shrink = 0.5),
-              cov = cov_returns(shrink = T)) %>% evaluate_model %>% head#performance_plot
+              cov = cov_returns(shrink = T, lag_adjustment = 3), no_shorts = T) %>% performance_plot
+
+eff_portfolio(mean = mean_returns(shrink = 0.5),
+              cov = cov_returns(shrink = T, lag_adjustment = 3), no_shorts = T, max.allocation = 0.5) %>% performance_plot
+
+eff_portfolio(mean = mean_returns(shrink = 0.5),
+              cov = cov_returns(shrink = T, lag_adjustment = 3), no_shorts = F, max.allocation = 0.5) %>% performance_plot
 
 
 ## ---- Equal Risk Contribution ---------------
@@ -57,3 +64,11 @@ max_sharpe_robust() %>% compute_kpis
 
 min_variance_robust() %>% performance_plot
 min_variance_robust() %>% compute_kpis
+
+## ---- 
+max_sharpe() %>% performance_plot(ass = assets_vxx)
+eff_portfolio(max.allocation = 0.6) %>% compute_kpis(ass=assets_vxx)
+
+part1 <- eff_portfolio(max.allocation = 0.6) %>% evaluate_model(ass = assets_vxx) %>% drop_last %>% portfolio_return(ass=assets_vxx) %>% (function(x)x/8) %>% rowSums.xts
+part2 <- (cumprod(1+euribor[index(part1)]) * 7/8*100)
+p <- merge.xts(part1, part2) %>% na.omit

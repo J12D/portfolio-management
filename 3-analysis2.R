@@ -1,7 +1,7 @@
 #http://economistatlarge.com/portfolio-theory/r-optimized-portfolio
 library(quadprog)
 eff_portfolio <- function(mean = mean_returns(), cov = cov_returns(),
-                         short = F, risk.premium.up = 3, risk.increment = 0.1,
+                         no_shorts = F, risk.premium.up = 3, risk.increment = 0.001,
                          max.allocation = NULL) {
   function(returns) {
     mu <- returns %>% mean
@@ -15,7 +15,7 @@ eff_portfolio <- function(mean = mean_returns(), cov = cov_returns(),
     meq <- 1
     
     # Modify Amat & bvec if short-selling not allowed
-    if (short) {
+    if (no_shorts) {
       Amat <- cbind(1, diag(n))
       bvec <- c(bvec, rep(0, n))
     }
