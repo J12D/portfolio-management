@@ -314,6 +314,20 @@ compute_kpis <- function(model, ass = assets) {
        "alpha"         = alpha)
 }
 
+compute_kpis_fix <- function(value) {
+  returns <- value %>% ROC(type = "discrete") %>% na.omit
+  
+  max_dd <- getMDD(value)
+  excess_mu <- mean(returns) * 252
+  standard_dev <- sd(returns) * sqrt(252)
+  sharpe <- excess_mu / standard_dev
+  list("sharpe"        = sharpe,
+       "mu"            = excess_mu,
+       "sigma"         = standard_dev,
+       "max_draw_down" = max_dd,
+       "turnover"      = 0)
+}
+
 evaluate_fix <- function(weights, ass = assets, from = "2012-01-01") {
   a <- ass[paste0(from, "/")]
   a %<>% apply(2, function(x) x * 100 / (coredata(x[1]))) %>% as.xts
