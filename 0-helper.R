@@ -65,12 +65,12 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-plotTable <- function(object, name){
+plotTable <- function(object, name, sep = "") {
   if (is.xts(object)) {
     object <- data.frame(time = index(object), value = drop(coredata(object)))
   }
   path <- paste("report/plot-data/", name, ".txt", sep = "")
-  write.table(object, path, sep = " ", row.names = F, quote = F, na = "nan")
+  write.table(object, path, sep = sep, row.names = F, quote = F, na = "nan")
 }
 
 xts2df <- function(xts) {
