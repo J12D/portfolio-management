@@ -118,6 +118,16 @@ max_sharpe_blacklitterman <- function(P = BL_P, v = BL_v) {
   }
 }
 
+BL_P_vxx <- t(matrix(c(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1), nrow = 4, ncol = 4))
+BL_v_vxx <- matrix(c(0.042,0.035,0.02, -0.9))
+max_sharpe_blacklitterman_vxx <- function(P = BL_P_vxx, v = BL_v_vxx) {
+  function(returns) {
+    mu <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLMu
+    c <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLSigma
+    mean_variance_base(mu, c)
+  }
+}
+
 max_sharpe_robust <- function() {
   function(returns) {
     moments <- cov.nnve(returns, k = 12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$mu

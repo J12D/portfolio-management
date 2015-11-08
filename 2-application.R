@@ -27,14 +27,18 @@ portfolio_party(fw, "equal")
 
 ## ---- Fixed allocation, No rebalance ---------------
 fix_nr <- evaluate_fix(c(1/3, 1/3, 1/3))
-evaluate_fix(c(0.5,0.5,0.5,-0.5)) %>% compute_kpis
+evaluate_fix(c(0.5,0.5,0.5,-0.5), assets_vxx) %>% compute_kpis_fix
 
 ## ---- Black Litterman ---------------
 w <- max_sharpe_blacklitterman()(returns)
 bl <- fixed_weights(w)
 #portfolio_party(bl, "black_littie")
 
-evaluate_fix(w) %>% plotXTS(size = 1)
+evaluate_fix(w) %>% compute_kpis_fix
+
+w <- max_sharpe_blacklitterman_vxx()(returns_vxx)
+bl <- fixed_weights(w)
+evaluate_fix(w, assets_vxx) %>% compute_kpis_fix
 
 
 ## ---- Other Optimization ---------------
