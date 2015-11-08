@@ -23,9 +23,12 @@ mean_returns <- function(shrink = 0, annualize = 252) {
 
 ## ---- Covariance -----------
 hayashi_yoshida <- function(ts_fixing_pre, ts_fixing_post) {
-  ts_fixing_post %>% lag %>% head
-  aligned <- merge.xts(ts_fixing_pre,ts_fixing_post)
-  aligned %<>% na.omit
+  stopifnot(!is.null(ts_fixing_pre))
+  ts_fixing_post %<>% as.xts
+  ts_fixing_pre %<>% as.xts
+  index(ts_fixing_post) <- index(ts_fixing_pre)
+  
+  aligned <- merge.xts(ts_fixing_pre, ts_fixing_post) %>% na.omit
   cov(aligned[,1],aligned[,2])
 }
 
@@ -106,27 +109,29 @@ max_sharpe <- function(mean = mean_returns(), cov = cov_returns()) {
 }
 
 BL_P <- t(matrix(c(1,0,0, 0,1,0, 0,0,1), nrow = 3, ncol = 3))
-BL_v <- matrix(c(0.0539,0.0351,0.0117))
+BL_v <- matrix(c(0.042,0.035,0.02))
 max_sharpe_blacklitterman <- function(P = BL_P, v = BL_v) {
   function(returns) {
     mu <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLMu
     c <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLSigma
-    mean_variance_base(mu, c) %>% t
+    mean_variance_base(mu, c)
   }
 }
 
 max_sharpe_robust <- function() {
   function(returns) {
-    mu <- cov.nnve(returns, k=12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$mu
-    c <- cov.nnve(returns, k=12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$cov
+    moments <- cov.nnve(returns, k = 12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$mu
+    mu <- moments$mu
+    c <- moments$cov
     mean_variance_base(mu, c) %>% t
   }
 }
 
 min_variance_robust <- function() {
   function(returns) {
-    mu <- cov.nnve(returns, k=12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$mu
-    c <- cov.nnve(returns, k=12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$cov
+    moments <- cov.nnve(returns, k = 12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)
+    mu <- moments$mu
+    c <- moments$cov
     mean_variance_optimal(mu, c %>% solve, Inf) %>% t
   }
 }
@@ -140,11 +145,11 @@ fixed_weights <- function(weights) {
   }
 }
 
-equal_risk_contribution <- function(cov = cov_returns()){
+equal_risk_contribution <- function(cov = cov_returns()) {
   function(returns){
     c <- returns %>% cov
     ERC <- PERC(c)
-    w <- Weights(ERC)/100
+    w <- Weights(ERC) / 100
     t(w)
   }
 }
@@ -152,9 +157,9 @@ equal_risk_contribution <- function(cov = cov_returns()){
 
 ## ---- base-wrapper --------------------------
 # select an expanding window of returns, starting end of 2012 and feed it into the model
-months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"],"months")]
+months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"], "months")]
 
-evaluate_model <- function(model, ass = assets, lookback = "2 years", subset = "2012/", period = "months") {
+evaluate_model <- function(model, ass = assets, lookback = "3 years", subset = "2012/", period = "months") {
   returns <- ass %>% ROC(type = "discrete") %>% na.omit
   vars <- index(returns[subset])[endpoints(returns[subset], period)] %>% 
     lapply(function(date) returns[paste0("/", date)]) %>%
@@ -168,48 +173,31 @@ evaluate_model <- function(model, ass = assets, lookback = "2 years", subset = "
   vars
 }
 
-# min_variance() %>% evaluate_model %>% plotXTS
-
-# Max Sharpe with shrunken means
-# max_sharpe(mean = mean_returns(shrink = 1)) %>% evaluate_model %>% plotXTS
-
-# Min Variance with hayashi yoshida adjustment
-# w <- min_variance(cov = cov_returns(lag_adjustment = 3)) %>% evaluate_model
-# w %>% plotXTS + ylim(c(-1,1.5))
-
-
-
 ## ---- performance-calculation --------------------------
-drop_first <- function(x) {
-  x[-1,]
-}
-
-drop_last <- function(x) {
-  x[-dim(x)[1],]
-}
 
 portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "months") {
   returns <- ass %>% ROC(type = "discrete") %>% na.omit
   
   dates <- index(returns[subset])[endpoints(returns[subset], period)] 
   # returns for decision months
-  periodical_returns <- lag(ass[dates],-1) / ass[dates] - 1
+  periodical_returns <- lag(ass[dates], -1) / ass[dates] - 1
   
   portfolio_returns <- rowSums(periodical_returns * weights, na.rm = T) %>%
     xts(index(weights)) %>%
     (function(x) cumprod(1 + x))
-  
-  vals <- apply(assets[subset], 1, function(x) x/as.numeric(ass[subset][1,])) %>% t
+
+  vals <- apply(ass[subset], 1, function(x) x / as.numeric(ass[1,])) %>% t
+
   my_asset_returns <- xts(vals, index(ass[subset]))
   
   weight_development <- function(initial_weights, asset_evolution, amt = 1) {
     units <- amt / as.numeric(asset_evolution[1,]) * as.numeric(initial_weights)
     vals <- apply(asset_evolution, 1, function(x) x * units) %>% t
-    xts(coredata(vals),index(asset_evolution))
+    xts(coredata(vals), index(asset_evolution))
   }
   
   relative_weights <- function(x) {
-    x/rowSums(x)
+    x / rowSums(x)
   }
 
   periods <- paste0(dates[1:(length(index(dates)) - 1)], "/", dates[2:length(index(dates))])
@@ -230,22 +218,22 @@ portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "
     weights <- period_slice$weights
     res <- weight_development(weights, assets, value)
     if (!is.null(carry)) {
-      res <- rbind(carry,res)
+      res <- rbind(carry, res)
     }
     res
   }, p, NULL)
   pf
 }
 
-evaluate_turnover <- function(weights) {
-  performance <- portfolio_return(weights)
+evaluate_turnover <- function(weights, ass = assets) {
+  performance <- portfolio_return(weights, ass = ass)
   index(weights) %>% lapply(function(date){
     idx <- which(index(performance) == date)
     differences <- abs(performance[idx] - as.numeric(performance[idx + 1]))
     differences %>% sum
   }) %>% unlist %>% (function(weight_changes){
-    sum(weight_changes)/(length(weight_changes)/12)
-    }) %>% (function(turnover)turnover/2)
+    sum(weight_changes) / (length(weight_changes) / 12)
+  }) %>% (function(turnover) turnover / 2)
 }
 
 rowSums.xts <- function(x) {
@@ -272,9 +260,7 @@ pipeline <- function(model, ass = assets) {
 }
 
 performance_plot <- function(model, ass = assets) {
-   model %>%
-    pipeline(ass) %>%
-    plotXTS(size = 1)
+   model %>% pipeline(ass) %>% plotXTS(size = 1)
 }
 
 pgfplot <- function(model, name, ass = assets) {
@@ -282,7 +268,9 @@ pgfplot <- function(model, name, ass = assets) {
 }
 
 decompose_plot <- function(model, name, ass = assets) {
-  model %>% evaluate_model(ass = assets) %>% drop_last %>% portfolio_return(ass = assets) %>% plotTable(name)
+  model %>% evaluate_model(ass = assets) %>%
+    drop_last %>% portfolio_return(ass = assets) %>%
+    plotTable(name)
 }
 
 decompose_relw_plot <- function(model, name, ass = assets) {
@@ -290,7 +278,7 @@ decompose_relw_plot <- function(model, name, ass = assets) {
     evaluate_model(ass = assets) %>%
     drop_last %>%
     portfolio_return(ass = assets) %>%
-    apply(2,function(x)x/as.numeric(rowSums.xts(.))) %>% as.xts %>%
+    apply(2,function(x) x / as.numeric(rowSums.xts(.))) %>% as.xts %>%
     plotTable(name)
 }
 
@@ -299,9 +287,9 @@ decompose <- function(model, ass = assets) {
 }
 
 compute_kpis <- function(model, ass = assets) {
-  weights <- model %>% evaluate_model(ass = assets) %>% drop_last
+  weights <- model %>% evaluate_model(ass = ass) %>% drop_last
   value <- weights %>%
-    portfolio_return(ass = assets) %>%
+    portfolio_return(ass = ass) %>%
     rowSums.xts %>%
     zero_killer 
   returns <- value %>% ROC(type = "discrete") %>% na.omit
@@ -311,12 +299,12 @@ compute_kpis <- function(model, ass = assets) {
   standard_dev <- sd(returns) * sqrt(252)
   sharpe <- excess_mu / standard_dev
   
-  turnover <- evaluate_turnover(weights)
+  turnover <- evaluate_turnover(weights, ass = ass)
   
   factor_merge <- merge.xts(fact[,c("DAX", "Dow.Jones", "Nikkei")], weights[,c("DAX", "Dow.Jones", "Nikkei")]) %>% na.omit
   f_returns <- factor_merge[,c("DAX", "Dow.Jones", "Nikkei")] * factor_merge[,c("DAX", "Dow.Jones", "Nikkei")]
 
-  alpha <- sum(f_returns)/(NROW(f_returns)/12)
+  alpha <- sum(f_returns) / (NROW(f_returns) / 12)
   
   list("sharpe"        = sharpe,
        "mu"            = excess_mu,
@@ -326,9 +314,23 @@ compute_kpis <- function(model, ass = assets) {
        "alpha"         = alpha)
 }
 
+compute_kpis_fix <- function(value) {
+  returns <- value %>% ROC(type = "discrete") %>% na.omit
+  
+  max_dd <- getMDD(value)
+  excess_mu <- mean(returns) * 252
+  standard_dev <- sd(returns) * sqrt(252)
+  sharpe <- excess_mu / standard_dev
+  list("sharpe"        = sharpe,
+       "mu"            = excess_mu,
+       "sigma"         = standard_dev,
+       "max_draw_down" = max_dd,
+       "turnover"      = 0)
+}
+
 evaluate_fix <- function(weights, ass = assets, from = "2012-01-01") {
-  a <- ass[paste0(from,"/")]
-  a %<>% apply(2, function(x) x*100/(coredata(x[1]))) %>% as.xts
+  a <- ass[paste0(from, "/")]
+  a %<>% apply(2, function(x) x * 100 / (coredata(x[1]))) %>% as.xts
   
   xts(a %*% weights, index(a))
 }
@@ -362,9 +364,11 @@ model_res
 eu_factor_return <- predict(models$EU, eu_factors) %>% as.xts
 us_factor_return <- predict(models$US, us_factors) %>% as.xts
 jp_factor_return <- predict(models$JP, jp_factors) %>% as.xts
-factor_returns <- merge.xts(eu_factor_return, us_factor_return, jp_factor_return)
-fact <- merge.xts(returns_monthly[,1:3] - (factor_returns %>% lag(1)))
-fact <- fact/(NROW(fact)/12)
+factor_returns <- merge.xts(eu_factor_return, us_factor_return, jp_factor_return) %>% lag(1) %>% na.omit %>% as.xts
+index(factor_returns) <- returns_monthly %>% index
+
+fact <- returns_monthly[,1:3] - factor_returns
+fact <- fact / (NROW(fact) / 12)
 factor_alpha <- apply(fact, 2, sum)
 
 rm(list = c("eu_factor_return", "us_factor_return", "jp_factor_return", "factor_returns", "us_d", "eu_d", "jp_d"))

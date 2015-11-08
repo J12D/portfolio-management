@@ -4,7 +4,7 @@ gg_color_hue <- function(n) {
 }
 
 # convenience function for ggploting xts objects
-plotXTS <- function(xtsObject, title, xlab = "time", ylab = "value", size = 0.5){
+plotXTS <- function(xtsObject, title, xlab = "time", ylab = "value", size = 0.8) {
   d <- data.frame(time = index(xtsObject), value = drop(coredata(xtsObject)))
   if (dim(xtsObject)[2]) {
     d <- melt(d, id.vars = "time", varnames = names(dimnames(xtsObject)))
@@ -65,12 +65,12 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-plotTable <- function(object, name){
+plotTable <- function(object, name, sep = " ") {
   if (is.xts(object)) {
     object <- data.frame(time = index(object), value = drop(coredata(object)))
   }
   path <- paste("report/plot-data/", name, ".txt", sep = "")
-  write.table(object, path, sep = " ", row.names = F, quote = F, na = "nan")
+  write.table(object, path, sep = sep, row.names = F, quote = F, na = "nan")
 }
 
 xts2df <- function(xts) {
@@ -81,6 +81,14 @@ xts2df <- function(xts) {
 df2xts <- function(df) {
   stopifnot(is.data.frame(df))
   xts(df[,("time" != colnames(df))],df[,("time" == colnames(df))])
+}
+
+drop_first <- function(x) {
+  x[-1,]
+}
+
+drop_last <- function(x) {
+  x[-dim(x)[1],]
 }
 
 ones <- function(num) {

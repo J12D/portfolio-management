@@ -14,3 +14,10 @@ documents
 *.swp
 *.aux
 .RData
+portfolio-report.pdf
+report/portfolio-report.auxlock
+report/portfolio-report.fdb_latexmk
+data/Europe_Factors.csv
+data/Japan_Factors.csv
+data/North_America_Factors.csv
+.Rhistory
