@@ -121,7 +121,7 @@ msr_rob %>% compute_kpis(rf_allocation = list(weight = 16/26, rate = euribor))
 msr_rob %>% portfolio_party("msr_rob", rf_allocation = list(weight = 16/26, rate = euribor))
 #9
 mvo %>% compute_kpis(ass = assets_vxx, rf_allocation = list(weight = 26/34, rate = euribor))
-mvo %>% portfolio_party("msr_rob", rf_allocation = list(weight = 16/26, rate = euribor), ass= assets_vxx)
+mvo %>% portfolio_party("mvo", rf_allocation = list(weight = 16/26, rate = euribor), ass= assets_vxx)
 #10
 mva %>% compute_kpis(ass = assets_vxx, rf_allocation = list(weight = 78E-2, rate = euribor))
-mva %>% portfolio_party("msr_rob", rf_allocation = list(weight = 78E-2, rate = euribor), ass= assets_vxx)
+mva %>% portfolio_party("mva", rf_allocation = list(weight = 78E-2, rate = euribor), ass= assets_vxx)
