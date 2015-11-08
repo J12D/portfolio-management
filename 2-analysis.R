@@ -23,9 +23,12 @@ mean_returns <- function(shrink = 0, annualize = 252) {
 
 ## ---- Covariance -----------
 hayashi_yoshida <- function(ts_fixing_pre, ts_fixing_post) {
-  ts_fixing_post %>% lag %>% head
-  aligned <- merge.xts(ts_fixing_pre,ts_fixing_post)
-  aligned %<>% na.omit
+  stopifnot(!is.null(ts_fixing_pre))
+  ts_fixing_post %<>% as.xts
+  ts_fixing_pre %<>% as.xts
+  index(ts_fixing_post) <- index(ts_fixing_pre)
+  
+  aligned <- merge.xts(ts_fixing_pre, ts_fixing_post) %>% na.omit
   cov(aligned[,1],aligned[,2])
 }
 
