@@ -25,9 +25,11 @@ portfolio_party(ms, "ms")
 fw <- fixed_weights(c(1/3, 1/3, 1/3))
 portfolio_party(fw, "equal")
 
+
 ## ---- Fixed allocation, No rebalance ---------------
 fix_nr <- evaluate_fix(c(1/3, 1/3, 1/3))
 evaluate_fix(c(0.5,0.5,0.5,-0.5), assets_vxx) %>% compute_kpis_fix
+
 
 ## ---- Black Litterman ---------------
 w <- max_sharpe_blacklitterman()(returns)
@@ -42,17 +44,10 @@ evaluate_fix(w, assets_vxx) %>% compute_kpis_fix
 
 
 ## ---- Other Optimization ---------------
-eff_portfolio(mean = mean_returns(shrink = 0.65),
-              cov = cov_returns(shrink = T), F, 3, 0.01, 0.5) %>% performance_plot
+mvo <- eff_portfolio(mean = mean_returns(shrink = 0.5),
+                     cov = cov_returns(shrink = T, lag_adjustment = 3), no_shorts = T, max.allocation = 0.5)
 
-eff_portfolio(mean = mean_returns(shrink = 0.5),
-              cov = cov_returns(shrink = T, lag_adjustment = 3), no_shorts = T) %>% performance_plot
-
-eff_portfolio(mean = mean_returns(shrink = 0.5),
-              cov = cov_returns(shrink = T, lag_adjustment = 3), no_shorts = T, max.allocation = 0.5) %>% performance_plot
-
-eff_portfolio(mean = mean_returns(shrink = 0.5),
-              cov = cov_returns(shrink = T, lag_adjustment = 3), no_shorts = F, max.allocation = 0.5) %>% performance_plot
+mvo %>% performance_plot
 
 
 ## ---- Equal Risk Contribution ---------------
