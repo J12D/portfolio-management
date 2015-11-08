@@ -130,7 +130,7 @@ max_sharpe_blacklitterman_vxx <- function(P = BL_P_vxx, v = BL_v_vxx) {
 
 max_sharpe_robust <- function() {
   function(returns) {
-    moments <- cov.nnve(returns, k = 12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)$mu
+    moments <- cov.nnve(returns, k = 12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)
     mu <- moments$mu
     c <- moments$cov
     mean_variance_base(mu, c) %>% t
@@ -354,8 +354,8 @@ compute_kpis_fix <- function(value) {
        "turnover"      = 0)
 }
 
-evaluate_fix <- function(weights, ass = assets, from = "2012-01-01") {
-  a <- ass[paste0(from, "/")]
+evaluate_fix <- function(weights, ass = assets, subset = "2013/2015-06-30") {
+  a <- ass[subset]
   a %<>% apply(2, function(x) x * 100 / (coredata(x[1]))) %>% as.xts
   
   xts(a %*% weights, index(a))
