@@ -1,10 +1,10 @@
 source("2-analysis.R")
 
-portfolio_party <- function(model, name) {
-  model %>% performance_plot
-  model %>% compute_kpis %>% print
-  model %>% decompose_plot(name)
-  model %>% decompose_relw_plot(paste0(name,"_relw"))
+portfolio_party <- function(model, name, rf_allocation = NULL, subset = "2013/2015-06-30") {
+  #model %>% performance_plot
+  #model %>% compute_kpis %>% print
+  model %>% decompose_plot(name, rf_allocation = rf_allocation, subset = subset)
+  model %>% decompose_relw_plot(paste0(name,"_relw"), rf_allocation = rf_allocation, subset = subset)
 }
 
 
@@ -97,8 +97,10 @@ comp
 ## PIMMEL PORTFOLIOS
 #1
 minv %>% compute_kpis(rf_allocation = list(weight = 23/34, rate = euribor))
+minv %>% portfolio_party("minv")
 #2
 ms %>% compute_kpis(rf_allocation = list(weight = 81/93, rate = euribor))
+ms %>% portfolio_party("ms", rf_allocation = list(weight = 81/93, rate = euribor))
 #3
 evaluate_fix(c(1/3, 1/3, 1/3)) %>% compute_kpis_fix
 #4

@@ -287,21 +287,21 @@ performance_plot <- function(model, ass = assets, rf_allocation = NULL, subset =
    model %>% pipeline(ass, rf_allocation = rf_allocation, subset = subset) %>% plotXTS(size = 1)
 }
 
-pgfplot <- function(model, name, ass = assets, rf_allocation = NULL) {
-  model %>% pipeline(ass, rf_allocation = rf_allocation) %>% plotTable(name)
+pgfplot <- function(model, name, ass = assets, rf_allocation = NULL, subset = "2013/2015-06-30") {
+  model %>% pipeline(ass, rf_allocation = rf_allocation, subset = subset) %>% plotTable(name)
 }
 
-decompose_plot <- function(model, name, ass = assets, rf_allocation = NULL) {
+decompose_plot <- function(model, name, ass = assets, rf_allocation = NULL, subset = "2013/2015-06-30") {
   model %>% evaluate_model(ass = assets) %>%
-    drop_last %>% portfolio_return(ass = assets, rf_allocation = rf_allocation) %>%
+    drop_last %>% portfolio_return(ass = assets, rf_allocation = rf_allocation, subset = subset) %>%
     plotTable(name)
 }
 
-decompose_relw_plot <- function(model, name, ass = assets, rf_allocation = NULL) {
+decompose_relw_plot <- function(model, name, ass = assets, rf_allocation = NULL, subset = "2013/2015-06-30") {
   model %>%
     evaluate_model(ass = assets) %>%
     drop_last %>%
-    portfolio_return(ass = assets, rf_allocation = rf_allocation) %>%
+    portfolio_return(ass = assets, rf_allocation = rf_allocation, subset = subset) %>%
     apply(2,function(x) x / as.numeric(rowSums.xts(.))) %>% as.xts %>%
     plotTable(name)
 }
@@ -310,7 +310,7 @@ decompose <- function(model, ass = assets, rf_allocation = NULL) {
   model %>% evaluate_model(ass = assets) %>% drop_last %>% portfolio_return(rf_allocation = rf_allocation)
 }
 
-compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = "2013/2015-06-31") {
+compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = "2013/2015-06-30") {
   weights <- model %>% evaluate_model(ass = ass) %>% drop_last
   value <- weights %>%
     portfolio_return(ass = ass, rf_allocation = rf_allocation, subset = subset) %>%
@@ -354,13 +354,17 @@ compute_kpis_fix <- function(value) {
        "turnover"      = 0)
 }
 
-evaluate_fix <- function(weights, ass = assets, subset = "2013/2015-06-30") {
+evaluate_fix_components <- function(weights, ass = assets, subset = "2013/2015-06-30") {
   a <- ass[subset]
   a %<>% apply(2, function(x) x * 100 / (coredata(x[1]))) %>% as.xts
   
-  xts(a %*% weights, index(a))
+  a
 }
 
+evaluate_fix <- function(weights, ass = assets, subset = "2013/2015-06-30") {
+  a <- evaluate_fix_components(weights, ass, subset)
+  xts(a %*% weights, index(a))
+}
 
 ## ---- linear-regression --------------------
 timepoints <- index(assets[endpoints(assets["2009-02-01/2015-09-30"],"months")])
