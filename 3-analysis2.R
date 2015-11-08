@@ -1,8 +1,7 @@
 #http://economistatlarge.com/portfolio-theory/r-optimized-portfolio
 library(quadprog)
 eff_portfolio <- function(mean = mean_returns(), cov = cov_returns(),
-                         no_shorts = F, risk.premium.up = 3, risk.increment = 0.001,
-                         max.allocation = NULL) {
+                         no_shorts = F, risk.premium.up = 3, risk.increment = 0.001, max.allocation = NULL) {
   function(returns) {
     mu <- returns %>% mean
     c <- returns %>% cov
