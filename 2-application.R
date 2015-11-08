@@ -1,10 +1,10 @@
 source("2-analysis.R")
 
-portfolio_party <- function(model, name, rf_allocation = NULL, subset = "2013/2015-06-30") {
+portfolio_party <- function(model, name, rf_allocation = NULL, subset = "2013/2015-06-30", ass = assets) {
   #model %>% performance_plot
   #model %>% compute_kpis %>% print
-  model %>% decompose_plot(name, rf_allocation = rf_allocation, subset = subset)
-  model %>% decompose_relw_plot(paste0(name,"_relw"), rf_allocation = rf_allocation, subset = subset)
+  model %>% decompose_plot(name, rf_allocation = rf_allocation, subset = subset, ass = ass)
+  model %>% decompose_relw_plot(paste0(name,"_relw"), rf_allocation = rf_allocation, subset = subset, ass = ass)
 }
 
 
@@ -109,7 +109,11 @@ evaluate_fix(c(1/2, 1/2, 1/2, -1/2), ass = assets_vxx) %>% compute_kpis_fix
 c(1/2, 1/2, 1/2, -1/2) %>% evaluate_fix_components(ass = assets_vxx) %>% plotTable("fw_lev")
 #5
 evaluate_fix(bl_w) %>% compute_kpis_fix
+<<<<<<< HEAD
 bl_w %>% evaluate_fix_components %>% plotTable("bl")
+=======
+evaluate_fix(bl_w) %>% evaluate_fix_components %>% plotTable("fw_bl")
+>>>>>>> bbf2b986f56b7cc79fb68b33086f7a42c3de4b5f
 #6
 erc %>% compute_kpis(rf_allocation = list(weight = 1/3, rate = euribor))
 erc %>% portfolio_party("erc", rf_allocation = list(weight = 1/3, rate = euribor))
@@ -121,6 +125,7 @@ msr_rob %>% compute_kpis(rf_allocation = list(weight = 16/26, rate = euribor))
 msr_rob %>% portfolio_party("msr_rob", rf_allocation = list(weight = 16/26, rate = euribor))
 #9
 mvo %>% compute_kpis(ass = assets_vxx, rf_allocation = list(weight = 26/34, rate = euribor))
-
+mvo %>% portfolio_party("mvo", rf_allocation = list(weight = 16/26, rate = euribor), ass= assets_vxx)
 #10
 mva %>% compute_kpis(ass = assets_vxx, rf_allocation = list(weight = 78E-2, rate = euribor))
+mva %>% portfolio_party("mva", rf_allocation = list(weight = 78E-2, rate = euribor), ass= assets_vxx)
