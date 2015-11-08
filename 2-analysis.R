@@ -192,8 +192,10 @@ portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "
   # returns for decision months
   periodical_returns <- lag(ass[dates], -1) / ass[dates] - 1
   
-  portfolio_returns <- rowSums(periodical_returns * weights, na.rm = T) %>%
-    xts(index(weights)) %>%
+  w <- weights[index(periodical_returns)]
+  
+  portfolio_returns <- rowSums(periodical_returns * w, na.rm = T) %>%
+    xts(index(w)) %>%
     (function(x) cumprod(1 + x))
 
   vals <- apply(ass[subset], 1, function(x) x / as.numeric(ass[1,])) %>% t
@@ -212,10 +214,11 @@ portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "
 
   periods <- paste0(dates[1:(length(index(dates)) - 1)], "/", dates[2:length(index(dates))])
   period_assets <- periods %>% sapply(function(x)ass[x] %>% drop_first)
-  
-  p <- vector(mode = "list", length = dim(weights)[1])
-  for (i in 1:dim(weights)[1]) {
-    p[[i]] <- list(weights = weights[i], assets = period_assets[[i]])
+
+  p <- vector(mode = "list", length = NROW(periods))
+  for (i in 1:NROW(periods)) {
+    per <- periods[i]
+    p[[i]] <- list(weights = weights[per][1], assets = drop_first(ass[per]))
   }
   
   pf <- Reduce(function(carry, period_slice) {
@@ -307,10 +310,10 @@ decompose <- function(model, ass = assets, rf_allocation = NULL) {
   model %>% evaluate_model(ass = assets) %>% drop_last %>% portfolio_return(rf_allocation = rf_allocation)
 }
 
-compute_kpis <- function(model, ass = assets, rf_allocation = NULL) {
+compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = "2012/") {
   weights <- model %>% evaluate_model(ass = ass) %>% drop_last
   value <- weights %>%
-    portfolio_return(ass = ass, rf_allocation = rf_allocation) %>%
+    portfolio_return(ass = ass, rf_allocation = rf_allocation, subset = subset) %>%
     rowSums.xts %>%
     zero_killer 
   returns <- value %>% ROC(type = "discrete") %>% na.omit
@@ -322,19 +325,19 @@ compute_kpis <- function(model, ass = assets, rf_allocation = NULL) {
   standard_dev <- sd(returns) * sqrt(252)
   sharpe <- excess_mu / standard_dev
   
-  turnover <- evaluate_turnover(weights, ass = ass) * (1 - w)
+  turnover <- evaluate_turnover(weights, ass = ass) * ifelse(is.null(rf_allocation),1,(1 - w))
   
   factor_merge <- merge.xts(fact[,c("DAX", "Dow.Jones", "Nikkei")], weights[,c("DAX", "Dow.Jones", "Nikkei")]) %>% na.omit
   f_returns <- factor_merge[,c("DAX", "Dow.Jones", "Nikkei")] * factor_merge[,c("DAX", "Dow.Jones", "Nikkei")]
 
   alpha <- sum(f_returns) / (NROW(f_returns) / 12)
   
-  list("sharpe"        = sharpe,
-       "mu"            = excess_mu,
-       "sigma"         = standard_dev,
-       "max_draw_down" = max_dd,
-       "turnover"      = turnover,
-       "alpha"         = alpha)
+  data.frame(sharpe = sharpe,
+                 mu = excess_mu * 100,
+              sigma = standard_dev * 100,
+        maxDrawDown = max_dd,
+           turnover = turnover,
+              alpha = alpha * 100)
 }
 
 compute_kpis_fix <- function(value) {
