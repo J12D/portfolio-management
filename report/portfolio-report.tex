@@ -179,6 +179,16 @@
 \end{axis}
 }
 
+
+ %Comment to turn off externalization
+%\usepgfplotslibrary{external}
+%\usetikzlibrary{external}
+%\tikzexternalize[optimize=false,prefix=tikz/]
+%\tikzset{external/system call={lualatex \tikzexternalcheckshellescape -halt-on-error -interaction=batchmode -jobname "\image" "\texsource"}}
+%\tikzset{external/force remake=false}
+%\tikzset{external/mode=list and make}
+%\tikzexternalize
+
 \title{Portfolios for a safe future}
 \author{JD POWER}
 \begin{document}
@@ -234,6 +244,9 @@
 
 
 
+
+
+
 \chapter*{Investment Objectives}
 Presenting you our portfolio choices, we
 
@@ -243,7 +256,23 @@ Presenting you our portfolio choices, we
   \item Maximize Sharpe-Ratio
 \end{itemize}
 
-%\section*{Min Variance}
+%\section*{1 -- Min Variance}
+%\begin{tikzpicture}
+  %\begin{axis}[w={-50}{180}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/minv.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/minv.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/minv.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+  %\end{axis}
+  %\begin{axis}[w={-50}{180}, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/minv.txt}\closedcycle;
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/minv.txt}\closedcycle;
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/minv.txt}\closedcycle;
+  %\end{axis}
+%\end{tikzpicture}
+
 %\begin{tikzpicture}
   %\begin{axis}[relw={-0.3}{1.3}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
     %\addplot table[x=time, y=value.DAX] {plot-data/minv_relw.txt}\closedcycle;
@@ -260,7 +289,25 @@ Presenting you our portfolio choices, we
   %\end{axis}
 %\end{tikzpicture}
 
-%\section*{Max Sharpe}
+%\section*{2 -- Max Sharpe}
+%\begin{tikzpicture}
+  %\begin{axis}[w={-50}{180}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/ms.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/ms.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/ms.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addplot table[x=time, y=value.mixed] {plot-data/ms.txt}\closedcycle;
+    %\addlegendentry{Euribor}
+  %\end{axis}
+  %\begin{axis}[w={-50}{180}, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/ms.txt}\closedcycle;
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/ms.txt}\closedcycle;
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/ms.txt}\closedcycle;
+  %\end{axis}
+%\end{tikzpicture}
+
 %\begin{tikzpicture}
   %\begin{axis}[relw={-0.3}{1.3}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
     %\addplot table[x=time, y=value.DAX] {plot-data/ms_relw.txt}\closedcycle;
@@ -279,172 +326,190 @@ Presenting you our portfolio choices, we
   %\end{axis}
 %\end{tikzpicture}
 
-\section*{Equal Weight}
-\begin{tikzpicture}
-  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
-    \addplot table[x=time, y=value.DAX] {plot-data/fw.txt}\closedcycle;
-    \addlegendentry{DAX}
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/fw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
-    \addplot table[x=time, y=value.Nikkei] {plot-data/fw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-  \end{axis}
-  \begin{axis}[w={0}{170}, bottom, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
-    \addplot table[x=time, y=value.DAX] {plot-data/fw.txt}\closedcycle;
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/fw.txt}\closedcycle;
-    \addplot table[x=time, y=value.Nikkei] {plot-data/fw.txt}\closedcycle;
-  \end{axis}
-\end{tikzpicture}
-
-\section*{Equal Weight Leveraged}
-\begin{tikzpicture}
-  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
-    \addplot table[x=time, y=value.DAX] {plot-data/fw_lev.txt}\closedcycle;
-    \addlegendentry{DAX}
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/fw_lev.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
-    \addplot table[x=time, y=value.Nikkei] {plot-data/fw_lev.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-  \end{axis}
-  \begin{axis}[w={0}{170}, bottom, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
-    \addplot table[x=time, y=value.VXX.Adjusted] {plot-data/fw_lev.txt}\closedcycle;
-    \addlegendentry{VXX}
-  \end{axis}
-\end{tikzpicture}
-
+%\section*{3 -- Equal Weight}
 %\begin{tikzpicture}
-%\begin{axis}[
-  %colorbrewer cycle list=Set1,
-		%no marks,
-		%date coordinates in=x,
-		%xticklabel=\year,
-    %xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
-    %yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
-    %ylabel=Asset value,
-		%xlabel=Time,
-    %legend pos = north west,
-    %every axis plot/.append style={thick, smooth},
-    %width=\textwidth,
-    %height=0.5\textwidth,
-    %legend pos = north west,
-    %stack plots=y,area style,
-    %yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
-    %y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult},
-    %ylabel=Weights,
-    %ymin=-0.3,ymax=1.3,
-    %trim axis left,trim axis right]
-  %\addplot table[x=time, y=value.DAX] {plot-data/minv_relw.txt}\closedcycle;
-  %\addlegendentry{DAX}
-  %\addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_relw.txt}\closedcycle;
-  %\addlegendentry{Dow Jones}
-  %\addplot table[x=time, y=value.Nikkei] {plot-data/minv_relw.txt}\closedcycle;
-  %\addlegendentry{Nikkei}
-%\end{axis}
-%\begin{axis}[
-  %colorbrewer cycle list=Set1,
-    %no marks,
-    %axis y line = none,
-    %date coordinates in=x,
-    %xticklabel=\year,
-    %xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
-    %xlabel=Time,
-    %every axis plot/.append style={thick, smooth},
-    %width=\textwidth,
-    %height=0.5\textwidth,
-    %legend pos = north west,
-    %stack plots=y,area style,
-    %stack dir=plus,
-    %ymin=-0.3, ymax=1.3,
-    %y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult},
-    %trim axis left,trim axis right]
-  %\addplot table[x=time, y=value.DAX] {plot-data/minv_relw.txt}\closedcycle;
-  %\addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_relw.txt}\closedcycle;
-  %\addplot table[x=time, y=value.Nikkei] {plot-data/minv_relw.txt}\closedcycle;
-%\end{axis}
+  %\begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/fw.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/fw.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/fw.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+  %\end{axis}
+  %\begin{axis}[w={0}{170}, bottom, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/fw.txt}\closedcycle;
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/fw.txt}\closedcycle;
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/fw.txt}\closedcycle;
+  %\end{axis}
 %\end{tikzpicture}
 
-%\chapter*{Asset Universe}
-%We're looking at 4 assets: DAX
+%\section*{4 -- Equal Weight Leveraged}
+%\begin{tikzpicture}
+  %\begin{axis}[w={-60}{280}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/fw_lev.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/fw_lev.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/fw_lev.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addplot table[x=time, y=value.VXX.Adjusted] {plot-data/fw_lev.txt}\closedcycle;
+    %\addlegendentry{VXX}
+  %\end{axis}
+  %\begin{axis}[w={-60}{280}, bottom, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
+    %\pgfplotsset{cycle list shift=3}
+    %\addplot table[x=time, y=value.VXX.Adjusted] {plot-data/fw_lev.txt}\closedcycle;
+  %\end{axis}
+%\end{tikzpicture}
 
-%\begin{performanceplot}[ylabel=Asset value]
-  %\addplot table[x=time, y=value.DAX] {plot-data/assets.txt};
-  %\addlegendentry{DAX}
-  %\addplot table[x=time, y=value.Dow.Jones] {plot-data/assets.txt};
-  %\addlegendentry{Dow Jones}
-  %\addplot table[x=time, y=value.Nikkei] {plot-data/assets.txt};
-  %\addlegendentry{Nikkei}
-  %\addplot table[x=time, y=value.VIX] {plot-data/assets.txt};
-  %\addlegendentry{!VIX}
-%\end{performanceplot}
+%\section*{5 -- Black Litterman}
+%\begin{tikzpicture}
+  %\begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/bl.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/bl.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/bl.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+  %\end{axis}
+%\end{tikzpicture}
+
+%\section*{6 -- Equal Risk Contribution}
+%\begin{tikzpicture}
+  %\begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/erc.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/erc.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/erc.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addplot table[x=time, y=value.mixed] {plot-data/erc.txt}\closedcycle;
+    %\addlegendentry{Euribor}
+  %\end{axis}
+%\end{tikzpicture}
+
+%\begin{tikzpicture}
+  %\begin{axis}[relw={-0.1}{1.1}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/erc_relw.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/erc_relw.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/erc_relw.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addplot table[x=time, y=value.mixed] {plot-data/erc_relw.txt}\closedcycle;
+    %\addlegendentry{Euribor}
+  %\end{axis}
+%\end{tikzpicture}
+
+%\section*{7 --- Min Variance Robust}
+%\begin{tikzpicture}
+  %\begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/minv_rob.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_rob.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/minv_rob.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addplot table[x=time, y=value.mixed] {plot-data/minv_rob.txt}\closedcycle;
+    %\addlegendentry{Euribor}
+  %\end{axis}
+%\end{tikzpicture}
+
+%\begin{tikzpicture}
+  %\begin{axis}[relw={-0.1}{1.1}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/minv_rob_relw.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_rob_relw.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/minv_rob_relw.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addplot table[x=time, y=value.mixed] {plot-data/minv_rob_relw.txt}\closedcycle;
+    %\addlegendentry{Euribor}
+  %\end{axis}
+%\end{tikzpicture}
 
 
-%\chapter*{Investment Opportunities}
-%\section*{Max Sharpe Ratio}
-%\portfolioperformanceplot{max_sharpe}{}
+%\section*{8 --- Max Sharpe Robust}
+%\begin{tikzpicture}
+  %\begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/msr_rob.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_rob.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/msr_rob.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addplot table[x=time, y=value.mixed] {plot-data/msr_rob.txt}\closedcycle;
+    %\addlegendentry{Euribor}
+  %\end{axis}
+%\end{tikzpicture}
 
-%\section*{Equal-Weighted}
+%\begin{tikzpicture}
+  %\begin{axis}[relw={-0.1}{1.1}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/msr_rob_relw.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_rob_relw.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/msr_rob_relw.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addplot table[x=time, y=value.mixed] {plot-data/msr_rob_relw.txt}\closedcycle;
+    %\addlegendentry{Euribor}
+  %\end{axis}
+%\end{tikzpicture}
 
-%\section*{Portfolio 3}
+\section*{9 --- Mean Variance with Maximum Allocation Constraint}
+\begin{tikzpicture}
+  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+    \addplot table[x=time, y=value.DAX] {plot-data/msr_rob.txt}\closedcycle;
+    \addlegendentry{DAX}
+    \addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_rob.txt}\closedcycle;
+    \addlegendentry{Dow Jones}
+    \addplot table[x=time, y=value.Nikkei] {plot-data/msr_rob.txt}\closedcycle;
+    \addlegendentry{Nikkei}
+    \addplot table[x=time, y=value.mixed] {plot-data/msr_rob.txt}\closedcycle;
+    \addlegendentry{Euribor}
+  \end{axis}
+\end{tikzpicture}
 
-%\chapter*{Performance Evaluation}
+\begin{tikzpicture}
+  \begin{axis}[relw={-0.1}{1.1}]
+    \addplot table[x=time, y=value.DAX] {plot-data/msr_rob_relw.txt}\closedcycle;
+    \addlegendentry{DAX}
+    \addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_rob_relw.txt}\closedcycle;
+    \addlegendentry{Dow Jones}
+    \addplot table[x=time, y=value.Nikkei] {plot-data/msr_rob_relw.txt}\closedcycle;
+    \addlegendentry{Nikkei}
+    \addplot table[x=time, y=value.mixed] {plot-data/msr_rob_relw.txt}\closedcycle;
+    \addlegendentry{Euribor}
+  \end{axis}
+\end{tikzpicture}
 
-%\section*{Min Variance}
-%\doubleplot{minv}
+\section*{10 --- Mean Variance with Maximum Allocation and Short-Sale Constraint}
+\begin{tikzpicture}
+  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+    \addplot table[x=time, y=value.DAX] {plot-data/msr_rob.txt}\closedcycle;
+    \addlegendentry{DAX}
+    \addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_rob.txt}\closedcycle;
+    \addlegendentry{Dow Jones}
+    \addplot table[x=time, y=value.Nikkei] {plot-data/msr_rob.txt}\closedcycle;
+    \addlegendentry{Nikkei}
+    \addplot table[x=time, y=value.mixed] {plot-data/msr_rob.txt}\closedcycle;
+    \addlegendentry{Euribor}
+  \end{axis}
+\end{tikzpicture}
 
-%\section*{Maximum Sharpe Ratio}
-%\doubleplot{ms}
+\begin{tikzpicture}
+  \begin{axis}[relw={-0.1}{1.1}]
+    \addplot table[x=time, y=value.DAX] {plot-data/msr_rob_relw.txt}\closedcycle;
+    \addlegendentry{DAX}
+    \addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_rob_relw.txt}\closedcycle;
+    \addlegendentry{Dow Jones}
+    \addplot table[x=time, y=value.Nikkei] {plot-data/msr_rob_relw.txt}\closedcycle;
+    \addlegendentry{Nikkei}
+    \addplot table[x=time, y=value.mixed] {plot-data/msr_rob_relw.txt}\closedcycle;
+    \addlegendentry{Euribor}
+  \end{axis}
+\end{tikzpicture}
 
 
-%\section*{1/N}
-%\begin{figure}[!h]
-%\centering
-%\begin{subfigure}[b]{\textwidth}
-%\centering
-%\decomposeplot{equal}{trim axis left,trim axis right}
-%\end{subfigure}
-%\begin{subfigure}[b]{\textwidth}
-%\centering
-%\decomposerelplot{equal_relw}{trim axis left,trim axis right}
-%\end{subfigure}
-%\end{figure}
 
-%\section*{Min Variance}
-%\begin{figure}[!h]
-%\centering
-%\begin{subfigure}[b]{\textwidth}
-%\centering
-%\decomposeplot{minv}{}
-%\end{subfigure}
-%\begin{subfigure}[b]{\textwidth}
-%\centering
-%\decomposerelplot{minv_relw}{}
-%\end{subfigure}
-%\end{figure}
-
-%\section*{Black-Litterman}
-%\begin{figure}[!h]
-%\centering
-%\begin{subfigure}[b]{\textwidth}
-%\centering
-%\decomposeplot{black_littie}{}
-%\end{subfigure}
-%\begin{subfigure}[b]{\textwidth}
-%\centering
-%\decomposerelplot{black_littie_relw}{}
-%\end{subfigure}
-%\end{figure}
-
-%\section*{Max Sharpe}
-%\begin{figure}[!h]
-%\centering
-%\begin{subfigure}[b]{\textwidth}
-%\centering
-%\decomposeplot{ms}{}
-%\end{subfigure}
-%\begin{subfigure}[b]{\textwidth}
-%\centering
-%\decomposerelplot{ms_relw}{}
-%\end{subfigure}
-%\end{figure}
 
 \end{document}
