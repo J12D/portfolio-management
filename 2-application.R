@@ -94,7 +94,7 @@ comp <- list("Minimum Variance" = minv,
 comp
 
 
-## PIMMEL PORTFOLIOS
+## PORTFOLIOS
 #1
 minv %>% compute_kpis(rf_allocation = list(weight = 23/34, rate = euribor))
 minv %>% portfolio_party("minv", rf_allocation = list(weight = 23/34, rate = euribor))
@@ -120,5 +120,6 @@ msr_rob %>% compute_kpis(rf_allocation = list(weight = 16/26, rate = euribor))
 msr_rob %>% portfolio_party("msr_rob", rf_allocation = list(weight = 16/26, rate = euribor))
 #9
 mvo %>% compute_kpis(ass = assets_vxx, rf_allocation = list(weight = 26/34, rate = euribor))
+
 #10
 mva %>% compute_kpis(ass = assets_vxx, rf_allocation = list(weight = 78E-2, rate = euribor))
