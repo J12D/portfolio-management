@@ -103,8 +103,10 @@ ms %>% compute_kpis(rf_allocation = list(weight = 81/93, rate = euribor))
 ms %>% portfolio_party("ms", rf_allocation = list(weight = 81/93, rate = euribor))
 #3
 evaluate_fix(c(1/3, 1/3, 1/3)) %>% compute_kpis_fix
+rep(1/3,3) %>% evaluate_fix_components %>% plotTable("fw")
 #4
 evaluate_fix(c(1/2, 1/2, 1/2, -1/2), ass = assets_vxx) %>% compute_kpis_fix
+c(1/2, 1/2, 1/2, -1/2) %>% evaluate_fix_components(ass = assets_vxx) %>% plotTable("fw_lev")
 #5
 evaluate_fix(bl_w) %>% compute_kpis_fix
 #6
