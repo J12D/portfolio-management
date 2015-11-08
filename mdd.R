@@ -23,9 +23,7 @@ calcMDD <- function(asset) {
 }
 
 getMDD <- function(returns) {
-  returns %>% (function(x)
-    x[endpoints(x),]) %>%
+  returns %>% (function(x) x[endpoints(x),]) %>%
     rollapply(12, calcMDD) %>% na.omit %>%
-    (function(x)
-      sum(x) / (length(x) - 13))
+    (function(x) sum(x) / (length(x) - 13))
 }
