@@ -175,7 +175,7 @@ evaluate_model <- function(model, ass = assets, lookback = "3 years", subset = "
 
 ## ---- performance-calculation --------------------------
 
-portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "months") {
+portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "months", rf_allocation = NULL) {
   returns <- ass %>% ROC(type = "discrete") %>% na.omit
   
   dates <- index(returns[subset])[endpoints(returns[subset], period)] 
@@ -222,7 +222,18 @@ portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "
     }
     res
   }, p, NULL)
-  pf
+  if (!is.null(rf_allocation)) {
+    
+    weight <- rf_allocation[["weight"]]
+    my_euribor <- rf_allocation[["rate"]][index(pf)]
+    my_portfolio <- pf[index(my_euribor)]
+    my_euribor <- cumprod(1 + my_euribor)*100
+    
+    mixed <- merge.xts(my_portfolio * (1 - weight), mixed = my_euribor * weight)
+    mixed
+  } else {
+    pf 
+  }
 }
 
 evaluate_turnover <- function(weights, ass = assets) {
@@ -250,56 +261,58 @@ zero_killer <- function(x) {
 
 
 ## ---- Pipelines ------------------
-pipeline <- function(model, ass = assets) {
+pipeline <- function(model, ass = assets, rf_allocation = NULL) {
   model %>%
     evaluate_model(ass = ass) %>%
     drop_last %>%
-    portfolio_return(ass = ass) %>%
+    portfolio_return(ass = ass, rf_allocation = rf_allocation) %>%
     rowSums.xts %>%
     zero_killer
 }
 
-performance_plot <- function(model, ass = assets) {
-   model %>% pipeline(ass) %>% plotXTS(size = 1)
+performance_plot <- function(model, ass = assets, rf_allocation = NULL) {
+   model %>% pipeline(ass, rf_allocation = rf_allocation) %>% plotXTS(size = 1)
 }
 
-pgfplot <- function(model, name, ass = assets) {
-  model %>% pipeline(ass) %>% plotTable(name)
+pgfplot <- function(model, name, ass = assets, rf_allocation = NULL) {
+  model %>% pipeline(ass, rf_allocation = rf_allocation) %>% plotTable(name)
 }
 
-decompose_plot <- function(model, name, ass = assets) {
+decompose_plot <- function(model, name, ass = assets, rf_allocation = NULL) {
   model %>% evaluate_model(ass = assets) %>%
-    drop_last %>% portfolio_return(ass = assets) %>%
+    drop_last %>% portfolio_return(ass = assets, rf_allocation = rf_allocation) %>%
     plotTable(name)
 }
 
-decompose_relw_plot <- function(model, name, ass = assets) {
+decompose_relw_plot <- function(model, name, ass = assets, rf_allocation = NULL) {
   model %>%
     evaluate_model(ass = assets) %>%
     drop_last %>%
-    portfolio_return(ass = assets) %>%
+    portfolio_return(ass = assets, rf_allocation = rf_allocation) %>%
     apply(2,function(x) x / as.numeric(rowSums.xts(.))) %>% as.xts %>%
     plotTable(name)
 }
 
-decompose <- function(model, ass = assets) {
-  model %>% evaluate_model(ass = assets) %>% drop_last %>% portfolio_return
+decompose <- function(model, ass = assets, rf_allocation = NULL) {
+  model %>% evaluate_model(ass = assets) %>% drop_last %>% portfolio_return(rf_allocation = rf_allocation)
 }
 
-compute_kpis <- function(model, ass = assets) {
+compute_kpis <- function(model, ass = assets, rf_allocation = NULL) {
   weights <- model %>% evaluate_model(ass = ass) %>% drop_last
   value <- weights %>%
-    portfolio_return(ass = ass) %>%
+    portfolio_return(ass = ass, rf_allocation = rf_allocation) %>%
     rowSums.xts %>%
     zero_killer 
   returns <- value %>% ROC(type = "discrete") %>% na.omit
   
-  max_dd <- getMDD(value)
+  w <- rf_allocation[["weight"]]
+  
+  max_dd <- getMDD(value)# * (1 - w)
   excess_mu <- mean(returns) * 252
   standard_dev <- sd(returns) * sqrt(252)
   sharpe <- excess_mu / standard_dev
   
-  turnover <- evaluate_turnover(weights, ass = ass)
+  turnover <- evaluate_turnover(weights, ass = ass) * (1 - w)
   
   factor_merge <- merge.xts(fact[,c("DAX", "Dow.Jones", "Nikkei")], weights[,c("DAX", "Dow.Jones", "Nikkei")]) %>% na.omit
   f_returns <- factor_merge[,c("DAX", "Dow.Jones", "Nikkei")] * factor_merge[,c("DAX", "Dow.Jones", "Nikkei")]
