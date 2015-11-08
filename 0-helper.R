@@ -4,7 +4,7 @@ gg_color_hue <- function(n) {
 }
 
 # convenience function for ggploting xts objects
-plotXTS <- function(xtsObject, title, xlab = "time", ylab = "value", size = 0.5) {
+plotXTS <- function(xtsObject, title, xlab = "time", ylab = "value", size = 0.8) {
   d <- data.frame(time = index(xtsObject), value = drop(coredata(xtsObject)))
   if (dim(xtsObject)[2]) {
     d <- melt(d, id.vars = "time", varnames = names(dimnames(xtsObject)))
