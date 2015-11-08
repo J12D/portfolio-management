@@ -97,7 +97,7 @@ comp
 ## PIMMEL PORTFOLIOS
 #1
 minv %>% compute_kpis(rf_allocation = list(weight = 23/34, rate = euribor))
-minv %>% portfolio_party("minv")
+minv %>% portfolio_party("minv", rf_allocation = list(weight = 23/34, rate = euribor))
 #2
 ms %>% compute_kpis(rf_allocation = list(weight = 81/93, rate = euribor))
 ms %>% portfolio_party("ms", rf_allocation = list(weight = 81/93, rate = euribor))
@@ -111,10 +111,13 @@ c(1/2, 1/2, 1/2, -1/2) %>% evaluate_fix_components(ass = assets_vxx) %>% plotTab
 evaluate_fix(bl_w) %>% compute_kpis_fix
 #6
 erc %>% compute_kpis(rf_allocation = list(weight = 1/3, rate = euribor))
+erc %>% portfolio_party("erc", rf_allocation = list(weight = 1/3, rate = euribor))
 #7
 minv_rob %>% compute_kpis(rf_allocation = list(weight = 16/26, rate = euribor))
+minv_rob %>% portfolio_party("minv_rob", rf_allocation = list(weight = 16/26, rate = euribor))
 #8
 msr_rob %>% compute_kpis(rf_allocation = list(weight = 16/26, rate = euribor))
+msr_rob %>% portfolio_party("msr_rob", rf_allocation = list(weight = 16/26, rate = euribor))
 #9
 mvo %>% compute_kpis(ass = assets_vxx, rf_allocation = list(weight = 26/34, rate = euribor))
 #10
