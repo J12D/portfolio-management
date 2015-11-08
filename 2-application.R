@@ -109,11 +109,7 @@ evaluate_fix(c(1/2, 1/2, 1/2, -1/2), ass = assets_vxx) %>% compute_kpis_fix
 c(1/2, 1/2, 1/2, -1/2) %>% evaluate_fix_components(ass = assets_vxx) %>% plotTable("fw_lev")
 #5
 evaluate_fix(bl_w) %>% compute_kpis_fix
-<<<<<<< HEAD
 bl_w %>% evaluate_fix_components %>% plotTable("bl")
-=======
-evaluate_fix(bl_w) %>% evaluate_fix_components %>% plotTable("fw_bl")
->>>>>>> bbf2b986f56b7cc79fb68b33086f7a42c3de4b5f
 #6
 erc %>% compute_kpis(rf_allocation = list(weight = 1/3, rate = euribor))
 erc %>% portfolio_party("erc", rf_allocation = list(weight = 1/3, rate = euribor))
