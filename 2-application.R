@@ -67,8 +67,13 @@ min_variance_robust() %>% compute_kpis
 
 ## ---- 
 max_sharpe() %>% performance_plot(ass = assets_vxx)
-eff_portfolio(max.allocation = 0.6) %>% compute_kpis(ass=assets_vxx)
+eff_portfolio(max.allocation = 0.6) %>% compute_kpis(ass = assets_vxx)
 
-part1 <- eff_portfolio(max.allocation = 0.6) %>% evaluate_model(ass = assets_vxx) %>% drop_last %>% portfolio_return(ass=assets_vxx) %>% (function(x)x/8) %>% rowSums.xts
-part2 <- (cumprod(1+euribor[index(part1)]) * 7/8*100)
-p <- merge.xts(part1, part2) %>% na.omit
+
+a <- fw %>% evaluate_model %>% drop_last %>% portfolio_return(rf_allocation = list(weight = 0.5, rate = euribor))
+b <- fw %>% evaluate_model %>% drop_last %>% portfolio_return(rf_allocation = list(weight = 0, rate = euribor))
+c <- fw %>% evaluate_model %>% drop_last %>% portfolio_return(rf_allocation = list(weight = 1, rate = euribor))
+merge.xts(a,b,c) %>% plotXTS
+a %>% getMDD
+b %>% getMDD
+c %>% getMDD
