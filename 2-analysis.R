@@ -274,17 +274,17 @@ zero_killer <- function(x) {
 
 
 ## ---- Pipelines ------------------
-pipeline <- function(model, ass = assets, rf_allocation = NULL) {
+pipeline <- function(model, ass = assets, rf_allocation = NULL, subset = "2013/") {
   model %>%
     evaluate_model(ass = ass) %>%
     drop_last %>%
-    portfolio_return(ass = ass, rf_allocation = rf_allocation) %>%
+    portfolio_return(ass = ass, rf_allocation = rf_allocation, subset = subset) %>%
     rowSums.xts %>%
     zero_killer
 }
 
-performance_plot <- function(model, ass = assets, rf_allocation = NULL) {
-   model %>% pipeline(ass, rf_allocation = rf_allocation) %>% plotXTS(size = 1)
+performance_plot <- function(model, ass = assets, rf_allocation = NULL, subset = "2013/") {
+   model %>% pipeline(ass, rf_allocation = rf_allocation, subset = subset) %>% plotXTS(size = 1)
 }
 
 pgfplot <- function(model, name, ass = assets, rf_allocation = NULL) {
@@ -310,7 +310,7 @@ decompose <- function(model, ass = assets, rf_allocation = NULL) {
   model %>% evaluate_model(ass = assets) %>% drop_last %>% portfolio_return(rf_allocation = rf_allocation)
 }
 
-compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = "2012/") {
+compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = "2013/2015-06-31") {
   weights <- model %>% evaluate_model(ass = ass) %>% drop_last
   value <- weights %>%
     portfolio_return(ass = ass, rf_allocation = rf_allocation, subset = subset) %>%
@@ -320,7 +320,7 @@ compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = "20
   
   w <- rf_allocation[["weight"]]
   
-  max_dd <- getMDD(value)# * (1 - w)
+  max_dd <- tryCatch(getMDD(value), error=function(e){print(e);return(NA)})
   excess_mu <- mean(returns) * 252
   standard_dev <- sd(returns) * sqrt(252)
   sharpe <- excess_mu / standard_dev

@@ -9,7 +9,7 @@ portfolio_party <- function(model, name) {
 
 
 ## ---- Minimum Variance ---------------
-minv <- min_variance(cov = cov_returns(shrink = T))
+minv <- min_variance(cov = cov_returns(shrink = T, lag_adjustment = 3))
 portfolio_party(minv, "minv")
 
 
@@ -87,3 +87,11 @@ xtable(a)
 
 
 minv %>% evaluate_model %>% drop_last %>% portfolio_return %>% .["2015/"]
+
+fw %>% compute_kpis(subset = "2015-06-30/")
+
+comp <- list("Minimum Variance" = minv,
+             "Fixed" = fw,
+             "Blackie" = bl) %>%
+  lapply(function(x)compute_kpis(x, subset = "2015-06-30/")) %>% do.call(rbind, .)
+comp
