@@ -185,8 +185,9 @@ portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "
   portfolio_returns <- rowSums(periodical_returns * weights, na.rm = T) %>%
     xts(index(weights)) %>%
     (function(x) cumprod(1 + x))
-  
-  vals <- apply(assets[subset], 1, function(x) x / as.numeric(ass[subset][1,])) %>% t
+
+  vals <- apply(ass[subset], 1, function(x) x / as.numeric(ass[1,])) %>% t
+
   my_asset_returns <- xts(vals, index(ass[subset]))
   
   weight_development <- function(initial_weights, asset_evolution, amt = 1) {
@@ -224,8 +225,8 @@ portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "
   pf
 }
 
-evaluate_turnover <- function(weights) {
-  performance <- portfolio_return(weights)
+evaluate_turnover <- function(weights, ass = assets) {
+  performance <- portfolio_return(weights, ass = ass)
   index(weights) %>% lapply(function(date){
     idx <- which(index(performance) == date)
     differences <- abs(performance[idx] - as.numeric(performance[idx + 1]))
@@ -286,9 +287,9 @@ decompose <- function(model, ass = assets) {
 }
 
 compute_kpis <- function(model, ass = assets) {
-  weights <- model %>% evaluate_model(ass = assets) %>% drop_last
+  weights <- model %>% evaluate_model(ass = ass) %>% drop_last
   value <- weights %>%
-    portfolio_return(ass = assets) %>%
+    portfolio_return(ass = ass) %>%
     rowSums.xts %>%
     zero_killer 
   returns <- value %>% ROC(type = "discrete") %>% na.omit
@@ -298,7 +299,7 @@ compute_kpis <- function(model, ass = assets) {
   standard_dev <- sd(returns) * sqrt(252)
   sharpe <- excess_mu / standard_dev
   
-  turnover <- evaluate_turnover(weights)
+  turnover <- evaluate_turnover(weights, ass = ass)
   
   factor_merge <- merge.xts(fact[,c("DAX", "Dow.Jones", "Nikkei")], weights[,c("DAX", "Dow.Jones", "Nikkei")]) %>% na.omit
   f_returns <- factor_merge[,c("DAX", "Dow.Jones", "Nikkei")] * factor_merge[,c("DAX", "Dow.Jones", "Nikkei")]
