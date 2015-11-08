@@ -69,7 +69,8 @@ max_sharpe_robust() %>% compute_kpis
 min_variance_robust() %>% performance_plot
 min_variance_robust() %>% compute_kpis
 
-## ---- 
+
+## ---- Max Sharpe ----------------
 max_sharpe() %>% performance_plot(ass = assets_vxx)
 eff_portfolio(max.allocation = 0.6) %>% compute_kpis(ass = assets_vxx)
 
@@ -78,6 +79,16 @@ a <- fw %>% evaluate_model %>% drop_last %>% portfolio_return(rf_allocation = li
 b <- fw %>% evaluate_model %>% drop_last %>% portfolio_return(rf_allocation = list(weight = 0, rate = euribor))
 c <- fw %>% evaluate_model %>% drop_last %>% portfolio_return(rf_allocation = list(weight = 1, rate = euribor))
 merge.xts(a,b,c) %>% plotXTS
-a %>% getMDD
-b %>% getMDD
-c %>% getMDD
+
+
+## ---- Produce Tables -----------
+library(xtable)
+a <- list("Minimum Variance" = minv,
+          "Fixed" = fw,
+          "Blackie" = bl) %>%
+  lapply(compute_kpis) %>% do.call(rbind, .)
+
+xtable(a)
+
+
+minv %>% evaluate_model %>% drop_last %>% portfolio_return %>% .["2015/"]
