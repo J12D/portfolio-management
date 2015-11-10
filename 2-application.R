@@ -1,12 +1,5 @@
 source("2-analysis.R")
 
-list(
-  model = minv, #{returns -> weights}
-  rf_allocation = list(weight = 16/26, rate = euribor), #{list(weight, rate), NULL}
-  assets = assets, # xts with assets in columns
-  period = "months", # {"months", "years", "fix"}
-  time = "2012-12-30/2015-06-30"
-)
 
 run_job <- function(job) {
   model <- job[["model"]]
@@ -69,22 +62,21 @@ fix_base["period"] <- "fix"
 run_job(list(model = minv, rf_allocation = NULL, assets = assets, period = "years", time = "2012-12-30/2015-06-30"))
 
 portfolio_party <- function(job_result, name) {
-  job_result[["values"]] %T>%
-    plotTable(name) %>%
-    base_100 %>%
-    plotTable(paste0(name,"_relw"))
+  job_result[["values"]] %>% plotTable(name)
+  job_result[["values"]] %>% base_100 %>% plotTable(paste0(name,"_relw"))
+  job_result[["value"]] %>% plotTable(paste0(name,"_p"))
 }
 
 
 ## ---- 1-Minimum Variance ---------------
 minv <- min_variance(cov = cov_returns(shrink = T, lag_adjustment = 3))
-minv_res <- base %>% with_model(minv) %>% with_allocation(13/24) %>% run_job
+minv_res <- annual_base %>% with_model(minv) %>% with_allocation(0.45) %>% run_job
 minv_res %>% portfolio_party("minv")
 
 ## ---- 2-Maximum Sharpe ---------------
 ms <-  max_sharpe(mean = mean_returns(shrink = 0.5),
            cov = cov_returns(lag_adjustment = 3, shrink = T))
-ms_res <- base %>% with_model(ms) %>% run_job
+ms_res <- annual_base %>% with_model(ms) %>% run_job
 ms_res %>% portfolio_party("ms")
 
 ## ---- 3-Fixed Weights ---------------
@@ -93,7 +85,7 @@ fw_res <- fix_base %>% with_model(fw) %>% run_job
 fw_res %>% portfolio_party("equal")
 
 ## ---- 4-Fixed Weights Leveraged ------
-fw_lev <- fixed_weights(c(1/2, 1/2, 1/2, -1/2))
+fw_lev <- fixed_weights(c(0.36, 0.36, 0.36, -0.08))
 fw_lev_res <- fix_base %>% with_model(fw_lev) %>% on_assets(assets_vxx) %>% run_job
 fw_lev_res %>% portfolio_party("equal")
 
@@ -107,54 +99,51 @@ bl_w_res %>% portfolio_party("bl")
 library(FRAPO)
 
 erc <- equal_risk_contribution(cov = cov_returns(shrink = T, lag_adjustment = 3))
-erc_res <- base %>% with_model(erc) %>% run_job
+erc_res <- base %>% with_model(erc) %>% with_allocation(0.3) %>% run_job
 erc_res %>% portfolio_party("erc")
 detach("package:FRAPO", unload = TRUE)
 
 ## ---- 7-Robust MinVP ---------------
 minv_rob <- min_variance_robust()
-minv_rob_res <- base %>% with_model(minv_rob) %>% run_job
+minv_rob_res <- annual_base %>% with_model(minv_rob) %>% run_job
 minv_rob_res %>% portfolio_party("minv_rob")
 
 ## ---- 8-Robust MVP ---------------
 msr_rob <- max_sharpe_robust()
-msr_rob_res <- base %>% with_model(minv_rob) %>% run_job
+msr_rob_res <- annual_base %>% with_model(minv_rob) %>% run_job
 msr_rob_res %>% portfolio_party("msr_rob")
 
 ## ---- 9-MVP Max Allocation ---------------
 mv_max_alloc <- eff_portfolio(mean = mean_returns(shrink = 0.5),
                      cov = cov_returns(shrink = T), no_shorts = T, max.allocation = 0.5)
 
-mv_max_alloc_res <- base %>% with_model(mv_max_alloc) %>% run_job
+mv_max_alloc_res <- base %>% with_model(mv_max_alloc) %>% on_assets(assets_vxx) %>% with_allocation(0.75) %>% run_job
 mv_max_alloc_res %>% portfolio_party("mvo")
 
 ## ---- 10-MVP Max Allocation No Short ---------------
 mv_max_alloc_no_short <- eff_portfolio(mean = mean_returns(shrink = 0.5),
                      cov = cov_returns(shrink = T), no_shorts = F, max.allocation = 0.5)
 
-mv_max_alloc_no_short_res <- base %>% with_model(mv_max_alloc_no_short) %>% run_job
+mv_max_alloc_no_short_res <- base %>% with_model(mv_max_alloc_no_short) %>% on_assets(assets_vxx) %>% with_allocation(0.75) %>% run_job
 mv_max_alloc_no_short_res %>% portfolio_party("mva")
 
 
 ## ---- Produce Tables -----------
 library(xtable)
-a <- list("Minimum Variance" = minv,
-          "Fixed" = fw,
-          "Blackie" = bl) %>%
-  lapply(compute_kpis) %>% do.call(rbind, .)
-
-xtable(a)
 
 comp <- list("Minimum Variance" = minv_res,
              "Maximum Sharpe" = ms_res,
+             "Fixed Weights" = fw_res,
+             "Fixed Weights Leveraged" = fw_lev_res,
+             "Black Litterman" = bl_w_res,
              "Equal Risk" = erc_res,
              "Min Variance Robust" = minv_rob_res,
              "Maximum Sharpe Robust" = msr_rob_res,
-             "Mean Variance Maximum Allocation" = mva_res,
-             "Mean Variance Maximum Allocation & Short-Sales" = mvo_res) %>%
+             "Mean Variance Maximum Allocation" = mv_max_alloc_res,
+             "Mean Variance Maximum Allocation & Short-Sales" = mv_max_alloc_no_short_res) %>%
   lapply(function(x)x$kpis) %>% do.call(rbind, .)
 comp
-
+#xtable(comp)
 
 # ## PORTFOLIOS
 # #1
@@ -187,3 +176,12 @@ comp
 # #10
 # c10 <- mva %>% compute_kpis(ass = assets_vxx, rf_allocation = list(weight = 78E-2, rate = euribor))
 # mva %>% portfolio_party("mva", rf_allocation = list(weight = 78E-2, rate = euribor), ass = assets_vxx)
+# 
+# 
+# list(
+#   model = minv, #{returns -> weights}
+#   rf_allocation = list(weight = 16/26, rate = euribor), #{list(weight, rate), NULL}
+#   assets = assets, # xts with assets in columns
+#   period = "months", # {"months", "years", "fix"}
+#   time = "2012-12-30/2015-06-30"
+# )

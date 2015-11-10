@@ -317,7 +317,7 @@ compute_kpis <- function(value, values, weights, job) {
     turnover <- 0
     alpha <- NA  
   } else {
-    turnover <- evaluate_turnover(weights, values, period = job[["period"]], subset = job[["subset"]]) * ifelse(is.null(rf_allocation),1,(1 - w))
+    turnover <- evaluate_turnover(weights, values, period = job[["period"]], subset = job[["subset"]]) #* ifelse(is.null(rf_allocation),1,(1 - w))
     
     factor_merge <- merge.xts(fact[,c("DAX", "Dow.Jones", "Nikkei")], weights[,c("DAX", "Dow.Jones", "Nikkei")]) %>% na.omit
     f_returns <- factor_merge[,c("DAX", "Dow.Jones", "Nikkei")] * factor_merge[,c("DAX", "Dow.Jones", "Nikkei")]
