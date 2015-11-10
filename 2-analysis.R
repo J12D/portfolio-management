@@ -115,7 +115,7 @@ max_sharpe_blacklitterman <- function(P = BL_P, v = BL_v) {
   function(returns) {
     mu <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLMu
     c <- black.litterman(returns["/2012"], P, Mu = NULL, Sigma = NULL, Views = v)$BLSigma
-    mean_variance_base(mu, c)
+    mean_variance_base(mu, c) %>% t
   }
 }
 
@@ -150,7 +150,7 @@ min_variance_robust <- function() {
 
 fixed_weights <- function(weights) {
   function(returns) {
-    w <- t(weights)
+    w <- t(weights) %>% as.data.frame %>% as.vector
     colnames(w) <- colnames(returns)
     w
   }
@@ -313,11 +313,12 @@ compute_kpis <- function(value, values, weights, job) {
   standard_dev <- sd(returns) * sqrt(252) * 100
   sharpe <- mu / standard_dev
   
-  turnover <- evaluate_turnover(weights, values, period = job[["period"]], subset = job[["subset"]]) * ifelse(is.null(rf_allocation),1,(1 - w))
-  
   if (job[["period"]] == "fix") {
-    alpha <- NULL  
+    turnover <- 0
+    alpha <- NA  
   } else {
+    turnover <- evaluate_turnover(weights, values, period = job[["period"]], subset = job[["subset"]]) * ifelse(is.null(rf_allocation),1,(1 - w))
+    
     factor_merge <- merge.xts(fact[,c("DAX", "Dow.Jones", "Nikkei")], weights[,c("DAX", "Dow.Jones", "Nikkei")]) %>% na.omit
     f_returns <- factor_merge[,c("DAX", "Dow.Jones", "Nikkei")] * factor_merge[,c("DAX", "Dow.Jones", "Nikkei")]
     
@@ -333,10 +334,13 @@ compute_kpis <- function(value, values, weights, job) {
 }
 
 evaluate_fix_components <- function(weights, ass = assets, subset = my_subset) {
-  a <- ass[subset]
-  a %<>% apply(2, function(x) x * 100 / (coredata(x[1]))) %>% as.xts
+  assets <- ass[subset]
+  t <- index(assets)
+  res <- assets %>% apply(2, function(x) x * 100 / (coredata(x[1]))) %>% as.xts
+  res <- drop(coredata(res))
+  res %<>% apply(1,function(x) x * drop(weights)) %>% Reduce(rbind, .)
   
-  t(t(a) * drop(weights)) %>% as.xts
+  xts(res, t)
 }
 
 evaluate_fix <- function(weights, ass = assets, subset = "2013/2015-06-30") {
