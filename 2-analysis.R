@@ -11,6 +11,7 @@ source("1-data.R")
 source("mdd.R")
 source("3-analysis2.R")
 
+my_subset = "2012-12-30/2015-06-30"
 
 ## ---- Mean ----------
 mean_returns <- function(shrink = 0, annualize = 252) {
@@ -169,7 +170,7 @@ equal_risk_contribution <- function(cov = cov_returns()) {
 # select an expanding window of returns, starting end of 2012 and feed it into the model
 months_calibration <- index(returns["2012/"])[endpoints(returns["2012/"], "months")]
 
-evaluate_model <- function(model, ass = assets, lookback = "3 years", subset = "2012/", period = "months") {
+evaluate_model <- function(model, ass = assets, lookback = "3 years", subset = my_subset, period = "months") {
   returns <- ass %>% ROC(type = "discrete") %>% na.omit
   vars <- index(returns[subset])[endpoints(returns[subset], period)] %>% 
     lapply(function(date) returns[paste0("/", date)]) %>%
@@ -185,7 +186,7 @@ evaluate_model <- function(model, ass = assets, lookback = "3 years", subset = "
 
 ## ---- performance-calculation --------------------------
 
-portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "months", rf_allocation = NULL) {
+portfolio_return <- function(weights, ass = assets, subset = my_subset, period = "months", rf_allocation = NULL) {
   returns <- ass %>% ROC(type = "discrete") %>% na.omit
   
   dates <- index(returns[subset])[endpoints(returns[subset], period)] 
@@ -249,14 +250,16 @@ portfolio_return <- function(weights, ass = assets, subset = "2012/", period = "
   }
 }
 
-evaluate_turnover <- function(weights, ass = assets) {
-  performance <- portfolio_return(weights, ass = ass)
-  index(weights) %>% lapply(function(date){
+evaluate_turnover <- function(weights, period = "months", subset = my_subset, ass = assets) {
+  stopifnot(any(period == "months", period == "years"))
+  periods_per_year <- ifelse(period == "months", 12, 1)
+  performance <- portfolio_return(weights, ass = ass, period = period, subset = subset)
+  index(weights)[-1] %>% lapply(function(date){
     idx <- which(index(performance) == date)
     differences <- abs(performance[idx] - as.numeric(performance[idx + 1]))
     differences %>% sum
   }) %>% unlist %>% (function(weight_changes){
-    sum(weight_changes) / (length(weight_changes) / 12)
+    sum(weight_changes) / (length(weight_changes) / periods_per_year)
   }) %>% (function(turnover) turnover / 2)
 }
 
@@ -274,7 +277,7 @@ zero_killer <- function(x) {
 
 
 ## ---- Pipelines ------------------
-pipeline <- function(model, ass = assets, rf_allocation = NULL, subset = "2013/") {
+pipeline <- function(model, ass = assets, rf_allocation = NULL, subset = my_subset) {
   model %>%
     evaluate_model(ass = ass) %>%
     drop_last %>%
@@ -283,34 +286,24 @@ pipeline <- function(model, ass = assets, rf_allocation = NULL, subset = "2013/"
     zero_killer
 }
 
-performance_plot <- function(model, ass = assets, rf_allocation = NULL, subset = "2013/") {
+performance_plot <- function(model, ass = assets, rf_allocation = NULL, subset = my_subset) {
    model %>% pipeline(ass, rf_allocation = rf_allocation, subset = subset) %>% plotXTS(size = 1)
 }
 
-pgfplot <- function(model, name, ass = assets, rf_allocation = NULL, subset = "2013/2015-06-30") {
+pgfplot <- function(model, name, ass = assets, rf_allocation = NULL, subset = my_subset) {
   model %>% pipeline(ass, rf_allocation = rf_allocation, subset = subset) %>% plotTable(name)
 }
 
-decompose_plot <- function(model, name, ass = assets, rf_allocation = NULL, subset = "2013/2015-06-30") {
-  model %>% evaluate_model(ass = assets) %>%
-    drop_last %>% portfolio_return(ass = assets, rf_allocation = rf_allocation, subset = subset) %>%
-    plotTable(name)
-}
-
-decompose_relw_plot <- function(model, name, ass = assets, rf_allocation = NULL, subset = "2013/2015-06-30") {
-  model %>%
-    evaluate_model(ass = assets) %>%
-    drop_last %>%
-    portfolio_return(ass = assets, rf_allocation = rf_allocation, subset = subset) %>%
-    apply(2,function(x) x / as.numeric(rowSums.xts(.))) %>% as.xts %>%
-    plotTable(name)
+base_100 <- function(values) {
+  values %>%
+    apply(2,function(x) x / as.numeric(rowSums.xts(.))) %>% as.xts
 }
 
 decompose <- function(model, ass = assets, rf_allocation = NULL) {
   model %>% evaluate_model(ass = assets) %>% drop_last %>% portfolio_return(rf_allocation = rf_allocation)
 }
 
-compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = "2013/2015-06-30") {
+compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = my_subset) {
   weights <- model %>% evaluate_model(ass = ass) %>% drop_last
   value <- weights %>%
     portfolio_return(ass = ass, rf_allocation = rf_allocation, subset = subset) %>%
@@ -320,7 +313,7 @@ compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = "20
   
   w <- rf_allocation[["weight"]]
   
-  max_dd <- tryCatch(getMDD(value), error=function(e){print(e);return(NA)})
+  max_dd <- tryCatch(getMDD(value), error = function(e){print(e);return(NA)})
   excess_mu <- mean(returns) * 252
   standard_dev <- sd(returns) * sqrt(252)
   sharpe <- excess_mu / standard_dev
@@ -343,18 +336,19 @@ compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = "20
 compute_kpis_fix <- function(value) {
   returns <- value %>% ROC(type = "discrete") %>% na.omit
   
-  max_dd <- getMDD(value)
+  max_dd <- tryCatch(getMDD(value), error = function(e){print(e);return(NA)})
   excess_mu <- mean(returns) * 252
   standard_dev <- sd(returns) * sqrt(252)
   sharpe <- excess_mu / standard_dev
-  list("sharpe"        = sharpe,
-       "mu"            = excess_mu,
-       "sigma"         = standard_dev,
-       "max_draw_down" = max_dd,
-       "turnover"      = 0)
+  data.frame(sharpe        = sharpe,
+             mu            = excess_mu,
+             sigma         = standard_dev,
+             max_draw_down = max_dd,
+             turnover      = 0,
+             alpha = NA)
 }
 
-evaluate_fix_components <- function(weights, ass = assets, subset = "2013/2015-06-30") {
+evaluate_fix_components <- function(weights, ass = assets, subset = my_subset) {
   a <- ass[subset]
   a %<>% apply(2, function(x) x * 100 / (coredata(x[1]))) %>% as.xts
   
