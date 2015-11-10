@@ -250,13 +250,12 @@ portfolio_return <- function(weights, ass = assets, subset = my_subset, period =
   }
 }
 
-evaluate_turnover <- function(weights, period = "months", subset = my_subset, ass = assets) {
+evaluate_turnover <- function(weights, values, period = "months", subset = my_subset, ass = assets) {
   stopifnot(any(period == "months", period == "years"))
   periods_per_year <- ifelse(period == "months", 12, 1)
-  performance <- portfolio_return(weights, ass = ass, period = period, subset = subset)
-  index(weights)[-1] %>% lapply(function(date){
-    idx <- which(index(performance) == date)
-    differences <- abs(performance[idx] - as.numeric(performance[idx + 1]))
+  index(weights)[-c(1, length(index(weights)))] %>% lapply(function(date){
+    idx <- which(index(values) == date)
+    differences <- abs(values[idx] - as.numeric(values[idx + 1]))
     differences %>% sum
   }) %>% unlist %>% (function(weight_changes){
     sum(weight_changes) / (length(weight_changes) / periods_per_year)
@@ -303,49 +302,34 @@ decompose <- function(model, ass = assets, rf_allocation = NULL) {
   model %>% evaluate_model(ass = assets) %>% drop_last %>% portfolio_return(rf_allocation = rf_allocation)
 }
 
-compute_kpis <- function(model, ass = assets, rf_allocation = NULL, subset = my_subset) {
-  weights <- model %>% evaluate_model(ass = ass) %>% drop_last
-  value <- weights %>%
-    portfolio_return(ass = ass, rf_allocation = rf_allocation, subset = subset) %>%
-    rowSums.xts %>%
-    zero_killer 
+compute_kpis <- function(value, values, weights, job) {
+  rf_allocation <- job[["rf_allocation"]]
   returns <- value %>% ROC(type = "discrete") %>% na.omit
   
-  w <- rf_allocation[["weight"]]
+  w <- job[["rf_allocation"]][["weight"]]
   
   max_dd <- tryCatch(getMDD(value), error = function(e){print(e);return(NA)})
-  excess_mu <- mean(returns) * 252
-  standard_dev <- sd(returns) * sqrt(252)
-  sharpe <- excess_mu / standard_dev
+  mu <- mean(returns) * 252 * 100
+  standard_dev <- sd(returns) * sqrt(252) * 100
+  sharpe <- mu / standard_dev
   
-  turnover <- evaluate_turnover(weights, ass = ass) * ifelse(is.null(rf_allocation),1,(1 - w))
+  turnover <- evaluate_turnover(weights, values, period = job[["period"]], subset = job[["subset"]]) * ifelse(is.null(rf_allocation),1,(1 - w))
   
-  factor_merge <- merge.xts(fact[,c("DAX", "Dow.Jones", "Nikkei")], weights[,c("DAX", "Dow.Jones", "Nikkei")]) %>% na.omit
-  f_returns <- factor_merge[,c("DAX", "Dow.Jones", "Nikkei")] * factor_merge[,c("DAX", "Dow.Jones", "Nikkei")]
-
-  alpha <- sum(f_returns) / (NROW(f_returns) / 12)
+  if (job[["period"]] == "fix") {
+    alpha <- NULL  
+  } else {
+    factor_merge <- merge.xts(fact[,c("DAX", "Dow.Jones", "Nikkei")], weights[,c("DAX", "Dow.Jones", "Nikkei")]) %>% na.omit
+    f_returns <- factor_merge[,c("DAX", "Dow.Jones", "Nikkei")] * factor_merge[,c("DAX", "Dow.Jones", "Nikkei")]
+    
+    alpha <- sum(f_returns) / (NROW(f_returns) / 12) * 100
+  }
   
   data.frame(sharpe = sharpe,
-                 mu = excess_mu * 100,
-              sigma = standard_dev * 100,
+                 mu = mu,
+              sigma = standard_dev,
         maxDrawDown = max_dd,
            turnover = turnover,
-              alpha = alpha * 100)
-}
-
-compute_kpis_fix <- function(value) {
-  returns <- value %>% ROC(type = "discrete") %>% na.omit
-  
-  max_dd <- tryCatch(getMDD(value), error = function(e){print(e);return(NA)})
-  excess_mu <- mean(returns) * 252
-  standard_dev <- sd(returns) * sqrt(252)
-  sharpe <- excess_mu / standard_dev
-  data.frame(sharpe        = sharpe,
-             mu            = excess_mu,
-             sigma         = standard_dev,
-             max_draw_down = max_dd,
-             turnover      = 0,
-             alpha = NA)
+              alpha = alpha)
 }
 
 evaluate_fix_components <- function(weights, ass = assets, subset = my_subset) {

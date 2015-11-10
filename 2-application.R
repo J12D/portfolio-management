@@ -26,7 +26,9 @@ run_job <- function(job) {
   }
   
   value <- values %>% rowSums.xts
-  list(weights = weights, values = values, value = value, job = job)
+  kpis <- compute_kpis(value, values, weights, job)
+  
+  list(weights = weights, values = values, value = value, kpis = kpis, job = job)
 }
 
 with_model <- function(job, model) {
