@@ -134,7 +134,9 @@ max_sharpe_robust <- function() {
     moments <- cov.nnve(returns, k = 12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)
     mu <- moments$mu
     c <- moments$cov
-    mean_variance_base(mu, c) %>% t
+    w <- mean_variance_base(mu, c) %>% t
+    colnames(w) <- colnames(returns)
+    w
   }
 }
 
@@ -143,7 +145,9 @@ min_variance_robust <- function() {
     moments <- cov.nnve(returns, k = 12, pnoise = 0.05, emconv = 0.001, bound = 1.5, extension = TRUE, devsm = 0.01)
     mu <- moments$mu
     c <- moments$cov
-    mean_variance_optimal(mu, c %>% solve, Inf) %>% t
+    w <- mean_variance_optimal(mu, c %>% solve, Inf) %>% t
+    colnames(w) <- colnames(returns)
+    w
   }
 }
 
@@ -319,10 +323,13 @@ compute_kpis <- function(value, values, weights, job) {
   } else {
     turnover <- evaluate_turnover(weights, values, period = job[["period"]], subset = job[["subset"]]) #* ifelse(is.null(rf_allocation),1,(1 - w))
     
-    factor_merge <- merge.xts(fact[,c("DAX", "Dow.Jones", "Nikkei")], weights[,c("DAX", "Dow.Jones", "Nikkei")]) %>% na.omit
-    f_returns <- factor_merge[,c("DAX", "Dow.Jones", "Nikkei")] * factor_merge[,c("DAX", "Dow.Jones", "Nikkei")]
+    factor_map <- list("DAX" = "EU", "Dow Jones" = "US", "Nikkei" = "JP", "VXX" = "US")
+    aligned_weights <- weights[index(weights) %in% index(fact)]
+    aligned_fact <- fact[index(fact) %in% index(aligned_weights)]
     
-    alpha <- sum(f_returns) / (NROW(f_returns) / 12) * 100
+    alpha <- colnames(aligned_weights) %>% lapply(function(col) {
+      sum(aligned_weights[, col] * aligned_fact[, factor_map[[col]]])
+    }) %>% Reduce(`+`, .)
   }
   
   data.frame(sharpe = sharpe,
@@ -330,7 +337,8 @@ compute_kpis <- function(value, values, weights, job) {
               sigma = standard_dev,
         maxDrawDown = max_dd,
            turnover = turnover,
-              alpha = alpha)
+   transaction_cost = turnover * 50E-4,
+              alpha = alpha * 100)
 }
 
 evaluate_fix_components <- function(weights, ass = assets, subset = my_subset) {
@@ -361,9 +369,9 @@ index(jp_factors) <- timepoints
 
 returns_monthly <- assets[timepoints] %>% ROC(type = "discrete") %>% na.omit
 
-us_d <- merge.xts(returns_monthly["/2012-01-01"][,"Dow Jones"] %>% lag(-1), us_factors) %>% na.omit
-eu_d <- merge.xts(returns_monthly["/2012-01-01"][,"DAX"] %>% lag(-1), eu_factors) %>% na.omit
-jp_d <- merge.xts(returns_monthly["/2012-01-01"][,"Nikkei"] %>% lag(-1), jp_factors) %>% na.omit
+us_d <- merge.xts(returns_monthly["/2012-01-01"][,"Dow Jones"], us_factors) %>% na.omit
+eu_d <- merge.xts(returns_monthly["/2012-01-01"][,"DAX"], eu_factors) %>% na.omit
+jp_d <- merge.xts(returns_monthly["/2012-01-01"][,"Nikkei"], jp_factors) %>% na.omit
 
 models <- list(EU = list("DAX", eu_d),
                US = list("Dow.Jones", us_d),
@@ -383,6 +391,8 @@ index(factor_returns) <- returns_monthly %>% index
 
 fact <- returns_monthly[,1:3] - factor_returns
 fact <- fact / (NROW(fact) / 12)
+colnames(fact) <- c("EU", "US", "JP")
+
 factor_alpha <- apply(fact, 2, sum)
 
 rm(list = c("eu_factor_return", "us_factor_return", "jp_factor_return", "factor_returns", "us_d", "eu_d", "jp_d"))

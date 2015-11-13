@@ -1,351 +1,381 @@
-\documentclass[roman]{scrreprt}
+\documentclass{scrreprt}
 
 \usepackage{jdcommands}
 \jdfontsetup{}
 
+\usepackage{amssymb}
 \usepackage[USenglish]{babel}
 
 \usepackage{pgfplots}
 \pgfplotsset{compat=newest}
-\usepgfplotslibrary{dateplot,colorbrewer}
+\usepgfplotslibrary{dateplot}
 
 \usepackage{subcaption}
-
-%xtick={2008-01-01,2009-01-01,2010-01-01,2001-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
-\pgfplotsset{y label style={at={(axis description cs:-0.08,.5)}, text depth=0.25ex, anchor=south,}}
-
-\newenvironment{performanceplot}[1][]{
-\begin{tikzpicture}
-\begin{axis}[
-		no marks,
-		date coordinates in=x,
-		xticklabel=\year,
-    xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
-		%xticklabel style={/pgf/number format/.cd,fixed,precision=2},
-    %yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
-    yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
-		ylabel=Performance,
-		xlabel=Time,
-    legend pos = north west,
-    every axis plot/.append style={thick, smooth},
-    width=\textwidth,
-    height=0.5\textwidth,
-    #1]
-}{%
-\end{axis}
-\end{tikzpicture}
-}
-
-\newcommand{\portfolioperformanceplot}[2]{
-\begin{tikzpicture}
-\begin{axis}[
-		no marks,
-		date coordinates in=x,
-		xticklabel=\year,
-    xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
-		%xticklabel style={/pgf/number format/.cd,fixed,precision=2},
-    %yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
-    yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
-		ylabel=Performance,
-		xlabel=Time,
-    legend pos = north west,
-    every axis plot/.append style={thick, smooth},
-    width=\textwidth,
-    height=0.5\textwidth,
-    #2]
-  \addplot table[x=time, y=value] {plot-data/#1.txt};
-\end{axis}
-\end{tikzpicture}
-}
-
-\newcommand{\decomposeplot}[2]{
-\begin{tikzpicture}
-\begin{axis}[
-		no marks,
-		date coordinates in=x,
-		xticklabel=\year,
-    xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
-    yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
-    ylabel=Asset value,
-    ymin=0,
-		xlabel=Time,
-    legend pos = north west,
-    every axis plot/.append style={thick, smooth},
-    width=\textwidth,
-    height=0.5\textwidth,
-    legend pos = north west,
-    stack plots=y,area style,
-    trim axis left,trim axis right,
-    #2]
-  \addplot table[x=time, y=value.DAX] {plot-data/#1.txt}\closedcycle;
-  \addlegendentry{DAX}
-  \addplot table[x=time, y=value.Dow.Jones] {plot-data/#1.txt}\closedcycle;
-  \addlegendentry{Dow Jones}
-  \addplot table[x=time, y=value.Nikkei] {plot-data/#1.txt}\closedcycle;
-  \addlegendentry{Nikkei}
-\end{axis}
-\end{tikzpicture}
-}
-
-\newcommand{\decomposerelplot}[2]{
-\begin{tikzpicture}
-\begin{axis}[
-		no marks,
-		date coordinates in=x,
-		xticklabel=\year,
-    xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
-    yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
-    ylabel=Asset value,
-    ymin=0,
-		xlabel=Time,
-    legend pos = north west,
-    every axis plot/.append style={thick, smooth},
-    width=\textwidth,
-    height=0.5\textwidth,
-    legend pos = north west,
-    stack plots=y,area style,
-    yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
-    ylabel=Weights,
-    trim axis left,trim axis right,
-    #2]
-  \addplot table[x=time, y=value.DAX] {plot-data/#1.txt}\closedcycle;
-  \addlegendentry{DAX}
-  \addplot table[x=time, y=value.Dow.Jones] {plot-data/#1.txt}\closedcycle;
-  \addlegendentry{Dow Jones}
-  \addplot table[x=time, y=value.Nikkei] {plot-data/#1.txt}\closedcycle;
-  \addlegendentry{Nikkei}
-\end{axis}
-\end{tikzpicture}
-}
-
-\newcommand{\doubleplot}[1]{
-\begin{figure}[!h]
-\centering
-\begin{subfigure}[b]{\textwidth}
-\centering
-\decomposeplot{#1}{trim axis left,trim axis right}
-\end{subfigure}
-\begin{subfigure}[b]{\textwidth}
-\centering
-\decomposerelplot{#1_relw}{trim axis left,trim axis right}
-\end{subfigure}
-\end{figure}%
-}
-
-\newenvironment{growtop}[2]{
-\begin{axis}[
-  colorbrewer cycle list=Set1,
-		no marks,
-		date coordinates in=x,
-		xticklabel=\year,
-    xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
-    yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
-    ylabel=Asset value,
-		xlabel=Time,
-    legend pos = north west,
-    every axis plot/.append style={thick, smooth},
-    width=\textwidth,
-    height=0.5\textwidth,
-    legend pos = north west,
-    stack plots=y,area style,
-    yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
-    y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult},
-    ylabel=Weights,
-    ymin=#1,ymax=#2,
-    trim axis left,trim axis right]
-}{
-\end{axis}
-}
-
-\newenvironment{growbottom}[2]{
-\begin{axis}[
-  colorbrewer cycle list=Set1,
-    no marks,
-    axis y line = none,
-    date coordinates in=x,
-    xticklabel=\year,
-    xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
-    xlabel=Time,
-    every axis plot/.append style={thick, smooth},
-    width=\textwidth,
-    height=0.5\textwidth,
-    legend pos = north west,
-    stack plots=y,area style,
-    stack dir=plus,
-    ymin=#1, ymax=#2,
-    y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult},
-    trim axis left,trim axis right]
-}{
-\end{axis}
-}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{listings}
+\lstset{numbers=left, numberstyle=\tiny, frame=lines, breaklines, caption=\lstname}
 
 
- %Comment to turn off externalization
-%\usepgfplotslibrary{external}
-%\usetikzlibrary{external}
-%\tikzexternalize[optimize=false,prefix=tikz/]
-%\tikzset{external/system call={lualatex \tikzexternalcheckshellescape -halt-on-error -interaction=batchmode -jobname "\image" "\texsource"}}
-%\tikzset{external/force remake=false}
-%\tikzset{external/mode=list and make}
-%\tikzexternalize
+\usetikzlibrary{external}
+\tikzexternalize[prefix=tikz/]
+
+\definecolor{lightblue}{RGB}{0,152,219}
+\definecolor{warmgrey}{RGB}{152,143,134}
+\definecolor{orange}{RGB}{255,161,0}
+\definecolor{green}{RGB}{122,184,0}
+\definecolor{palegrey}{RGB}{224,230,230}
 
 \title{Portfolios for a safe future}
 \author{JD POWER}
 \begin{document}
 \maketitle
 
+\pgfplotsset{y label style={at={(axis description cs:-0.08,.5)}, text depth=0.25ex, anchor=south,}}
+
+\pgfplotsset{every axis legend/.append style={
+        at={(0.5,1.03)},
+        anchor=south}}
+
 \pgfplotsset{
-   relw/.style 2 args={
-      colorbrewer cycle list=Set1,
+    /pgfplots/bar cycle list/.style={/pgfplots/cycle list={%
+        {fill=lightblue, lightblue!80!black},
+        {fill=warmgrey, warmgrey!80!black},
+        {fill=orange, orange!80!black},
+        {fill=green, green!80!black},
+        {fill=palegrey, palegrey!80!black},
+        %{fill=lightblue},
+      %{teal,fill=teal!80!black},%
+      %{orange,fill=orange!80!black},%
+      %{cyan!60!black,fill=cyan!80!black},%
+      %{yellow!60!black,fill=yellow!80!black},%
+      %{pinky!80!black,fill=pinky!90!black},%
+  }
+},
+}
+
+\pgfplotsset{
+  gen/.style={
       no marks,
       date coordinates in=x,
       xticklabel=\year,
       xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
       yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
-      ylabel=Weights,
-      xlabel=Time,
       legend pos = north west,
       every axis plot/.append style={thick, smooth},
       width=\textwidth,
       height=0.5\textwidth,
       legend pos = north west,
-      stack plots=y,area style,
+      legend columns=5,
+      every axis legend/.append style={at={(0.5,1.03)}, anchor=south},
+      trim axis left,trim axis right,
+      stack plots=y,
+      cycle list name=exotic,
+      area style,
+      every axis/.append style={font=\small},
+      legend style = {font=\small},
+  },
+  total/.style={red, ultra thick, line legend},
+   relw/.style 2 args={
+      gen,
+      ylabel=,
       yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
       ymin=#1, ymax=#2,
-      trim axis left,trim axis right
     },
-  top/.style={y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}},
-  bottom/.style={y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}},
-}
-
-\pgfplotsset{
    w/.style 2 args={
-      colorbrewer cycle list=Set1,
-      no marks,
-      date coordinates in=x,
-      xticklabel=\year,
-      xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
-      yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
-      ylabel=Portfolio value,
-      xlabel=Time,
-      legend pos = north west,
-      every axis plot/.append style={thick, smooth},
-      width=\textwidth,
-      height=0.5\textwidth,
-      legend pos = north west,
-      stack plots=y,area style,
+      gen,
+      ylabel=,
       yticklabel=\pgfmathparse{\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
       ymin=#1, ymax=#2,
-      trim axis left,trim axis right
     },
-  top/.style={y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}},
   bottom/.style={axis y line = none},
+  cycle list name=exotic
 }
 
-
-
-
-
-
-\chapter*{Investment Objectives}
-Presenting you our portfolio choices, we
+\chapter{Become active regarding your wealth}
+First we would like to introduce ourselves and JD investments.
+JD investments is one of the world’s leading investment organizations with an asset under management of over EUR 132 billion.
+The company offers institutions traditional and alternative investments across all major asset classes.
+We offer our clients first-rate product management and a consistently superior client service platform.
+ 
+We are JD Investments’ team of most experienced portfolio managers.
+With over 30 years of market experience, global expertise and one of the smallest but most successful asset management team for active asset allocation and risk mitigation in Europe.
+The following factors make us specialists in our industry: 
 
 \begin{itemize}
-  \item Drawdown less than 10\% per year
-  \item Turnover of less than 10\% per year
-  \item Maximize Sharpe-Ratio
+\item[$\checkmark$] Diversified active portfolio manager
+\item[$\checkmark$] Global investment and research capabilities 
+\item[$\checkmark$] Consultative local delivery 
+\item[$\checkmark$] Forward looking investment strategies 
 \end{itemize}
 
-\newpage\section*{1 -- Min Variance}
-\begin{tikzpicture}
-  \begin{axis}[w={-50}{180}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
-    \addplot table[x=time, y=value.DAX] {plot-data/minv.txt}\closedcycle;
-    \addlegendentry{DAX}
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
-    \addplot table[x=time, y=value.Nikkei] {plot-data/minv.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-  \end{axis}
-  \begin{axis}[w={-50}{180}, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
-    \addplot table[x=time, y=value.DAX] {plot-data/minv.txt}\closedcycle;
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv.txt}\closedcycle;
-    \addplot table[x=time, y=value.Nikkei] {plot-data/minv.txt}\closedcycle;
-  \end{axis}
-\end{tikzpicture}
+We would like to guide you through our investment process and advise you with an investment that is tailored to your individual needs.
+You came to us as an experienced investor looked to expand your investment portfolio with the following five assets: DAX, Dow Jones Industrial, Nikkei 225, iPath S\&P 500 and the risk free rate (Euribor).
+We have compiled an overview of various portfolio strategies that would fit to your risk mentality.
+Furthermore we back-tested these strategies, in order to see which of these would fit best to your return expectations.
+  
+In our first interaction you have set some limitations in our investment strategy which we took into account in order to create the portfolios customized to your needs.
+You stated that you do not wish high transaction costs, are relatively risk averse and want maximum return.
+Therefore we have set up constraints to limit turnover to 10+-2\%, p.
+a., limit drawdown to less than 10\% p.a. and maximize realized Sharpe ratio.
 
+In the following proposal we will start off by introducing the asset classes you have selected and our view on them.
+Afterwards we will give a brief summary of the current market environment that is monitored by our highly-renown economic analysts.
+The proposal includes a detailed description of our investment philosophy, since it is the key to understanding how we have optimized and which tools we have used for our portfolios.
+This is followed by a summary of the portfolios we have custom-made for you and ultimately our personal recommendation.
+ 
+
+
+\chapter{Asset Universe}
+Because investor is risk-averse, we invest in indexes of mature markets.
+\paragraph{DAX} German capitalization-weighted stock market index that includes top 30 (blue chip) German companies trading on the Frankfurt Stock Exchange. Considered as one of the most important indexes for the European investor. German economy is the largest European economy (4th in the world) and in comparison to U.S., export oriented. Many of the companies from the Index enter heavily into emerging markets, exploiting the huge potential of developing countries. Leaders of revenues in foreign markets are Volkswagen, Daimler, BMW. More than 75\% of the revenues that the constituents make, come from foreign markets, so companies are well internationally diversified.
+
+\paragraph{Dow Jones Industrial Average} price-weighted stock market index that describes the stock performance of 30 large and most influential publicly owned companies based in the United States. The Index proved itself as one of the most stable, that is less risky and better able to overcome large market downturns, since most companies in the index are well-established and internationally diversified. America is the world leading economy and DJIA takes the most influential companies of this economy, and investing in this index must be a safe investment in the future.
+
+\paragraph{Euribor} (Euro Interbank Offered Rate) –-- estimated rate at which European banks borrow funds from one another. It is calculated by excluding highest and lowest 15\% lending rates and averaging the remaining. As of 10th November, the Euribor rate was -0.004\% (average Euribor in November is 0\%).
+Nikkei 225 - price-weighted (in yen) stock market index for the Tokyo Stock Exchange, which is considered as the best average representative of the Japanese Market. Japanese economy is the third world largest. It is assumed by many analysts to enter into the recovery phase after two decades of stagnation. Japan is also leading country in the world for such parameters as R\&D as proportion of GDP, number of registered patents and environment for the development of business. Moreover, Japan is considered as mature market gateway to quickly growing Asian market.
+
+\paragraph{iPath S\&P 500 VIX Short-Term Futures ETN} --- medium-term notes, created by Barclays Bank PLC that are uncollateralized debt securities, performance of which is highly related to the performance of the underlying VIX futures (S\&P 500 VIX ShortTerm Futures™ Index TR) with maturities 1 and 2 months. The main benefit of VXX is that by buying it investor gets exposure to VIX futures but does not have to constantly roll over these futures that produces additional costs. From the VXX performance perspective, it is almost perfectly correlated to the performance of VIX (according to Barclays, correlation is even equal to 1), therefore further, by describing usage of VIX (which are simpler products), we assume that the same is also true for VXX.
+
+VIX benchmark index reflects market opinion and corresponding price of volatility of S\&P 500 Index over 30 days in the future. It is calculated based on implied volatility of the S\&P 500 Index at various points along the volatility forward curve. For the calculation of the index value, out-of-the-money put and call options on the S\&P 500 are used. The prices of the options of the current and the following months are taken to estimate one month implied volatility.  VIX indexes of maturities one and two months are used as an underlying for the construction of ETN. The weights of VIX contracts are assigned in such a way that ETN approximates one month forward market view on volatility. For example, as of 9 November, weights for CBOE VIX Future NOV 15 and CBOE VIX Future DEC 15 were 29.46\% and 70.54\%, correspondingly.
+
+Normally, in times of uncertainty the value of the index increases, so investor can benefit from going long VIX futures when realized volatility appears to be larger than implied. Short positions in the VIX are taken when investor expects market implied volatility to decrease in the future. Moreover, historically VIX was negatively correlated with the underlying index. That is, in 80\% of time VIX and S\&P 500 moved in opposite direction. Therefore, when markets fall, long position in VIX futures should increase in value. All this is also true for VXX, but compared to futures strategies (with constant rolling over), here we just take long or short position of VXX in our portfolio and slightly adjust it with time.
+
+
+\chapter*{Portfolios}
+
+\section*{1 -- JD Investments Minimum Variance Equity Fund}
+\textit{JD Investments Minimum Variance Equity} fund invests in American, German and Japanese equity market together with 6M Euribor to substantially reduce risk.
+The asset allocation is oriented on volatility minimization while disregarding expected returns.
+This portfolio is particularly suitable for the clients with strong risk-aversion, since it does not try to speculate on expected returns but rather cares just about reducing variance.
+
+\paragraph{Portfolio Construction}
+\begin{sit}
+\item Long only equity exposure
+\item Risk reduction through investments in Euribor
+\item High concentration in risk-free investment (45\% of portfolio)
+\item No assumption on expected returns
+\end{sit}
+
+\begin{figure}[H]
 \begin{tikzpicture}
-  \begin{axis}[relw={-0.3}{1.3}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={0}{140}, y filter/.expression={max(y,0)}]
+    \addplot table[x=time, y=value.DAX] {plot-data/minv.txt}\closedcycle;
+    \addlegendentry{DAX}
+    \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv.txt}\closedcycle;
+    \addlegendentry{Dow Jones}
+    \addplot table[x=time, y=value.Nikkei] {plot-data/minv.txt}\closedcycle;
+    \addlegendentry{Nikkei}
+    \pgfplotsset{cycle list shift=1}
+    \addplot table[x=time, y=value.mixed] {plot-data/minv.txt}\closedcycle;
+    \addlegendentry{Euribor}
+    \addlegendimage{total} \addlegendentry{Total Value}
+  \end{axis}
+  \begin{axis}[w={0}{140}]
+    \addplot[total] table[x=time, y=value] {plot-data/minv_p.txt};
+  \end{axis}
+  \begin{axis}[w={0}{140}, y filter/.expression={min(y,0)}]
+    \addplot table[x=time, y=value.DAX] {plot-data/minv.txt}\closedcycle;
+    \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv.txt}\closedcycle;
+    \addplot table[x=time, y=value.Nikkei] {plot-data/minv.txt}\closedcycle;
+    \pgfplotsset{cycle list shift=4}
+    \addplot table[x=time, y=value.mixed] {plot-data/minv.txt}\closedcycle;
+  \end{axis}
+\end{tikzpicture}
+\end{figure}
+
+\vspace{\abovedisplayskip}
+\begin{minipage}{0.65\textwidth}
+\begin{tikzpicture}
+  \begin{axis}[relw={0}{1}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/minv_relw.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_relw.txt}\closedcycle;
     \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/minv_relw.txt}\closedcycle;
     \addlegendentry{Nikkei}
+    \pgfplotsset{cycle list shift=1}
+    \addplot table[x=time, y=value.mixed] {plot-data/minv_relw.txt}\closedcycle;
+    \addlegendentry{Euribor}
   \end{axis}
-  \begin{axis}[relw={-0.3}{1.3}, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
+  \begin{axis}[relw={0}{1},  y filter/.expression={min(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/minv_relw.txt}\closedcycle;
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_relw.txt}\closedcycle;
     \addplot table[x=time, y=value.Nikkei] {plot-data/minv_relw.txt}\closedcycle;
+    \pgfplotsset{cycle list shift=1}
+    \addplot table[x=time, y=value.mixed] {plot-data/minv_relw.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
+\end{minipage}
+\begin{minipage}{0.35\textwidth}
+\begin{tabular}{lr}
+\toprule
+Ann. Return & 10.92\%\\
+Ann. Volatility & 7.99\%\\
+Sharpe Ratio & 1.37\\
+Max. Drawdown & 5.92\% \\
+Turnover & 11.56\%\\
+\bottomrule
+\end{tabular}
+\end{minipage}
+
+This portfolio is suitable for very risk-averse clients who are ready to sacrifice potential returns and have lower Sharpe ratio just to reduce volatility.
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{XX}
+  \toprule
+  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
+  \midrule
+Possibility to gain attractive returns through participation American, German and Japanese stock markets.&
+Risks of obtaining very low returns in the periods of high concentration in Euribor since  return on short-term Euribor is often 0 and sometimes even negative. \\[1em]
+Risks of indexes are substantially reduced with the help of mixture with risk-free asset. &
+Losses possible in case unhedged currency position develop against exposure built up in the portfolio.\\
+  \bottomrule
+\end{tabularx}
+\end{table}
+
 
 \newpage\section*{2 -- Max Sharpe}
+The Maximum Sharpe Ratio portfolio is constructed with the use of sophisticated mathematical techniques. The objective of the fund is to deliver significant risk adjusted return, and to outperform any other portfolio within a similar investment universe. 
+At any point in time, assets of the portfolio are invested fully into risky assets. It is suitable for enthusiastic risk seekers than are willing to take high risk to achieve significant returns. As shown in the figure below, majority of funds are invested into US market and the rest is allocated in Germany and Japan. From the beginning of 2013 to the middle of 2015, MSR portfolio delivered return of over 17\% annually, while volatility was moderate and amounted to 12.05\%. 
+
+\begin{figure}[H]
 \begin{tikzpicture}
-  \begin{axis}[w={-10}{120}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/ms.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/ms.txt}\closedcycle;
     \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/ms.txt}\closedcycle;
     \addlegendentry{Nikkei}
-    \addplot table[x=time, y=value.mixed] {plot-data/ms.txt}\closedcycle;
-    \addlegendentry{Euribor}
+    \addlegendimage{total} \addlegendentry{Total Value}
   \end{axis}
-  \begin{axis}[w={-50}{180}, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={0}{170}]
+    \addplot[total] table[x=time, y=value] {plot-data/ms_p.txt};
+  \end{axis}
+  \begin{axis}[w={0}{170}, y filter/.expression={min(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/ms.txt}\closedcycle;
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/ms.txt}\closedcycle;
     \addplot table[x=time, y=value.Nikkei] {plot-data/ms.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
+\end{figure}
 
-\begin{tikzpicture}
-  \begin{axis}[relw={-0.1}{1.1}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+\vspace{\abovedisplayskip}
+\begin{minipage}{0.65\textwidth}
+  \begin{tikzpicture}
+  \begin{axis}[relw={0}{1}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/ms_relw.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/ms_relw.txt}\closedcycle;
     \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/ms_relw.txt}\closedcycle;
     \addlegendentry{Nikkei}
-    \addplot table[x=time, y=value.mixed] {plot-data/ms_relw.txt}\closedcycle;
-    \addlegendentry{Euribor}
   \end{axis}
-  \begin{axis}[relw={0}{1}, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
+  \begin{axis}[relw={0}{1}, y filter/.expression={min(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/ms_relw.txt}\closedcycle;
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/ms_relw.txt}\closedcycle;
     \addplot table[x=time, y=value.Nikkei] {plot-data/ms_relw.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
+\end{minipage}
+\begin{minipage}{0.35\textwidth}
+\begin{tabular}{lr}
+\toprule
+Ann. Return & 17.55\%\\
+Ann. Volatility & 12.05\%\\
+Sharpe Ratio & 1.46 \\
+Max. Drawdown & 8.92\% \\
+Turnover & 11.94\%\\
+\bottomrule
+\end{tabular}
+\end{minipage}
 
-\newpage\section*{3 -- Equal Weight}
+
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{XX}
+  \toprule
+  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
+  \midrule
+Active participation in the growth of US, German and Japanese stock market. Investor profits from momentum in the stock market. &
+Portfolio exposed to sudden increase in volatility. \\[1em]
+Portfolio rebalanced and optimized on yearly basis. By optimizing, investor achieves “best” asset allocation given investment set. &
+Due to 100\% allocation in risky assets, investor exposed to liquidity shock in the market.\\
+  \bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage\section*{3 -- JD Investments Fixed Weight Equity Fund}
+\textit{JD Investments Fixed Weight Equity Fund} invests in American, German and Japanese equity markets.
+The asset allocation is static and most diversified while disregarding expected returns and variances/covariance’s.
+This portfolio is especially appealing since it is resistant against errors in true variance/covariance and expected return estimation.
+
+\paragraph{Portfolio Construction}
+\begin{sit}
+\item	Long only and full equity exposure
+\item	Fixed asset allocation
+\item	Strong diversification
+\item	No assumption on expected returns and variances/covariances
+\end{sit}
+
+\vspace{\abovedisplayskip}
+\begin{minipage}{0.65\textwidth}
 \begin{tikzpicture}
-  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={0}{170}, ylabel = , y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/fw.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/fw.txt}\closedcycle;
     \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/fw.txt}\closedcycle;
     \addlegendentry{Nikkei}
+    \addlegendimage{total} \addlegendentry{Total Value}
   \end{axis}
-  \begin{axis}[w={0}{170}, bottom, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={0}{170}]
+    \addplot[total] table[x=time, y=value] {plot-data/fw_p.txt};
+  \end{axis}
+  \begin{axis}[w={0}{170}, bottom, y filter/.expression={min(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/fw.txt}\closedcycle;
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/fw.txt}\closedcycle;
     \addplot table[x=time, y=value.Nikkei] {plot-data/fw.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
+\end{minipage}
+\begin{minipage}{0.35\textwidth}
+\begin{tabular}{lr}
+\toprule
+Ann. Return & 17.17\%\\
+Ann. Volatility & 12.00\%\\
+Sharpe Ratio & 1.48 \\
+Max. Drawdown & 8.92 \\
+Turnover & 0\\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\vspace{\belowdisplayskip}
+
+With a promising track record and a solid risk return profile as well as zero turnover and therefore very appealing net cost return the \textit{JD Investments Fixed Weight Equity Fund} is an attractive investment for the investor with a moderate risk profile. 
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{XX}
+  \toprule
+  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
+  \midrule
+Prospect of positive return through participation American, German and Japanese stock markets &
+Losses possible in case stock markets develop against exposure built up in the portfolio.\\[1em]
+Prospect of positive returns due to unhedged currency exposure. &
+Losses possible in case unhedged currency position develop against exposure built up in the portfolio.\\
+  \bottomrule
+\end{tabularx}
+\end{table}
 
 \newpage\section*{4 -- Equal Weight Leveraged}
+EWL portfolio offers investor asset allocation into three different markets, namely US, German and Japanese. Weights in the portfolio are equally distributed with each asset class consisting of 36\% of total portfolio value. Furthermore, investor’s return will be enhanced by shorting VXX index that is predicted to have a bear run in the near future. Portfolio has no holdings in riskless assets, and invests heavily into diversified market indices. As shown in the figure below, portfolio has performed extremely well over the past two years. In this period EWL portfolio achieved return of more than 21\% with considerably lower volatility. 
+
+\vspace{\abovedisplayskip}
+\begin{minipage}{0.65\textwidth}
 \begin{tikzpicture}
-  \begin{axis}[w={-60}{280}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={-20}{190}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/fw_lev.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/fw_lev.txt}\closedcycle;
@@ -354,162 +384,445 @@ Presenting you our portfolio choices, we
     \addlegendentry{Nikkei}
     \addplot table[x=time, y=value.VXX.Adjusted] {plot-data/fw_lev.txt}\closedcycle;
     \addlegendentry{VXX}
+    \addlegendimage{total} \addlegendentry{Total Value}
   \end{axis}
-  \begin{axis}[w={-60}{280}, bottom, y filter/.code={\pgfmathparse{min(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={-20}{190}]
+    \addplot[total] table[x=time, y=value] {plot-data/fw_lev_p.txt};
+  \end{axis}
+  \begin{axis}[w={-20}{190}, bottom, y filter/.expression={min(y,0)}]
     \pgfplotsset{cycle list shift=3}
     \addplot table[x=time, y=value.VXX.Adjusted] {plot-data/fw_lev.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
+\end{minipage}
+\begin{minipage}{0.35\textwidth}
+\begin{tabular}{lr}
+\toprule
+Ann. Return & 21.47\%\\
+Ann. Volatility & 13.95\%\\
+Sharpe Ratio & 1.54 \\
+Max. Drawdown & 9.83\% \\
+Turnover & 0\\
+\bottomrule
+\end{tabular}
+\end{minipage}
 
-\newpage\section*{5 -- Black Litterman}
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{XX}
+  \toprule
+  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
+  \midrule
+Active participation in the growth of US, German and Japanese stock market. Investor profits low volatility in the stock market. &
+Portfolio is extremely exposed to sudden increase in volatility, since it is short volatility index.\\[1em]
+Portfolio is not rebalanced and thus there are no extra fees for buying or selling securities. &
+Maximal drawdown has to be carefully monitored due to the running of short position.\\
+  \bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage\section*{5 -- JD Investments Black Litterman Equity Fund}
+JD Investments Black Litterman Equity fund invests in American, German and Japanese equity market.
+The asset allocation is static and based on the market information combined with our opinion concerning expected returns.
+This portfolio is very attractive in terms of returns since it is built with the help of the predictions of our highly qualified analysts concerning prospective development of the markets.
+
+\paragraph{Portfolio Construction}
+\begin{sit}
+\item Long only and full equity exposure
+\item Market optimal asset allocation adjusted with regards to our views
+\item Deep analysis of indexes to get own estimation of expected returns and variances/covariances
+\end{sit}
+
 \begin{tikzpicture}
-  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/bl.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/bl.txt}\closedcycle;
     \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/bl.txt}\closedcycle;
     \addlegendentry{Nikkei}
+    \addlegendimage{total} \addlegendentry{Total Value}
+  \end{axis}
+  \begin{axis}[w={0}{170}]
+    \addplot[total] table[x=time, y=value] {plot-data/bl_p.txt};
   \end{axis}
 \end{tikzpicture}
 
+\begin{tabular}{lr}
+\toprule
+Ann. Return & 17.71\%\\
+Ann. Volatility & 12.00\%\\
+Sharpe Ratio & 1.48\\
+Max. Drawdown & 8.92\% \\
+Turnover & 0\%\\
+\bottomrule
+\end{tabular}
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{XX}
+  \toprule
+  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
+  \midrule
+Prospect of high positive return through participation analysis of all indexes and allocation of funds based partially on this analysis. &
+Not protected against all the markets crashing simultaneously. \\[1em]
+Prospect of positive returns due to unhedged currency exposure. &
+Losses possible in case unhedged currency position develop against exposure built up in the portfolio.\\
+  \bottomrule
+\end{tabularx}
+\end{table}
+
 \newpage\section*{6 -- Equal Risk Contribution}
+The idea of ER portfolio is to design weights in such a way that each risky asset class contributes to the risk of a portfolio in the same proportion. Portfolio is rebalanced every month in order to carefully monitor risk contributions to the portfolio. Portfolio is appealing to risk averse investors who care more about low risk than high returns. Investor will mainly profit from higher than anticipated return on less risky assets in the portfolio. As it can be seen in the figure below, portfolio value is increasing smoothly without any significant drawdowns over the period from 2013 to the middle of 2015, and has yielded return of 13.68\%.
+
+\begin{figure}[H]
 \begin{tikzpicture}
-  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/erc.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/erc.txt}\closedcycle;
     \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/erc.txt}\closedcycle;
     \addlegendentry{Nikkei}
+    \pgfplotsset{cycle list shift=1}
     \addplot table[x=time, y=value.mixed] {plot-data/erc.txt}\closedcycle;
     \addlegendentry{Euribor}
+    \addlegendimage{total} \addlegendentry{Total Value}
+  \end{axis}
+  \begin{axis}[w={0}{170}]
+    \addplot[total] table[x=time, y=value] {plot-data/erc_p.txt};
   \end{axis}
 \end{tikzpicture}
+\end{figure}
 
+\vspace{\abovedisplayskip}
+\begin{minipage}{0.65\textwidth}
 \begin{tikzpicture}
-  \begin{axis}[relw={-0.1}{1.1}]
+  \begin{axis}[relw={0}{1}]
     \addplot table[x=time, y=value.DAX] {plot-data/erc_relw.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/erc_relw.txt}\closedcycle;
     \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/erc_relw.txt}\closedcycle;
     \addlegendentry{Nikkei}
+    \pgfplotsset{cycle list shift=1}
     \addplot table[x=time, y=value.mixed] {plot-data/erc_relw.txt}\closedcycle;
     \addlegendentry{Euribor}
   \end{axis}
 \end{tikzpicture}
+\end{minipage}
+\begin{minipage}{0.35\textwidth}
+\begin{tabular}{lr}
+\toprule
+Ann. Return & 13.68\%\\
+Ann. Volatility & 9.16\%\\
+Sharpe Ratio & 1.49 \\
+Max. Drawdown & 7.53\% \\
+Turnover & 11.53\\
+\bottomrule
+\end{tabular}
+\end{minipage}
 
-\newpage\section*{7 --- Min Variance Robust}
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{XX}
+  \toprule
+  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
+  \midrule
+Active participation in the growth of US, German and Japanese stock market. Investor profits from momentum in the stock market. &
+Portfolio exposed to sudden increase in volatility. \\[1em]
+Extremely high diversification of the portfolio combined with riskless asset promise investor stable and risk averse portfolio. &\\
+  \bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage\section*{7 --- JD Investments Minimum Variance (Robust)}
+
+\textit{JD Investments Minimum Variance (Robust) Equity} fund invests in American, German and Japanese equity market. The asset allocation is aimed at reducing volatility while variances/covariance matrix is estimated using robust covariance-shrinkage method. This portfolio still provides attractive returns and sharpe ratio in spite of being oriented on variance minimization.
+
+\begin{figure}[H]
 \begin{tikzpicture}
-  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/minv_rob.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_rob.txt}\closedcycle;
     \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/minv_rob.txt}\closedcycle;
     \addlegendentry{Nikkei}
-    \addplot table[x=time, y=value.mixed] {plot-data/minv_rob.txt}\closedcycle;
-    \addlegendentry{Euribor}
+    \addlegendimage{total} \addlegendentry{Total Value}
+  \end{axis}
+  \begin{axis}[w={0}{170}]
+    \addplot[total] table[x=time, y=value] {plot-data/minv_rob_p.txt};
   \end{axis}
 \end{tikzpicture}
+\end{figure}
 
+\begin{minipage}{0.65\textwidth}
 \begin{tikzpicture}
-  \begin{axis}[relw={-0.1}{1.1}]
-    \addplot table[x=time, y=value.DAX] {plot-data/minv_rob_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_rob_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
-    \addplot table[x=time, y=value.Nikkei] {plot-data/minv_rob_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-    \addplot table[x=time, y=value.mixed] {plot-data/minv_rob_relw.txt}\closedcycle;
-    \addlegendentry{Euribor}
-  \end{axis}
+\begin{axis}[relw={0}{1}]
+  \addplot table[x=time, y=value.DAX] {plot-data/minv_rob_relw.txt}\closedcycle;
+  \addlegendentry{DAX}
+  \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_rob_relw.txt}\closedcycle;
+  \addlegendentry{Dow Jones}
+  \addplot table[x=time, y=value.Nikkei] {plot-data/minv_rob_relw.txt}\closedcycle;
+  \addlegendentry{Nikkei}
+\end{axis}
 \end{tikzpicture}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{tabular}{lr}
+  \toprule
+  Ann. Return & 18.10\%\\
+  Ann. Volatility & 12.32\%\\
+  Sharpe & 1.47\\
+  Maximum Drawdown& 8.2\%\\
+  Alpha & ---\\
+  Ann Return Net & \\
+  \bottomrule
+\end{tabular}
+\end{minipage}
 
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{XX}
+  \toprule
+  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
+  \midrule
+Prospect of positive return through participation American, German and Japanese stock markets despite the minimum variance goal. &
+High concentration in Dow Jones which reduces diversification benefits seriously.\\[1em]
+Prospect of positive returns due to unhedged currency exposure. &
+Losses possible in case unhedged currency position develop against exposure built up in the portfolio.\\
+  \bottomrule
+\end{tabularx}
+\end{table}
 
-\newpage\section*{8 --- Max Sharpe Robust}
-\begin{tikzpicture}
-  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
-    \addplot table[x=time, y=value.DAX] {plot-data/msr_rob.txt}\closedcycle;
-    \addlegendentry{DAX}
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_rob.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
-    \addplot table[x=time, y=value.Nikkei] {plot-data/msr_rob.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-    \addplot table[x=time, y=value.mixed] {plot-data/msr_rob.txt}\closedcycle;
-    \addlegendentry{Euribor}
-  \end{axis}
-\end{tikzpicture}
+%\newpage\section*{8 --- Max Sharpe Robust}
+%\begin{tikzpicture}
+  %\begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/msr_rob.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_rob.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/msr_rob.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addlegendimage{total} \addlegendentry{Total Value}
+  %\end{axis}
+  %\begin{axis}[w={0}{170}]
+    %\addplot[total] table[x=time, y=value] {plot-data/msr_rob_p.txt};
+  %\end{axis}
+%\end{tikzpicture}
 
-\begin{tikzpicture}
-  \begin{axis}[relw={-0.1}{1.1}]
-    \addplot table[x=time, y=value.DAX] {plot-data/msr_rob_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_rob_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
-    \addplot table[x=time, y=value.Nikkei] {plot-data/msr_rob_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-    \addplot table[x=time, y=value.mixed] {plot-data/msr_rob_relw.txt}\closedcycle;
-    \addlegendentry{Euribor}
-  \end{axis}
-\end{tikzpicture}
+%\begin{tikzpicture}
+  %\begin{axis}[relw={0}{1}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/msr_rob_relw.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/msr_rob_relw.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/msr_rob_relw.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+  %\end{axis}
+%\end{tikzpicture}
 
 \newpage\section*{9 --- Mean Variance with Maximum Allocation Constraint}
+\begin{figure}[H]
 \begin{tikzpicture}
-  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
-    \addplot table[x=time, y=value.DAX] {plot-data/mvo.txt}\closedcycle;
-    \addlegendentry{DAX}
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/mvo.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
-    \addplot table[x=time, y=value.Nikkei] {plot-data/mvo.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-    \addplot table[x=time, y=value.mixed] {plot-data/mvo.txt}\closedcycle;
-    \addlegendentry{Euribor}
-  \end{axis}
-\end{tikzpicture}
-
-\begin{tikzpicture}
-  \begin{axis}[relw={-0.1}{1.1}]
-    \addplot table[x=time, y=value.DAX] {plot-data/mvo_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/mvo_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
-    \addplot table[x=time, y=value.Nikkei] {plot-data/mvo_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-    \addplot table[x=time, y=value.mixed] {plot-data/mvo_relw.txt}\closedcycle;
-    \addlegendentry{Euribor}
-  \end{axis}
-\end{tikzpicture}
-
-\newpage\section*{10 --- Mean Variance with Maximum Allocation and Short-Sale Constraint}
-\begin{tikzpicture}
-  \begin{axis}[w={0}{170}, y filter/.code={\pgfmathparse{max(#1,0)}\pgfmathresult}]
+  \begin{axis}[w={-10}{120}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/mva.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/mva.txt}\closedcycle;
     \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/mva.txt}\closedcycle;
     \addlegendentry{Nikkei}
+    \addplot table[x=time, y=value.VXX.Adjusted] {plot-data/mva.txt}\closedcycle;
+    \addlegendentry{VXX}
     \addplot table[x=time, y=value.mixed] {plot-data/mva.txt}\closedcycle;
     \addlegendentry{Euribor}
+    \addlegendimage{total} \addlegendentry{Total Value}
+  \end{axis}
+  \begin{axis}[w={-10}{120}]
+    \addplot[total] table[x=time, y=value] {plot-data/mva_p.txt};
+  \end{axis}
+  \begin{axis}[w={-10}{120}, bottom, y filter/.expression={min(y,0)}]
+    \pgfplotsset{cycle list shift=3}
+    \addplot table[x=time, y=value.VXX.Adjusted] {plot-data/mva.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
+\end{figure}
 
 \begin{tikzpicture}
-  \begin{axis}[relw={-0.1}{1.1}]
+  \begin{axis}[relw={-0.1}{1.1}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/mva_relw.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/mva_relw.txt}\closedcycle;
     \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/mva_relw.txt}\closedcycle;
     \addlegendentry{Nikkei}
+    \addplot table[x=time, y=value.VXX.Adjusted] {plot-data/mva_relw.txt}\closedcycle;
+    \addlegendentry{VXX}
     \addplot table[x=time, y=value.mixed] {plot-data/mva_relw.txt}\closedcycle;
     \addlegendentry{Euribor}
   \end{axis}
+  \begin{axis}[relw={-0.1}{1.1}, bottom, y filter/.expression={min(y,0)}]
+    \pgfplotsset{cycle list shift=3}
+    \addplot table[x=time, y=value.VXX.Adjusted] {plot-data/mva_relw.txt}\closedcycle;
+  \end{axis}
 \end{tikzpicture}
 
+\newpage\section*{10 --- JD Investments Mean Variance with Maximum Allocation Constraint}
+\textit{JD Investments Mean Variance with Maximum Allocation Constraint} Equity fund invests in American, German and Japanese equity market alongside with investment in VXX and Euribor to optimize risk allocation. The asset allocation is dynamic and highly concentrated in Euribor. This portfolio is the safest portfolio out of all alternatives in terms of volatility.
+%
+\paragraph{Portfolio Construction}
+\begin{sit}
+\item	Equity Indexes, Euribor 6M, VXX
+\item	75\% invested in Euribor
+\item	Monthly rebalancing
+\item	Maximum weight for each index is 50\% relative to whole risky portfolio
+\item	Expected returns and variances/covariances are adjusted using shrinkage methods
+\end{sit}
 
 
+\begin{figure}[H]
+\begin{tikzpicture}
+  \begin{axis}[w={0}{120}, y filter/.expression={max(y,0)}, legend columns=3]
+    \addplot table[x=time, y=value.DAX] {plot-data/mvo.txt}\closedcycle;
+    \addlegendentry{DAX}
+    \addplot table[x=time, y=value.Dow.Jones] {plot-data/mvo.txt}\closedcycle;
+    \addlegendentry{Dow Jones}
+    \addplot table[x=time, y=value.Nikkei] {plot-data/mvo.txt}\closedcycle;
+    \addlegendentry{Nikkei}
+    \addplot table[x=time, y=value.VXX.Adjusted] {plot-data/mvo.txt}\closedcycle;
+    \addlegendentry{VXX}
+    \addplot table[x=time, y=value.mixed] {plot-data/mvo.txt}\closedcycle;
+    \addlegendentry{Euribor}
+    \addlegendimage{total} \addlegendentry{Total Value}
+  \end{axis}
+  \begin{axis}[w={0}{120}]
+    \addplot[total] table[x=time, y=value] {plot-data/mvo_p.txt};
+  \end{axis}
+  \begin{axis}[w={0}{120}, bottom, y filter/.expression={min(y,0)}]
+    \pgfplotsset{cycle list shift=3}
+    \addplot table[x=time, y=value.VXX.Adjusted] {plot-data/mvo.txt}\closedcycle;
+  \end{axis}
+\end{tikzpicture}
+\end{figure}
+
+\begin{minipage}{0.65\textwidth}
+\begin{tikzpicture}
+  \begin{axis}[relw={0}{1}, legend columns=3]
+    \addplot table[x=time, y=value.DAX] {plot-data/mvo_relw.txt}\closedcycle;
+    \addlegendentry{DAX}
+    \addplot table[x=time, y=value.Dow.Jones] {plot-data/mvo_relw.txt}\closedcycle;
+    \addlegendentry{Dow Jones}
+    \addplot table[x=time, y=value.Nikkei] {plot-data/mvo_relw.txt}\closedcycle;
+    \addlegendentry{Nikkei}
+    \addplot table[x=time, y=value.VXX.Adjusted] {plot-data/mvo_relw.txt}\closedcycle;
+    \addlegendentry{VXX}
+    \addplot table[x=time, y=value.mixed] {plot-data/mvo_relw.txt}\closedcycle;
+    \addlegendentry{Euribor}
+  \end{axis}
+\end{tikzpicture}
+\end{minipage}
+\begin{minipage}{0.35\textwidth}
+\begin{tabular}{lr}
+  \toprule
+  Ann. Return & 4.12\%\\
+  Ann. Volatility & 3.15\%\\
+  Sharpe & 1.31\\
+  Maximum Drawdown& 3.05\%\\
+  Turnover & 10.41\%\\
+  Alpha & ---\\
+  Ann. Return Net & \\
+  \bottomrule
+\end{tabular}
+\end{minipage}
+
+This portfolio is aimed at those who do not tolerate almost any risk. Along with high concentration in risk-free assets, portfolio is also strengthened with VXX derivatives, which reduce potential risks even further in case of increased market volatility.
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{XX}
+  \toprule
+  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
+  \midrule
+  \bottomrule
+\end{tabularx}
+\end{table}
+
+\chapter*{Out Of Sample: 2013-01-01 --- 2015-06-30}
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrrrr}
+\toprule
+                      & Sharpe & $\mu$ &$\sigma$& MDD & T/O & TC & $\alpha$ \\ 
+\midrule
+Minimum Variance        & 1.37 & 10.92 & 7.99 & 5.29 & 11.56 & 0.06 & -0.56 \\ 
+Maximum Sharpe          & 1.46 & 17.55 & 12.05 & 8.98 & 11.94 & 0.06 & -0.65 \\ 
+Fixed Weights           & 1.48 & 17.71 & 12.00 & 8.92 & 0.00 & 0.00 &  \\ 
+Fixed Weights Leveraged & 1.54 & 21.47 & 13.95 & 9.83 & 0.00 & 0.00 &  \\ 
+Black Litterman         & 1.48 & 17.71 & 12.00 & 8.92 & 0.00 & 0.00 &  \\ 
+Equal Risk              & 1.49 & 13.68 & 9.16 & 7.53 & 11.53 & 0.06 & 0.33 \\ 
+Min Variance Robust     & 1.47 & 18.10 & 12.32 & 8.20 & 9.47 & 0.05 & -0.66 \\ 
+Maximum Sharpe Robust   & 1.12 & 16.55 & 14.82 & 7.70 & 44.45 & 0.22 & -0.49 \\ 
+MV Max Alloc       & 1.31 & 4.12 & 3.15 & 3.05 & 10.41 & 0.05 & -0.45 \\ 
+MV Max Alloc \& No Shorts & 1.32 & 4.44 & 3.37 & 3.21 & 12.01 & 0.06 & -0.47 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter*{Bonus: 2015-06-30 --- 2015-11-01}
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrrr}
+  \toprule
+ & Sharpe & $\mu$ & $\sigma$ \\
+  \midrule
+Minimum Variance & -1.32 & -15.51 & 11.76 \\ 
+  Maximum Sharpe & -1.14 & -21.09 & 18.51 \\ 
+  Fixed Weights & -1.20 & -22.38 & 18.64 \\ 
+  Fixed Weights Leveraged & -1.27 & -25.50 & 20.02 \\ 
+  Black Litterman & -1.20 & -22.38 & 18.64 \\ 
+  Equal Risk & -0.81 & -11.30 & 13.90 \\ 
+  Min Variance Robust & -1.38 & -25.32 & 18.34 \\ 
+  Maximum Sharpe Robust & -1.21 & -22.29 & 18.38 \\ 
+  Mean Variance Maximum Allocation & -1.03 & -3.87 & 3.74 \\ 
+  Mean Variance Maximum Allocation \& Short-Sales & -1.03 & -3.93 & 3.80 \\ 
+   \bottomrule
+\end{tabular}
+\end{table}
+
+
+\chapter{Investment Philosophy \& Investment Approach}
+\section*{Our Philosophy}
+Supporters of passive investing believe in the implications of the CAPM and that markets are efficient, which means that market prices already fully reflect all fundamentals and therefore an outperformance cannot be achieved.
+On the other hand, advocates of active investing believe that one can outperform the market.
+Therefore it makes sense to consider timing and selection in the investment process.
+JD investments believes that one can generate return by careful strategic asset allocation and consequent tactical asset allocation.
+We believe that the advantages of active investing outweigh those of passive investing.
+A passive investor can unwillingly be very concentrated even though he wants to exploit all diversification benefits.
+That is the case if the market cap in an index increases during the time he holds the investment.
+This means with active investing we see a diversification benefit.
+ Especially as a consequence of the crisis people should be aware about the benefits of active investing.
+
+An actively managed portfolio may have the chance of outperforming the market since it weights the assets differently and may not necessarily own all of the assets in the benchmark index.
+It can also use special techniques such as shorting certain assets, which is not possible in a passive indexing strategy.
+We as active portfolio managers want to understand our investors investment objectives and risk tolerance.
+We use this knowledge to define an investment policy with risk and return goals, select a performance benchmark, choose an asset mix and allow for adjustments during the course of the market or changes in investment attitude of the investor.
+
+By choosing the indices you wish to invest in and defining your risk tolerance as well as constraints you have already made your first step as an active investor.
+JD Investments supports you in the next steps of active investing by providing sophisticated systematic solutions tailor made for your views and risk preferences.
+ 
+\section*{Investment Approach}
+
+
+
+\chapter*{Code}
+\lstinputlisting[language=R, basicstyle=\scriptsize]{../0-helper.R}
+
+\lstinputlisting[language=R, basicstyle=\scriptsize]{../1-save_data.R}
+
+\lstinputlisting[language=R, basicstyle=\scriptsize]{../1-data.R}
+
+\lstinputlisting[language=R, basicstyle=\scriptsize]{../2-analysis.R}
+
+\lstinputlisting[language=R, basicstyle=\scriptsize]{../2-application.R}
+
+\lstinputlisting[language=R, basicstyle=\scriptsize]{../3-analysis2.R}
+
+\lstinputlisting[language=R, basicstyle=\scriptsize]{../mdd.R}
 
 \end{document}

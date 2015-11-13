@@ -23,6 +23,7 @@ assets <- merge.xts(GDAXI, DJI, N225)["2009-01-30/"] %>% na.locf
 colnames(assets) <- c("DAX", "Dow Jones", "Nikkei")
 
 assets_vxx <- merge.xts(assets,VXX) %>% na.omit
+colnames(assets_vxx) <- c("DAX", "Dow Jones", "Nikkei", "VXX")
 
 asset_returns <- assets %>% ROC(type = "discrete")
 returns <- asset_returns["2009-02-02/"] %>% na.omit
