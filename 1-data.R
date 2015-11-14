@@ -47,3 +47,13 @@ message("> Imported data ---------------")
 
 ##########################################
 # apply(assets,2,function(x)x/drop(coredata(x[1]))*100) %>% as.xts %>% plotTable("assets")
+#getSymbols("URTH")
+#msci <- URTH$URTH.Adjusted/fx$EUR.USD
+#colnames(msci) <- c("MSCI")
+
+# msci_mu <- msci["2013-01-01/2015-06-30"] %>% ROC(type = "discrete") %>% na.omit %>% mean %>% (function(x)x*252)
+# msci_sigma <- msci["2013-01-01/2015-06-30"] %>% ROC(type = "discrete") %>% na.omit %>% sd %>% (function(x)x*sqrt(252))
+# msci_sharpe <- msci_mu / msci_sigma
+# data.frame(msci_mu, msci_sigma, msci_sharpe)
+# 
+# msci["2015-06-30/2015-11-01"] %>% (function(x)x/drop(coredata(x[1]))*100) %>% plotTable("msci_bo")

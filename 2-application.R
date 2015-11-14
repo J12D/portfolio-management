@@ -1,7 +1,7 @@
 source("2-analysis.R")
 
 PARTY <- F
-my_time <- "2012-12-30/2015-06-30"
+my_time <- "2012-12-30/2015-11-01"
 
 run_job <- function(job) {
   model <- job[["model"]]
@@ -87,7 +87,7 @@ ms_res <- annual_base %>% with_model(ms) %>% run_job
 ms_res %>% portfolio_party("ms")
 
 ## ---- 3-Fixed Weights ---------------
-fw <- fixed_weights(w %>% as.vector)
+fw <- fixed_weights(rep(1/3, 3))
 fw_res <- fix_base %>% with_model(fw) %>% run_job
 fw_res %>% portfolio_party("fw")
 
@@ -131,7 +131,7 @@ mv_max_alloc_res %>% portfolio_party("mvo")
 mv_max_alloc_no_short <- eff_portfolio(mean = mean_returns(shrink = 0.5),
                      cov = cov_returns(shrink = T), no_shorts = F, max.allocation = 0.5)
 
-mv_max_alloc_no_short_res <- base %>% with_model(mv_max_alloc_no_short) %>% on_assets(assets_vxx) %>% with_allocation(0.75) %>% run_job
+mv_max_alloc_no_short_res <- annual_base %>% with_model(mv_max_alloc_no_short) %>% on_assets(assets_vxx) %>% with_allocation(0.35) %>% run_job
 mv_max_alloc_no_short_res %>% portfolio_party("mva")
 
 
@@ -150,7 +150,7 @@ models <- list("Minimum Variance" = minv_res,
                "MV Max Allocation & Short-Constraint" = mv_max_alloc_no_short_res)
 
 comp <- models %>% lapply(function(x)x$kpis) %>% do.call(rbind, .)
-comp
+xtable(comp)
 
 ## ---- bonus -----
 

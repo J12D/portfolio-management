@@ -326,10 +326,10 @@ compute_kpis <- function(value, values, weights, job) {
     factor_map <- list("DAX" = "EU", "Dow Jones" = "US", "Nikkei" = "JP", "VXX" = "US")
     aligned_weights <- weights[index(weights) %in% index(fact)]
     aligned_fact <- fact[index(fact) %in% index(aligned_weights)]
-    
-    alpha <- colnames(aligned_weights) %>% lapply(function(col) {
-      sum(aligned_weights[, col] * aligned_fact[, factor_map[[col]]])
-    }) %>% Reduce(`+`, .)
+    alpha <- NA
+#     alpha <- colnames(aligned_weights) %>% lapply(function(col) {
+#       sum(aligned_weights[, col] * aligned_fact[, factor_map[[col]]])
+#     }) %>% Reduce(`+`, .)
   }
   
   data.frame(sharpe = sharpe,
