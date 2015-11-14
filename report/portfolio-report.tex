@@ -1,4 +1,4 @@
-\documentclass[11pt, DIV=15]{scrreprt}
+\documentclass[parskip=full]{scrreprt}
 
 \usepackage{jdcommands}
 \jdfontsetup{}
@@ -18,7 +18,6 @@
 \usepackage{float}
 \usepackage{listings}
 \lstset{numbers=left, numberstyle=\tiny, frame=lines, breaklines, caption=\lstname}
-
 
 \usetikzlibrary{external}
 \tikzexternalize[prefix=tikz/]
@@ -133,7 +132,6 @@ You stated that you do not wish high transaction costs, are relatively risk aver
 Therefore we have set up constraints to limit turnover to $10 \pm 2\%$, p.a., limit drawdown to less than 10\% p.a. and maximize realized Sharpe ratio.
 
 In the following proposal we will start off by introducing the asset classes you have selected and our view on them.
-Afterwards we will give a brief summary of the current market environment that is monitored by our highly-renown economic analysts.
 The proposal includes a detailed description of our investment philosophy, since it is the key to understanding how we have optimized and which tools we have used for our portfolios.
 This is followed by a summary of the portfolios we have custom-made for you and ultimately our personal recommendation.
 
@@ -217,28 +215,86 @@ Since we invest in indices of developed countries, the MSCI can be used as a ben
 The MSCI world is an index  which includes medium and large capitalization stocks of 23 developed markets.
 Concerning the performance of the index in our out-of-sample period starting from 1st January 2013 till 30th June 2015 the annual return of the index was 20.597\%, annual volatility -17.867\% and corresponding Sharpe ratio –1.15.
 
+\chapter{Investment Philosophy \& Investment Approach}
+\section*{Our Philosophy}
+Supporters of passive investing believe in the implications of the Capital Asset Pricing Model and market efficiency, which means that market prices fully reflect all fundamentals and hence an outperformance cannot be achieved.
+On the other hand, advocates of active investing believe that one can outperform the market.
+In this regard it makes sense to consider timing and selection in the investment process.
+JD investments believes that one can generate return based on a careful strategic asset allocation and consequent tactical asset allocation.
+We believe that the advantages of active investing outweigh those of passive investing.
+A passive investor can unwillingly be very concentrated even though he wants to exploit all diversification benefits.
+That is the case if the market cap in an index increases during the time he holds the investment.
+With active investing we see in our asset universe a diversification benefit.
+
+An actively managed portfolio may have the chance of outperforming the market since it weights the assets differently and may not necessarily own all of the assets in the benchmark index.
+It can also use special techniques such as taking short positions in certain assets, which is not possible in a passive indexing strategy.
+We as active portfolio managers want to understand our investor’s investment objectives and risk tolerance.
+We use this knowledge to define an investment policy with risk and return goals, select a performance benchmark, choose an asset mix and allow for adjustments during the course of the market or changes in investment attitude of the investor.
+
+By choosing the indices you wish to invest in and defining your risk tolerance as well as constraints you have already made your first step as an active investor.
+JD Investments supports you in the next steps of active investing by providing sophisticated systematic solutions tailor made for your views and risk preferences.
+
+ 
+\section*{Investment Approach and Assumptions}
+JD Investment uses modern portfolio optimization techniques based on most recent research combined with subjective experience of its experts with proven track records in order to manage its funds.
+Our culture of risk management and regular supervision of the portfolios is essential for our value adding client solutions.
+
+We use a \textit{time horizon} of three years of daily data.
+This implies a rolling window of historical data at each optimization since only then recent information has similar impact on optimizations at any point in time.
+Furthermore, it is assumed that the value add of older data might reflect a very different market environment and therefore reduce validity of information.
+
+ To adjust the portofolio’s asset allocation we can provide our investors \textit{rebalancing} solutions to realign the weightings monthly or yearly.
+
+In order to improve our out-of-sample performance we use selected regularization techniques and constraints.
+In the following we give our investors a brief overview of the approaches and their rationale.
+ 
+For portfolios with assets traded in different markets at different times we adjust the variance/covariance estimation based on the procedure of \textit{Hayashi and Yoshida}.
+This technique improves our estimation of the diversification benefit of assets being part of our asset universe.
+
+Since past performance is a weak indicator for future returns we adjust our expected returns by \textit{shrinking} them towards the average means.
+Moreover, we use shrinkage as specified by Ledoit and Wolf to adjust the variance/covariance estimators.
+Shrinkage leads to a better performance due to an increased stability of major optimization inputs.
+
+In order to incorporate our market views in our systematic approach we use the \textit{Black Littermann Model} for certain portfolios.
+Views on future development as well as volatilities on those views are additionally used in order to obtain optimal portfolio performances.
+
+We are further able to propose our investors \textit{robust portfolio choices} which are based on robust statistics.
+Our procedure follows Wang and Raftery’s approach\footnote{N. Wang, A. Raftery, 2002. Nearest neighbour variance estimation (NVVE). Robust covariance estimation via nearest neigbor cleaning (with discussion), Journal of the American Statistical Association, Volume 97, Pages 994-1019.} to find robust variance/covariance estimates.
+The advantage of this procedure is in comparison to the aforementioned that it yields similar results for our estimators even though our assumptions may not be correct.
+
+In order to \textit{reduce the level of turnover} and hence cut transaction costs several techniques are selectively used.
+Reducing active exposure by keeping some positions fixed or changing to larger optimization frequencies both leads to a smaller turnover.
+Further, maximum allocation constraints in each point in time of the optimization are used to drive down turnover and reduce transaction costs.
+Generally, our procedure is based on the method of Goldfarb and Idnani\footnote{D. Goldfarb, A. Idnani, 1983. A numerically stable dual method for solving strictly convex quadratic programs, Mathematical Programming, Volume 27, Pages 1-33.} to include both short-sale constraints and maximum allocation constraints in our optimization.
+
+To prevent large drawdowns in some of our strategies, market exposure of the fund is reduced by investing part of the portfolios in assets with low volatility e.g. the risk free asset.
+
+Further, long positions in implied volatility are used to exploit negative correlation to stocks in order to further reduce large drawdowns.
+For risk taking investors we also provide solutions where volatility is sold as one source of return in order to leverage.
+In general implied volatility as an asset is treated with highest care in JD Investments Funds as it reacts completely different than value assets.
+Implied volatility as an asset is solely used in order to increase or decrease volatility of a fund such that it matches the investors demand and risk profile.
+
+We provide our solutions in EUR denomination.
+Currency risks are not hedged in our funds since we do not have an active view about them.
+For clients requesting investments without currency exposure hedged share classes can be made available.
 
 \chapter*{Portfolios}
 
 \newpage\section*{JD Investments Low Risk Low Allocation Fund}
-\begin{multicols}{2}
 \textit{JD Investments Low Risk Low Allocation Fund} has long exposure to the American, German and Japanese equity markets as well as implied volatility of the US market.
 The asset allocation is aimed at minimizing volatility while not having more than 50\% exposure to a single market and not allowing for short sales.
 Returns are shrunk in order to reduce errors in expected return assumptions.
 The portfolio is very immune against stressed market conditions; risk free asset as well as long position in volatility additionally enhances diversification in the portfolio.
 
-%
 \paragraph{Portfolio Construction}
-\begin{sit}
-\item	Long-only equity exposure
-\item	Fixed part invested in risk-free asset
-\item	Yearly rebalanced
-\item	Optimized for minimal risk
-\item Shrinkage of returns
-\item	Constraints on maximum allocation and no short-sales
-\end{sit}
-
-\end{multicols}
+  \begin{sit}
+  \item	Long-only equity exposure
+  \item	Fixed part invested in risk-free asset
+  \item	Yearly rebalanced
+  \item	Optimized for minimal risk
+  \item Shrinkage of returns
+  \item	Constraints on maximum allocation and no short-sales
+  \end{sit}
 
 \tikzsetnextfilename{pf_10}
 \begin{figure}[H]
@@ -644,46 +700,27 @@ With a promising track record and a solid risk return profile as well as zero tu
   \end{sit}
 \end{minipage}
 
-\chapter*{Out Of Sample: 2013-01-01 --- 2015-06-30}
-\begin{table}[ht]
-\centering
-\begin{tabular}{lrrrrrrr}
-\toprule
-                      & Sharpe & $\mu$ &$\sigma$& MDD & T/O & TC & $\alpha$ \\ 
-\midrule
-Minimum Variance & 1.37 & 10.92 & 7.99 & 5.29 & 11.56 & 0.06 & -0.56 \\ 
-  Maximum Sharpe & 1.46 & 17.55 & 12.05 & 8.98 & 11.94 & 0.06 & -0.65 \\ 
-  Fixed Weights & 1.42 & 17.96 & 12.61 & 9.08 & 0.00 & 0.00 &  \\ 
-  Fixed Weights Leveraged & 1.54 & 21.47 & 13.95 & 9.83 & 0.00 & 0.00 &  \\ 
-  Black Litterman & 1.48 & 17.71 & 12.00 & 8.92 & 0.00 & 0.00 &  \\ 
-  Equal Risk & 1.49 & 13.68 & 9.16 & 7.53 & 11.53 & 0.06 & 0.33 \\ 
-  Min Variance Robust & 1.47 & 18.10 & 12.32 & 8.20 & 9.47 & 0.05 & -0.66 \\ 
-  Max Sharpe Robust & 1.12 & 16.55 & 14.82 & 7.70 & 44.45 & 0.22 & -0.49 \\ 
-  MV Max Allocation & 1.31 & 4.12 & 3.15 & 3.05 & 10.41 & 0.05 & -0.45 \\ 
-  MV Max Allocation \& Short-Constraint & 1.40 & 12.34 & 8.79 & 6.09 & 12.10 & 0.06 & -0.67 \\ 
-\bottomrule
-\end{tabular}
-\end{table}
+\chapter*{Conclusion \& Recommendation}
+In order to make a judgement of how portfolios perform we need to take a look at the out-of-sample performance of the five portfolios we introduced. 
+Compared to the Black Littermann portfolio the fixed weight portfolio has the higher rate of annual return of around 17.96\%. However, it also has higher volatility and a lower sharpe ratio.
+The maximum drawdown is also higher lying at 9,08\%.
+Both have a turnover of 0\% and therefore no transaction costs. 
+The equal risk weighted portfolio has a lower annual return of 13.68\% compared to the Black Littermann and the fixed weight portfolio. It also has a lower volatility and maximum drawdown. With 1.49 it has a higher sharpe ratio than the latter two. Turnover is 11.53\% and therefore we have transaction costs of
+0.06 \%. 
+Of the five portfolios introduced the minimum variance (robust) portfolio has the highest attainable performance.
+The minimum variance (robust) portfolio has a higher sharpe ratio than the fixed weight portfolio but lower than the equal risk and Black Littermann portfolio.
+The maximum drawdown is lower than the Black LItterman and fixed weights portfolio but higher than the equal risk portfolio.
+The turnover is higher than the Black Littermann and fixed weights portfolio but lower than the minimum variance(robust) portfolio.
+Transaction costs amount to 0.05\%.
+The MV max allocation and shortsale constraint portfolio has the lowest return compared to the other four portfolios and the lowest sharpe ratio. Therefore, it also has the lowest volatility and maximum drawdown.
+Turnover is 12.10\% and transaction costs are 0.06\%. 
 
-\tikzsetnextfilename{comparison}
-\begin{tikzpicture}
-  \begin{axis}[w={0}{180}, stack plots = false, ymin = 95, legend columns = 3]
-    \addplot[total, red] table[x=time, y=value] {plot-data/fw_p.txt};
-    \addlegendentry{Fixed Weights}
-    \addplot[total, blue] table[x=time, y=value] {plot-data/bl_p.txt};
-    \addlegendentry{Black Litterman}
-    \addplot[total, green] table[x=time, y=value] {plot-data/erc_p.txt};
-    \addlegendentry{Equal Risk}
-    \addplot[total, orange] table[x=time, y=value] {plot-data/minv_rob_p.txt};
-    \addlegendentry{Minimum Variance Robust}
-    \addplot[total, black] table[x=time, y=value] {plot-data/mvo_p.txt};
-    \addlegendentry{Max Allocation No Short Sale}
-    \addplot[total, gray] table[x=time, y=value] {plot-data/msci.txt};
-    \addlegendentry{MSCI}
-  \end{axis}
-\end{tikzpicture}
-
-
+After comparing the performance metrics of the five portfolios we have constructed we believe that the equal risk portfolio is the best portfolio choice for you.
+Even though it has a lower performance than the fixed weights, Black LIttermann and minimum variance(robust) portfolio we believe it fits best to your investment needs.
+Of the five portfolios it has the highest sharpe ratio which means that it gives you the highest risk-return trade-off.
+Secondly, it is the only portfolio that generates a positive alpha.
+This means that it is evident that you are benefiting from us as your portfolio managers making investment decisions for you.
+Our outperformance is also clear when comparing the performance to the respective benchmark. …XX
 
 \chapter*{Bonus: 2015-06-30 --- 2015-11-01}
 \begin{table}[ht]
@@ -725,68 +762,48 @@ Minimum Variance & -1.32 & -15.51 & 11.76 & 0.93\\
 \end{tikzpicture}
 
 
-\chapter{Investment Philosophy \& Investment Approach}
-\section*{Our Philosophy}
-Supporters of passive investing believe in the implications of the Capital Asset Pricing Model and market efficiency, which means that market prices fully reflect all fundamentals and hence an outperformance cannot be achieved.
-On the other hand, advocates of active investing believe that one can outperform the market.
-In this regard it makes sense to consider timing and selection in the investment process.
-JD investments believes that one can generate return based on a careful strategic asset allocation and consequent tactical asset allocation.
-We believe that the advantages of active investing outweigh those of passive investing.
-A passive investor can unwillingly be very concentrated even though he wants to exploit all diversification benefits.
-That is the case if the market cap in an index increases during the time he holds the investment.
-With active investing we see in our asset universe a diversification benefit.
 
-An actively managed portfolio may have the chance of outperforming the market since it weights the assets differently and may not necessarily own all of the assets in the benchmark index.
-It can also use special techniques such as taking short positions in certain assets, which is not possible in a passive indexing strategy.
-We as active portfolio managers want to understand our investor’s investment objectives and risk tolerance.
-We use this knowledge to define an investment policy with risk and return goals, select a performance benchmark, choose an asset mix and allow for adjustments during the course of the market or changes in investment attitude of the investor.
 
-By choosing the indices you wish to invest in and defining your risk tolerance as well as constraints you have already made your first step as an active investor.
-JD Investments supports you in the next steps of active investing by providing sophisticated systematic solutions tailor made for your views and risk preferences.
+\chapter*{Out Of Sample: 2013-01-01 --- 2015-06-30}
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrrrr}
+\toprule
+                      & Sharpe & $\mu$ &$\sigma$& MDD & T/O & TC & $\alpha$ \\ 
+\midrule
+Minimum Variance & 1.37 & 10.92 & 7.99 & 5.29 & 11.56 & 0.06 & -0.56 \\ 
+  Maximum Sharpe & 1.46 & 17.55 & 12.05 & 8.98 & 11.94 & 0.06 & -0.65 \\ 
+  Fixed Weights & 1.42 & 17.96 & 12.61 & 9.08 & 0.00 & 0.00 &  \\ 
+  Fixed Weights Leveraged & 1.54 & 21.47 & 13.95 & 9.83 & 0.00 & 0.00 &  \\ 
+  Black Litterman & 1.48 & 17.71 & 12.00 & 8.92 & 0.00 & 0.00 &  \\ 
+  Equal Risk & 1.49 & 13.68 & 9.16 & 7.53 & 11.53 & 0.06 & 0.33 \\ 
+  Min Variance Robust & 1.47 & 18.10 & 12.32 & 8.20 & 9.47 & 0.05 & -0.66 \\ 
+  Max Sharpe Robust & 1.12 & 16.55 & 14.82 & 7.70 & 44.45 & 0.22 & -0.49 \\ 
+  MV Max Allocation & 1.31 & 4.12 & 3.15 & 3.05 & 10.41 & 0.05 & -0.45 \\ 
+  MV Max Allocation \& Short-Constraint & 1.40 & 12.34 & 8.79 & 6.09 & 12.10 & 0.06 & -0.67 \\ 
+\bottomrule
+\end{tabular}
+\end{table}
 
- 
-\section*{Investment Approach and Assumptions}
-JD Investment uses modern portfolio optimization techniques based on most recent research combined with subjective experience of its experts with proven track records in order to manage its funds.
-Our culture of risk management and regular supervision of the portfolios is essential for our value adding client solutions.
+\tikzsetnextfilename{comparison}
+\begin{tikzpicture}
+  \begin{axis}[w={0}{180}, stack plots = false, ymin = 95, legend columns = 3]
+    \addplot[total, red] table[x=time, y=value] {plot-data/fw_p.txt};
+    \addlegendentry{Fixed Weights}
+    \addplot[total, blue] table[x=time, y=value] {plot-data/bl_p.txt};
+    \addlegendentry{Black Litterman}
+    \addplot[total, green] table[x=time, y=value] {plot-data/erc_p.txt};
+    \addlegendentry{Equal Risk}
+    \addplot[total, orange] table[x=time, y=value] {plot-data/minv_rob_p.txt};
+    \addlegendentry{Minimum Variance Robust}
+    \addplot[total, black] table[x=time, y=value] {plot-data/mvo_p.txt};
+    \addlegendentry{Max Allocation No Short Sale}
+    \addplot[total, gray] table[x=time, y=value] {plot-data/msci.txt};
+    \addlegendentry{MSCI}
+  \end{axis}
+\end{tikzpicture}
 
-We use a \textit{time horizon} of three years of daily data.
-This implies a rolling window of historical data at each optimization since only then recent information has similar impact on optimizations at any point in time.
-Furthermore, it is assumed that the value add of older data might reflect a very different market environment and therefore reduce validity of information.
 
- To adjust the portofolio’s asset allocation we can provide our investors \textit{rebalancing} solutions to realign the weightings monthly or yearly.
-
-In order to improve our out-of-sample performance we use selected regularization techniques and constraints.
-In the following we give our investors a brief overview of the approaches and their rationale.
- 
-For portfolios with assets traded in different markets at different times we adjust the variance/covariance estimation based on the procedure of \textit{Hayashi and Yoshida}.
-This technique improves our estimation of the diversification benefit of assets being part of our asset universe.
-
-Since past performance is a weak indicator for future returns we adjust our expected returns by \textit{shrinking} them towards the average means.
-Moreover, we use shrinkage as specified by Ledoit and Wolf to adjust the variance/covariance estimators.
-Shrinkage leads to a better performance due to an increased stability of major optimization inputs.
-
-In order to incorporate our market views in our systematic approach we use the \textit{Black Littermann Model} for certain portfolios.
-Views on future development as well as volatilities on those views are additionally used in order to obtain optimal portfolio performances.
-
-We are further able to propose our investors \textit{robust portfolio choices} which are based on robust statistics.
-Our procedure follows Wang and Raftery’s approach\footnote{N. Wang, A. Raftery, 2002. Nearest neighbour variance estimation (NVVE). Robust covariance estimation via nearest neigbor cleaning (with discussion), Journal of the American Statistical Association, Volume 97, Pages 994-1019.} to find robust variance/covariance estimates.
-The advantage of this procedure is in comparison to the aforementioned that it yields similar results for our estimators even though our assumptions may not be correct.
-
-In order to \textit{reduce the level of turnover} and hence cut transaction costs several techniques are selectively used.
-Reducing active exposure by keeping some positions fixed or changing to larger optimization frequencies both leads to a smaller turnover.
-Further, maximum allocation constraints in each point in time of the optimization are used to drive down turnover and reduce transaction costs.
-Generally, our procedure is based on the method of Goldfarb and Idnani\footnote{D. Goldfarb, A. Idnani, 1983. A numerically stable dual method for solving strictly convex quadratic programs, Mathematical Programming, Volume 27, Pages 1-33.} to include both short-sale constraints and maximum allocation constraints in our optimization.
-
-To prevent large drawdowns in some of our strategies, market exposure of the fund is reduced by investing part of the portfolios in assets with low volatility e.g. the risk free asset.
-
-Further, long positions in implied volatility are used to exploit negative correlation to stocks in order to further reduce large drawdowns.
-For risk taking investors we also provide solutions where volatility is sold as one source of return in order to leverage.
-In general implied volatility as an asset is treated with highest care in JD Investments Funds as it reacts completely different than value assets.
-Implied volatility as an asset is solely used in order to increase or decrease volatility of a fund such that it matches the investors demand and risk profile.
-
-We provide our solutions in EUR denomination.
-Currency risks are not hedged in our funds since we do not have an active view about them.
-For clients requesting investments without currency exposure hedged share classes can be made available.
 
 
 \chapter*{M Squared}
@@ -798,28 +815,6 @@ Because our portfolios have different volatilities compared to the benchmark we 
 
 $M^2$ has many benefits in comparison to Sharpe ratio as performance criteria.  First reason is that it could be difficult to compare portfolios with different Sharpe ratios, since the difference between them is not easily interpretable (we know that one Sharpe ratio is larger than another, but is this difference significant?). Secondly, it is hard to explain negative Sharpe ratios. Since we are always transparent to our clients we use M squared risk-adjusted returns, so that clients could compare returns of our portfolios directly to a benchmark and decide what suits them the best.
 
-
-\chapter*{Conclusion \& Recommendation}
-In order to make a judgement of how portfolios perform we need to take a look at the out-of-sample performance of the five portfolios we introduced. 
-Compared to the Black Littermann portfolio the fixed weight portfolio has the higher rate of annual return of around 17.96\%. However, it also has higher volatility and a lower sharpe ratio.
-The maximum drawdown is also higher lying at 9,08\%.
-Both have a turnover of 0\% and therefore no transaction costs. 
-The equal risk weighted portfolio has a lower annual return of 13.68\% compared to the Black Littermann and the fixed weight portfolio. It also has a lower volatility and maximum drawdown. With 1.49 it has a higher sharpe ratio than the latter two. Turnover is 11.53\% and therefore we have transaction costs of
-0.06 \%. 
-Of the five portfolios introduced the minimum variance (robust) portfolio has the highest attainable performance.
-The minimum variance (robust) portfolio has a higher sharpe ratio than the fixed weight portfolio but lower than the equal risk and Black Littermann portfolio.
-The maximum drawdown is lower than the Black LItterman and fixed weights portfolio but higher than the equal risk portfolio.
-The turnover is higher than the Black Littermann and fixed weights portfolio but lower than the minimum variance(robust) portfolio.
-Transaction costs amount to 0.05\%.
-The MV max allocation and shortsale constraint portfolio has the lowest return compared to the other four portfolios and the lowest sharpe ratio. Therefore, it also has the lowest volatility and maximum drawdown.
-Turnover is 12.10\% and transaction costs are 0.06\%. 
-
-After comparing the performance metrics of the five portfolios we have constructed we believe that the equal risk portfolio is the best portfolio choice for you.
-Even though it has a lower performance than the fixed weights, Black LIttermann and minimum variance(robust) portfolio we believe it fits best to your investment needs.
-Of the five portfolios it has the highest sharpe ratio which means that it gives you the highest risk-return trade-off.
-Secondly, it is the only portfolio that generates a positive alpha.
-This means that it is evident that you are benefiting from us as your portfolio managers making investment decisions for you.
-Our outperformance is also clear when comparing the performance to the respective benchmark. …XX
 
 \newpage
 \chapter{Appendix}
