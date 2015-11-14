@@ -326,10 +326,9 @@ compute_kpis <- function(value, values, weights, job) {
     factor_map <- list("DAX" = "EU", "Dow Jones" = "US", "Nikkei" = "JP", "VXX" = "US")
     aligned_weights <- weights[index(weights) %in% index(fact)]
     aligned_fact <- fact[index(fact) %in% index(aligned_weights)]
-    alpha <- NA
-#     alpha <- colnames(aligned_weights) %>% lapply(function(col) {
-#       sum(aligned_weights[, col] * aligned_fact[, factor_map[[col]]])
-#     }) %>% Reduce(`+`, .)
+    alpha <- colnames(aligned_weights) %>% lapply(function(col) {
+      sum(aligned_weights[, col] * aligned_fact[, factor_map[[col]]])
+    }) %>% Reduce(`+`, .)
   }
   
   data.frame(sharpe = sharpe,
@@ -356,6 +355,12 @@ evaluate_fix <- function(weights, ass = assets, subset = "2013/2015-06-30") {
   a %<>% apply(2, function(x) x * 100 / (coredata(x[1]))) %>% as.xts
   
   xts(a %*% weights, index(a))
+}
+
+information_ratio <- function(ra, rb) {
+  excess_return <- mean(ra - rb) * 252
+  tracking_error <- sd(ra - rb) * sqrt(252)
+  excess_return/tracking_error
 }
 
 ## ---- linear-regression --------------------

@@ -152,7 +152,30 @@ models <- list("Minimum Variance" = minv_res,
 comp <- models %>% lapply(function(x)x$kpis) %>% do.call(rbind, .)
 xtable(comp)
 
+###
+comp_res <- models %>% lapply(function(x)x$value) %>% do.call(merge.xts, .)
+c <- merge.xts(comp_res, msci) %>%
+  .["2015-06-30/"] %>% na.omit %>%
+  apply(2,function(x)x/coredata(x[1])*100) %>% as.xts %>% 
+  plotTable("comparison_bonus")
+###
+
+models %>%
+  lapply(function(x) x$value %>% ROC(type = "discrete") %>% information_ratio(ROC(msci, type = "discrete"))) %>%
+  do.call(rbind, .)
+
+### bonus information ratio
+merged_returns <- merge.xts(comp_res, msci) %>% na.omit %>% ROC(type = "discrete") %>% na.omit %>% as.xts
+merged_returns["2015-06-30/2015-10-30"] %>% lapply(function(x) {
+    information_ratio(x, merged_returns[,NCOL(merged_returns)]) 
+  }) %>% do.call(rbind, .)
+
+
 ## ---- bonus -----
 
-b_res <- models %>% lapply(function(x)rebase_to_date(x, "2015-06-30")) %>% lapply(function(x)compute_kpis(x,NULL, NULL, fix_base)) %>% do.call(rbind, .)
+b_res <- models %>%
+  lapply(function(x)rebase_to_date(x, "2015-06-30")) %>%
+  lapply(function(x)compute_kpis(x,NULL, NULL, fix_base)) %>%
+  do.call(rbind, .)
+
 xtable(b_res[,1:3])
