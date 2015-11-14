@@ -3,7 +3,7 @@
 \usepackage{jdcommands}
 \jdfontsetup{}
 
-\usepackage{amssymb}
+\usepackage{amsmath, amssymb}
 \usepackage[USenglish]{babel}
 
 \usepackage{pgfplots}
@@ -226,6 +226,10 @@ All this is also true for VXX, but compared to futures strategies (with constant
 \paragraph{Euribor} (Euro Interbank Offered Rate) –-- estimated rate at which European banks borrow funds from one another.
 It is calculated by excluding highest and lowest 15\% lending rates and averaging the remaining.
 As of 10th November, the Euribor rate was -0.004\% (average Euribor in November is 0\%).
+
+\section*{Our Benchmark: MSCI}
+In order to show that we have a good performance we need to compare our performance with a benchmark.. Since we invest in indices of developed countries, the MSCI can be used as a benchmark. The MSCI world is an index  which includes medium and large capitalization stocks of 23 developed markets. Concerning the performance of the index in our out-of-sample period starting from 1st January 2013 till 30th June 2015 the annual return of the index was 20.597\%, annual volatility -17.867\% and corresponding Sharpe ratio –1.15.
+
 
 \chapter*{Portfolios}
 
@@ -908,7 +912,7 @@ Minimum Variance & 1.37 & 10.92 & 7.99 & 5.29 & 11.56 & 0.06 & -0.56 \\
   Black Litterman & 1.48 & 17.71 & 12.00 & 8.92 & 0.00 & 0.00 &  \\ 
   Equal Risk & 1.49 & 13.68 & 9.16 & 7.53 & 11.53 & 0.06 & 0.33 \\ 
   Min Variance Robust & 1.47 & 18.10 & 12.32 & 8.20 & 9.47 & 0.05 & -0.66 \\ 
-  Maximum Sharpe Robust & 1.12 & 16.55 & 14.82 & 7.70 & 44.45 & 0.22 & -0.49 \\ 
+  Max Sharpe Robust & 1.12 & 16.55 & 14.82 & 7.70 & 44.45 & 0.22 & -0.49 \\ 
   MV Max Allocation & 1.31 & 4.12 & 3.15 & 3.05 & 10.41 & 0.05 & -0.45 \\ 
   MV Max Allocation \& Short-Constraint & 1.40 & 12.34 & 8.79 & 6.09 & 12.10 & 0.06 & -0.67 \\ 
 \bottomrule
@@ -940,18 +944,18 @@ Minimum Variance & 1.37 & 10.92 & 7.99 & 5.29 & 11.56 & 0.06 & -0.56 \\
 \centering
 \begin{tabular}{lrrrrrr}
   \toprule
- & Sharpe & $\mu$ & $\sigma$ \\
+ & Sharpe & $\mu$ & $\sigma$ & Inf. Ratio\\
   \midrule
-Minimum Variance & -1.32 & -15.51 & 11.76 \\ 
-  Maximum Sharpe & -1.14 & -21.09 & 18.51 \\ 
-  Fixed Weights & -1.20 & -22.38 & 18.64 \\ 
-  Fixed Weights Leveraged & -1.27 & -25.50 & 20.02 \\ 
-  Black Litterman & -1.20 & -22.38 & 18.64 \\ 
-  Equal Risk & -0.81 & -11.30 & 13.90 \\ 
-  Min Variance Robust & -1.38 & -25.32 & 18.34 \\ 
-  Maximum Sharpe Robust & -1.21 & -22.29 & 18.38 \\ 
-  Mean Variance Maximum Allocation & -1.03 & -3.87 & 3.74 \\ 
-  Mean Variance Maximum Allocation \& Short-Sales & -1.03 & -3.93 & 3.80 \\ 
+Minimum Variance & -1.32 & -15.51 & 11.76 & 0.93\\ 
+  Maximum Sharpe & -1.14 & -21.09 & 18.51 & -0.42\\ 
+  Fixed Weights & -1.20 & -22.38 & 18.64 & -0.82\\ 
+  Fixed Weights Leveraged & -1.27 & -25.50 & 20.02 & -0.94\\ 
+  Black Litterman & -1.20 & -22.38 & 18.64 & -0.79\\ 
+  Equal Risk & -0.81 & -11.30 & 13.90 & 0.62\\ 
+  Min Variance Robust & -1.38 & -25.32 & 18.34 & -0.58\\ 
+  Max Sharpe Robust & -1.21 & -22.29 & 18.38 & -0.58\\ 
+  MV Max Allocation & -1.03 & -3.87 & 3.74 & 1.52\\ 
+  MV Max Allocation \& Short-Constraint & -1.03 & -3.93 & 3.80 & 0.69\\ 
    \bottomrule
 \end{tabular}
 \end{table}
@@ -997,6 +1001,38 @@ JD Investments supports you in the next steps of active investing by providing s
  
 \section*{Investment Approach}
 
+
+\chapter*{M Squared}
+Because our portfolios have different volatilities compared to the benchmark we use Modigliani Squared formula to obtain risk-adjusted returns of our portfolios. Afterwards, we could directly compare returns of our portfolios to those of the index and confirm that our portfolios outperform the benchmark not because of higher risks but because of high-level analysis and research that we conduct in order to find best – way solutions. To obtain $M^2$ returns, we scale Sharpe ratios of our portfolios by volatility of the benchmark and add risk-free rate. Since our risk-free rate is Euribor 6M, for this period of time it averaged to zero, so we need just scaling to obtain risk-adjusted return of our portfolios. In formula terms, it looks as follows:
+
+\begin{align*}
+  M^2 = S \cdot \sigma_{MSCI} = \mu_P \cdot \frac{\sigma_{MSCI}}{\sigma_P}
+\end{align*}
+
+$M^2$ has many benefits in comparison to Sharpe ratio as performance criteria.  First reason is that it could be difficult to compare portfolios with different Sharpe ratios, since the difference between them is not easily interpretable (we know that one Sharpe ratio is larger than another, but is this difference significant?). Secondly, it is hard to explain negative Sharpe ratios. Since we are always transparent to our clients we use M squared risk-adjusted returns, so that clients could compare returns of our portfolios directly to a benchmark and decide what suits them the best.
+
+
+\chapter*{Conclusion \& Recommendation}
+In order to make a judgement of how portfolios perform we need to take a look at the out-of-sample performance of the five portfolios we introduced. 
+Compared to the Black Littermann portfolio the fixed weight portfolio has the higher rate of annual return of around 17.96\%. However, it also has higher volatility and a lower sharpe ratio.
+The maximum drawdown is also higher lying at 9,08\%.
+Both have a turnover of 0\% and therefore no transaction costs. 
+The equal risk weighted portfolio has a lower annual return of 13.68\% compared to the Black Littermann and the fixed weight portfolio. It also has a lower volatility and maximum drawdown. With 1.49 it has a higher sharpe ratio than the latter two. Turnover is 11.53\% and therefore we have transaction costs of
+0.06 \%. 
+Of the five portfolios introduced the minimum variance (robust) portfolio has the highest attainable performance.
+The minimum variance (robust) portfolio has a higher sharpe ratio than the fixed weight portfolio but lower than the equal risk and Black Littermann portfolio.
+The maximum drawdown is lower than the Black LItterman and fixed weights portfolio but higher than the equal risk portfolio.
+The turnover is higher than the Black Littermann and fixed weights portfolio but lower than the minimum variance(robust) portfolio.
+Transaction costs amount to 0.05\%.
+The MV max allocation and shortsale constraint portfolio has the lowest return compared to the other four portfolios and the lowest sharpe ratio. Therefore, it also has the lowest volatility and maximum drawdown.
+Turnover is 12.10\% and transaction costs are 0.06\%. 
+
+After comparing the performance metrics of the five portfolios we have constructed we believe that the equal risk portfolio is the best portfolio choice for you.
+Even though it has a lower performance than the fixed weights, Black LIttermann and minimum variance(robust) portfolio we believe it fits best to your investment needs.
+Of the five portfolios it has the highest sharpe ratio which means that it gives you the highest risk-return trade-off.
+Secondly, it is the only portfolio that generates a positive alpha.
+This means that it is evident that you are benefiting from us as your portfolio managers making investment decisions for you.
+Our outperformance is also clear when comparing the performance to the respective benchmark. …XX
 
 
 \chapter*{Code}
