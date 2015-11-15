@@ -21,3 +21,13 @@ data/Europe_Factors.csv
 data/Japan_Factors.csv
 data/North_America_Factors.csv
 .Rhistory
+*.dep
+*.dpth
+*.dpth
+*.gz(busy)
+*.gz(busy)
+*.md5
+*.md5
+report/tikz/*.pdf
+report/portfolio-report.figlist
+report/portfolio-report.makefile
