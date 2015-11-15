@@ -1227,7 +1227,8 @@ We developed our asset allocation algorithms in R. In the following section, we 
   \item[1-save data] Download of historic data from Yahoo Finance, Quandl and other sources
   \item[1-data] Basic data preparation tasks
   \item[2-analysis] Model specification, regularization techniques, Evaluation logic
-  \item[2-application] Composition of portfolios through abstraction of portfolio models and parameters into a ``job'' data structure; Data structure is passed into a ``run job'' function which returns a data structure containing, (a) individual asset weights, (b) overall portfolio value (c) generated portfolio weights (d) computed performance measures (e) original job specification\\ This data structure can then be processed/evaluated appropriately. The way in which the models and job processing is structured, allows the specification and evaluation of a portfolio by means of composition of idempotent functions.
+  \item[2-application] Composition of portfolios through abstraction of portfolio models and backtesting parameters into a ``job'' data structure; Data structure is passed into a ``run job'' function which returns a data structure containing, (a) individual asset weights, (b) overall portfolio value (c) generated portfolio weights (d) computed performance measures (e) original job specification.\\
+This data structure can subsequently be processed/evaluated appropriately. The structure of modules and functions as well as the abstraction into jobs allows for a clear separation of model specification and application on historic data. The historical simulation of a portfolio reduces to the specification of the model and backtesting setting by means of composition of idempotent functions.
   \item[3-analysis2] Numerical optimization algorithm to incorporate maximum allocation/short-sale constraints
   \item[mdd] Algorithm for calculating the maximum drawdown of a given timeseries
 \end{description}
