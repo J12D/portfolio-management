@@ -1,4 +1,4 @@
-\documentclass[parskip=full]{scrreprt}
+\documentclass[11pt, parskip=full, DIV=14]{scrreprt}
 
 \usepackage{jdcommands}
 \jdfontsetup{}
@@ -13,6 +13,22 @@
 
 \usepackage{multicol}
 \usepackage{wrapfig}
+
+\usepackage{xparse}
+
+\newlength{\oldintextsep}
+\setlength{\oldintextsep}{\intextsep}
+
+\setlength\intextsep{0pt}
+
+\NewDocumentEnvironment{mywraptable}{O{}mO{\wrapoverhang}mO{0pt}}{%
+  \setlength{\intextsep}{#5}%  Defaults to 0pt \plus 0pt \minus 0pt
+  \wraptable[#1]{#2}[#3]{#4}%
+}{%
+  \endwraptable%
+  \setlength{\intextsep}{\oldintextsep}%  Defaults to 0pt \plus 0pt \minus 0pt
+}
+
 \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{float}
@@ -31,16 +47,15 @@
 \definecolor{green}{RGB}{122,184,0}
 \definecolor{palegrey}{RGB}{224,230,230}
 
+\renewcommand{\familydefault}{\sfdefault}
+\setlength{\textfloatsep}{8pt plus 1.0pt minus 2.0pt}
+
 \title{Portfolios for a safe future}
 \author{JD POWER}
 \begin{document}
 \maketitle
 
 \pgfplotsset{y label style={at={(axis description cs:-0.08,.5)}, text depth=0.25ex, anchor=south,}}
-
-\pgfplotsset{every axis legend/.append style={
-        at={(0.5,1.03)},
-        anchor=south}}
 
 \pgfplotsset{
   /pgfplots/bar cycle list/.style={/pgfplots/cycle list={%
@@ -62,17 +77,14 @@
       yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
       legend pos = north west,
       every axis plot/.append style={thick, smooth},
-      legend pos = north west,
       legend columns=5,
       every axis legend/.append style={at={(0.5,1.03)}, anchor=south},
       trim axis left,trim axis right,
       stack plots=y,
       cycle list name=exotic,
       area style,
-      every axis/.append style={font=\small},
-      legend style={font=\small},
-      width=\textwidth,
-      height=0.5\textwidth,
+      every axis/.append style={font=\footnotesize},
+      legend style={font=\footnotesize},
   },
   total/.style={red, ultra thick, line legend},
    relw/.style 2 args={
@@ -80,13 +92,21 @@
       ylabel=,
       yticklabel=\pgfmathparse{100*\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
       ymin=#1, ymax=#2,
-      height=0.4\textwidth,
+      width=\textwidth,
+      height=0.5\textwidth,
+      %every axis legend/.append style={
+        %at={(0.5,1.03)},
+      %anchor=south},
     },
    w/.style 2 args={
       gen,
       ylabel=,
       yticklabel=\pgfmathparse{\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
       ymin=#1, ymax=#2,
+      legend pos=outer north east
+      width=0.8\textwidth,
+      height=0.4\textwidth,
+      %legend pos=outher north east,
     },
   bottom/.style={axis y line = none},
   cycle list name=exotic,
@@ -281,25 +301,28 @@ For clients requesting investments without currency exposure hedged share classe
 \chapter*{Portfolios}
 
 \newpage\section*{JD Investments Low Risk Low Allocation Fund}
+\begin{mywraptable}{r}{0pt}
+  \begin{tabular}{lr}
+  \toprule
+  Ann. Return & 4.12\%\\
+  Ann. Volatility & 3.15\%\\
+  Sharpe & 1.31\\
+  Max. Drawdown& 3.05\%\\
+  Turnover & 10.41\%\\
+  Alpha & ---\\
+  Ann. Return Net & \\
+  \bottomrule
+\end{tabular}
+\end{mywraptable}
 \textit{JD Investments Low Risk Low Allocation Fund} has long exposure to the American, German and Japanese equity markets as well as implied volatility of the US market.
 The asset allocation is aimed at minimizing volatility while not having more than 50\% exposure to a single market and not allowing for short sales.
 Returns are shrunk in order to reduce errors in expected return assumptions.
 The portfolio is very immune against stressed market conditions; risk free asset as well as long position in volatility additionally enhances diversification in the portfolio.
-
-\paragraph{Portfolio Construction}
-  \begin{sit}
-  \item	Long-only equity exposure
-  \item	Fixed part invested in risk-free asset
-  \item	Yearly rebalanced
-  \item	Optimized for minimal risk
-  \item Shrinkage of returns
-  \item	Constraints on maximum allocation and no short-sales
-  \end{sit}
-
-\tikzsetnextfilename{pf_10}
-\begin{figure}[H]
+%
+\begin{center}
+\tikzsetnextfilename{pf_10}  
 \begin{tikzpicture}
-  \begin{axis}[w={0}{120}, y filter/.expression={max(y,0)}, legend columns=3]
+  \begin{axis}[w={0}{120}, y filter/.expression={max(y,0)}, legend columns=1]
     \addplot table[x=time, y=value.DAX] {plot-data/mvo.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/mvo.txt}\closedcycle;
@@ -320,41 +343,36 @@ The portfolio is very immune against stressed market conditions; risk free asset
     \addplot table[x=time, y=value.VXX] {plot-data/mvo.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
-\end{figure}
+\end{center}
+%
+The portfolio has a well performing and smooth track record without any significant drawdowns over the period from 2013 to the middle of 2015.
+The portfolio is managed for very risk averse investors that are willing to give up some expected return in order to maintain a very low level of volatility in their position.
 
+\begin{minipage}[t]{0.5\textwidth}
+  \textbf{Portfolio Construction}
+\begin{sit}
+\item	Long-only equity exposure
+\item	Fixed part invested in risk-free asset
+\item	Yearly rebalanced
+\item	Optimized for minimal risk
+\item Shrinkage of returns
+\item	Maximum Allocation/No Short-sales constraint
+\end{sit}
+\end{minipage}
+%
+\begin{minipage}[t]{0.5\textwidth}
+\textbf{Weights in Portfolio}\\
 \tikzsetnextfilename{pf_10w}
-\begin{minipage}{0.65\textwidth}
 \begin{tikzpicture}
-  \begin{axis}[relw={0}{1}, legend columns=3]
+  \begin{axis}[relw={0}{1}]
     \addplot table[x=time, y=value.DAX] {plot-data/mvo_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/mvo_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/mvo_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
     \addplot table[x=time, y=value.VXX] {plot-data/mvo_relw.txt}\closedcycle;
-    \addlegendentry{VXX}
     \addplot table[x=time, y=value.mixed] {plot-data/mvo_relw.txt}\closedcycle;
-    \addlegendentry{Euribor}
   \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\begin{minipage}{0.35\textwidth}
-\begin{tabular}{lr}
-  \toprule
-  Ann. Return & 4.12\%\\
-  Ann. Volatility & 3.15\%\\
-  Sharpe & 1.31\\
-  Max. Drawdown& 3.05\%\\
-  Turnover & 10.41\%\\
-  Alpha & ---\\
-  Ann. Return Net & \\
-  \bottomrule
-\end{tabular}
-\end{minipage}
-
-The portfolio has a well performing and smooth track record without any significant drawdowns over the period from 2013 to the middle of 2015.
-The portfolio is managed for very risk averse investors that are willing to give up some expected return in order to maintain a very low level of volatility in their position.
 
 \begin{minipage}[t]{0.49\textwidth}
   \paragraph{Opportunities}
@@ -701,26 +719,17 @@ With a promising track record and a solid risk return profile as well as zero tu
 \end{minipage}
 
 \chapter*{Conclusion \& Recommendation}
-In order to make a judgement of how portfolios perform we need to take a look at the out-of-sample performance of the five portfolios we introduced. 
-Compared to the Black Littermann portfolio the fixed weight portfolio has the higher rate of annual return of around 17.96\%. However, it also has higher volatility and a lower sharpe ratio.
-The maximum drawdown is also higher lying at 9,08\%.
-Both have a turnover of 0\% and therefore no transaction costs. 
-The equal risk weighted portfolio has a lower annual return of 13.68\% compared to the Black Littermann and the fixed weight portfolio. It also has a lower volatility and maximum drawdown. With 1.49 it has a higher sharpe ratio than the latter two. Turnover is 11.53\% and therefore we have transaction costs of
-0.06 \%. 
-Of the five portfolios introduced the minimum variance (robust) portfolio has the highest attainable performance.
-The minimum variance (robust) portfolio has a higher sharpe ratio than the fixed weight portfolio but lower than the equal risk and Black Littermann portfolio.
-The maximum drawdown is lower than the Black LItterman and fixed weights portfolio but higher than the equal risk portfolio.
-The turnover is higher than the Black Littermann and fixed weights portfolio but lower than the minimum variance(robust) portfolio.
-Transaction costs amount to 0.05\%.
-The MV max allocation and shortsale constraint portfolio has the lowest return compared to the other four portfolios and the lowest sharpe ratio. Therefore, it also has the lowest volatility and maximum drawdown.
-Turnover is 12.10\% and transaction costs are 0.06\%. 
+To make an in-depth analysis of the performance of selected portfolios we take a look at their out-of-sample performance.
 
-After comparing the performance metrics of the five portfolios we have constructed we believe that the equal risk portfolio is the best portfolio choice for you.
-Even though it has a lower performance than the fixed weights, Black LIttermann and minimum variance(robust) portfolio we believe it fits best to your investment needs.
-Of the five portfolios it has the highest sharpe ratio which means that it gives you the highest risk-return trade-off.
-Secondly, it is the only portfolio that generates a positive alpha.
-This means that it is evident that you are benefiting from us as your portfolio managers making investment decisions for you.
-Our outperformance is also clear when comparing the performance to the respective benchmark. …XX
+Compared to the \textit{JD Investments Black Litterman Equity Fund} our \textit{JD Investments Fixed Weight Equity Fund} has with 17.96\% a higher rate of return. However, its sharpe ratio is lower. The maximum drawdown is also higher lying at 9.08\%. Both have a turnover of 0\% due to their static asset allocation.
+
+The \textit{JD Investments Equal Risk Contribution Equity Fund} has with 13.68\% a lower annual return than our \textit{JD Investments Black Litterman Equity Fund} and \textit{JD Investments Fixed Weight Equity Fund}. It also has a lower volatility and maximum drawdown. With 1.49 it has a higher sharpe ratio than the latter two. Turnover is 11.53\% with transaction costs of 0.06\%. 
+
+Of the five portfolios introduced the \textit{JD Investments Robust Minimum Variance Equity Fund} has the highest attainable performance. The\textit{JD Investments Robust Minimum Variance Equity Fund} has a higher sharpe ratio than the \textit{JD Investments Fixed Weight Equity Fund} but it is lower than for the \textit{JD Investments Equal Risk Contribution Equity Fund} and \textit{JD Investments Black Litterman Equity Fund}. The maximum drawdown is lower than for \textit{JD Investments Black Litterman Equity Fund} and \textit{JD Investments Fixed Weight Equity Fund} but higher than the equal risk portfolio. The turnover is higher than for \textit{JD Investments Black Litterman Equity Fund} and \textit{JD Investments Fixed Weight Equity Fund} but lower than the \textit{JD Investments Robust Minimum Variance Equity Fund}. Transaction costs amount to 0.05\%.
+
+The \textit{JD Investments Mean Variance with Maximum Allocation and Shortsale Constraint Equity Fund} has the lowest return compared to the other four funds and the lowest sharpe ratio. Respectively, it also has the lowest volatility and maximum drawdown. Turnover is 12.10\% and transaction costs are 0.06\%. Given the discussion above, it can be seen that choosing an optimal portfolio is not a straightforward task as it might look on the first sight. The decision of optimal portfolio was based on investor’s constraints and implied risk aversion. 
+
+After comparing the performance metrics of the five portfolios we believe that the \textit{JD Investments Equal Risk Contribution Equity Fund} is the best portfolio choice for you. Even though it has a lower performance than the \textit{JD Investments Fixed Weight Equity Fund}, \textit{JD Investments Black Litterman Equity Fund} and \textit{JD Investments Robust Minimum Variance Equity Fund} we believe it fits best to your investment needs. Of the five portfolios it has the highest sharpe ratio which means that it gives you the highest risk-return trade-off. Secondly, it is the only portfolio that generates a statistically significant positive alpha. This means that it is evident that you are benefiting from us as we proved to make solid investment decisions.
 
 \chapter*{Bonus: 2015-06-30 --- 2015-11-01}
 \begin{table}[ht]
