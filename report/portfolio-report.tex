@@ -1,4 +1,4 @@
-\documentclass[11pt, parskip=full, DIV=14]{scrreprt}
+\documentclass[11pt, parskip=full, DIV=14, headsepline]{scrreprt}
 
 \usepackage{jdcommands}
 \jdfontsetup{}
@@ -33,16 +33,6 @@
 \let\oldendcenter\endcenter
 \renewenvironment{center}{\setlength\topsep{6pt}\oldcenter}{\oldendcenter}
 
-\makeatletter
-\newcolumntype{i}[1]{%
-    >{\minipage[t]{\linewidth}\let\\\tabularnewline
-      \itemize
-      \addtolength{\rightskip}{0pt plus 50pt}% for raggedright
-      \setlength{\itemsep}{-\parsep}}%
-    p{#1}%
-    <{\@finalstrut\@arstrutbox\enditemize\endminipage}}
-\makeatother
-
 \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{float}
@@ -51,8 +41,6 @@
 
 \usetikzlibrary{external}
 \tikzexternalize[prefix=tikz/]
-%\tikzset{external/system call={lualatex -shell-escape -halt-on-error -interact
-%ion=batchmode -jobname "\image" "\texsource"}}
 
 \definecolor{dbblue}{RGB}{0,24,168}
 \definecolor{lightblue}{RGB}{0,152,219}
@@ -65,11 +53,11 @@
 \renewcommand{\familydefault}{\sfdefault}
 \setlength{\textfloatsep}{8pt plus 1.0pt minus 2.0pt}
 
-\usepackage[nouppercase,headsepline]{scrpage2}
-\pagestyle{scrheadings}
-\clearscrheadfoot
+\usepackage{scrlayer-scrpage}
 \automark[section]{chapter}
-\chead[\headmark]{\headmark}
+%\renewcommand{\chapterpagestyle}{scrheadings}
+\pagestyle{scrheadings}
+\chead{\headmark}
 \cfoot[\pagemark]{\pagemark}
 
 \newcommand*{\FSfont}[1]{}
@@ -86,16 +74,16 @@
 \begin{center}
 \def\CP{\textit{\Huge Active Fund Solutions for a safe future}}
 \settowidth{\unitlength}{\CP}
-{\color{dbblue}\topb} \\[\baselineskip]
+{\color{black}\topb} \\[\baselineskip]
 \textcolor{lightblue}{\CP} \\[\baselineskip]
-{\color{orange}\LARGE JD Investments} \\
-{\color{dbblue}\botb}
+%{\color{black}\LARGE JD Investments} \\
+\plogo\\[0.5\baselineskip]
+{\color{black}\botb}
 \end{center}
 \vfill
 \begin{center}
 {\LARGE\textbf{Andrej Bajic, Nikolay Balantsev, Julian Debus, Clemens Reeh, Nicolay Schmitt, Sabrina Taneja}}\\
 \vfill
-\plogo\\[0.5\baselineskip]
 \today
 \end{center}
 \endgroup}
@@ -110,16 +98,7 @@ width=\textwidth,
 left=0mm,
 sharp corners,
 adjusted title=#1
-}%\newtcolorbox{mybox}[1]{
-   %title=#1,
-   %width=\textwidth,
-   %coltitle=black,
-   %frame code={},
-   %interior titled code={
-     %\tikz{\draw[dbblue,ultra thick] 
-       %([yshift=5pt]frame.south west) |- ([xshift=60pt,yshift=-4pt]title.south west);}
-   %}
-%}
+}
 
 \title{Portfolios for a safe future}
 \author{JD POWER}
@@ -300,14 +279,14 @@ Therefore, when markets fall, long position in VIX futures should increase in va
 All this is also true for VXX, but compared to futures strategies (with constant rolling over), here we just take long or short position of VXX in our portfolio and slightly adjust it with time.
 
 
-\section*{Our Benchmark: MSCI}
+\section{Our Benchmark: MSCI}
 In order to show that we have a good performance we need to compare our performance with a benchmark.
 Since we invest in indices of developed countries, the MSCI world index can be used as a benchmark.
 The MSCI world is an index  which includes medium and large capitalization stocks of 23 developed markets.
 Concerning the performance of the index in our out-of-sample period starting from 1st January 2013 till 30th June 2015 the annual return of the index was 20.597\%, annual volatility -17.867\% and corresponding Sharpe ratio –1.15.
 
 \chapter{Investment Philosophy \& Investment Approach}
-\section*{Our Philosophy}
+\section{Our Philosophy}
 Supporters of passive investing believe in the implications of the Capital Asset Pricing Model and market efficiency, which means that market prices fully reflect all fundamentals and hence an outperformance cannot be achieved.
 On the other hand, advocates of active investing believe that one can outperform the market.
 In this regard it makes sense to consider timing and selection in the investment process.
@@ -326,7 +305,7 @@ By choosing the indices you wish to invest in and defining your risk tolerance a
 JD Investments supports you in the next steps of active investing by providing sophisticated systematic solutions tailor made for your views and risk preferences.
 
  
-\section*{Investment Approach and Assumptions}
+\section{Investment Approach and Assumptions}
 JD Investments uses modern portfolio optimization techniques based on most recent research combined with subjective experience of its experts with proven track records in order to manage its funds.
 Our culture of risk management and regular supervision of the portfolios is essential for our value adding client solutions.
 
@@ -369,23 +348,22 @@ We provide our solutions in EUR denomination.
 Currency risks are not hedged in our funds since we do not have an active view about them.
 For clients requesting investments without currency exposure hedged share classes can be made available.
 
+\vspace{-5em}
 \chapter{Portfolios}
 
-\newpage\section*{Mean Variance+ Equity Fund}
+\section{JD Investments Mean Variance+ Equity Fund}
 \begin{mywraptable}{r}{0pt}
   \begin{tabular}{lr}
   \toprule
-  Ann. Return & 4.12\%\\
-  Ann. Volatility & 3.15\%\\
-  Sharpe & 1.31\\
-  Max. Drawdown& 3.05\%\\
-  Turnover & 10.41\%\\
-  Alpha & ---\\
-  Ann. Return Net & \\
+  Ann. Return & 11.61\%\\
+  Ann. Volatility & 8.35\%\\
+  Sharpe & 1.39\\
+  Max. Drawdown& 5.88\%\\
+  Turnover & 10.34\%\\
   \bottomrule
 \end{tabular}
 \end{mywraptable}
-\textit{Mean Variance+ Equity Fund} has long exposure to the American, German and Japanese equity markets as well as implied volatility of the US market.
+\textit{JD Investments Mean Variance+ Equity Fund} has long exposure to the American, German and Japanese equity markets as well as implied volatility of the US market.
 The asset allocation is aimed at minimizing volatility while not having more than 50\% exposure to a single market and not allowing for short sales.
 Returns are shrunk in order to reduce errors in expected return assumptions.
 The portfolio is very immune against stressed market conditions, as we also include the risk-free asset into our portfolio.% We further enhance diversification due to long positions in volatility.
@@ -444,27 +422,25 @@ The portfolio is managed for very risk averse investors that are willing to give
 \end{minipage}
 
 \begin{minipage}[t]{0.5\textwidth}
-\begin{mybox}{Opportunities}
+  \textbf{Opportunities}
 \begin{sit}
     \item Prospect of positive return through participation in American, German and Japanese stock markets.
     \item Prospect of positive returns due to unhedged currency exposure.
     \item Reduced equity market exposure and protection to downturns due to risk free investments.
     \item Prospect of positive return through exploiting inefficiencies on equity option markets.
 \end{sit}
-\end{mybox}
 \end{minipage}
 \begin{minipage}[t]{0.5\textwidth}
-  \begin{mybox}{Risks}
+  \textbf{Risks}
   \begin{sit}
     \item Losses possible in case stock markets develops against exposure built up in the portfolio.
     \item Losses possible if unhedged currency position moves against exposure built up in the portfolio.
     \item Underperformance due to risk free investments possible.
     \item Significant losses possible due to inefficiencies on equity option markets.% The volatility of the price of portfolio units might be increased.    
   \end{sit}
-  \end{mybox}
 \end{minipage}
 
-\newpage\section*{JD Investments Equal Risk Contribution Fund}
+\newpage\section{JD Investments Equal Risk Contribution Fund}
 \begin{mywraptable}{r}{0pt}
 \begin{tabular}{lr}
 \toprule
@@ -472,21 +448,21 @@ Ann. Return & 13.68\%\\
 Ann. Volatility & 9.16\%\\
 Sharpe Ratio & 1.49 \\
 Max. Drawdown & 7.53\% \\
-Turnover & 11.53\\
+Turnover & 11.53\%\\
 \bottomrule
 \end{tabular}
 \end{mywraptable}
-\textit{JD Investments Equal Risk Contribution Fund} invests in the American, German and Japanese equity markets as well as a fixed proportion of the assets into the risk free rate.
-Exposure is built such that each asset contributes to the risk of a portfolio in the same proportion.
-The portfolio is rebalanced every month in order to carefully monitor risk contributions to the portfolio.
-
-This portfolio is especially appealing to risk averse investors who care more about risk aversion than high returns.
-An appealing feature of the portfolios investment process is that expected returns are not used, reducing the likelihood of incorrect assumptions.
+\textit{JD Investments Equal Risk Contribution Fund} invests in the American, German and Japanese equity markets as well as the risk free rate.
+The portfolio allocation aims to have each asset contributing equally to the portfolio risk.
+The portfolio is rebalanced each month in order to be able to quickly adapt to changing a market environment.
+%
+This portfolio is particularly attractive to risk averse investors.
+This portfolio completely ignores expected returns, making it robust for ever-changing markets or wrong assupmtions.
 Investors can profit from higher than anticipated returns on less risky assets in the portfolio.
  
 
 \tikzsetnextfilename{pf_6}
-\begin{figure}[H]
+\begin{center}
 \begin{tikzpicture}
   \begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/erc.txt}\closedcycle;
@@ -504,7 +480,7 @@ Investors can profit from higher than anticipated returns on less risky assets i
     \addplot[total] table[x=time, y=value] {plot-data/erc_p.txt};
   \end{axis}
 \end{tikzpicture}
-\end{figure}
+\end{center}
 
 \begin{minipage}[t]{0.5\textwidth}
   \textbf{Portfolio Construction}
@@ -537,8 +513,8 @@ Investors can profit from higher than anticipated returns on less risky assets i
 \end{minipage}
 
 
-The portfolio has a well performing and smooth track record without any significant drawdowns over the period from 2013 to the middle of 2015.
-It delivers an attractive return and low volatility due to the main attributes of this portfolio solution; regular optimization and risk free investments.
+The portfolio has smooth track record without any significant drawdowns over the period from 2013 to the middle of 2015.
+It delivers an attractive return and low volatility.
 The high level of diversification combined with the riskless asset promises the investor a stable and risk averse portfolio.
 The portfolio is an attractive solution for risk averse investors looking for global, long only, equity exposure.
  
@@ -557,13 +533,13 @@ The portfolio is an attractive solution for risk averse investors looking for gl
   \begin{sit}
     \item Losses possible in case stock markets develop against exposure built up in the portfolio.
     \item Losses possible in case unhedged currency position develops against exposure built up in the portfolio.
-    \item Underperformance due to risk free investments possible.
-    \item Portfolio exposed to sudden jumps at the level of volatility.
+    %\item Underperformance due to risk free investments possible.
+    %\item Portfolio exposed to sudden jumps at the level of volatility.
     \item Sudden increase in maximum drawdowns of low risk stocks may cause considerable losses in the portfolio.
   \end{sit}
 \end{minipage}
 
-\newpage\section*{JD Investments Market View Optimized Fund}
+\newpage\section{JD Investments Market View Optimized Fund}
 \begin{mywraptable}{r}{0pt}
 \begin{tabular}{lr}
 \toprule
@@ -571,7 +547,7 @@ Ann. Return & 17.71\%\\
 Ann. Volatility & 12.00\%\\
 Sharpe Ratio & 1.48\\
 Max. Drawdown & 8.92\% \\
-Turnover & 0\%\\
+Turnover & 0.00\%\\
 \bottomrule
 \end{tabular}
 \end{mywraptable}
@@ -581,9 +557,8 @@ For this the average over the forward looking target prices of our assets was in
 The mix of fundamental analysis and systematic optimization makes this fund an attractive investment.
 
 
-
 \tikzsetnextfilename{pf_5}
-\begin{figure}[H]
+\begin{center}
 \begin{tikzpicture}
   \begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/bl.txt}\closedcycle;
@@ -598,7 +573,7 @@ The mix of fundamental analysis and systematic optimization makes this fund an a
     \addplot[total] table[x=time, y=value] {plot-data/bl_p.txt};
   \end{axis}
 \end{tikzpicture}
-\end{figure}
+\end{center}
 
 \begin{minipage}{0.5\textwidth}
 \paragraph{Portfolio Construction}
@@ -643,16 +618,15 @@ The fund is an appealing solution for moderate risk taking investors looking for
   \end{sit}
 \end{minipage}
 
-\newpage\section*{JD Investments Low Risk Robust Fund}
+\newpage\section{JD Investments Low Risk Robust Fund}
 \begin{mywraptable}{r}{0pt}
   \begin{tabular}{lr}
   \toprule
   Ann. Return & 18.10\%\\
   Ann. Volatility & 12.32\%\\
   Sharpe & 1.47\\
-  Max. Drawdown& 8.2\%\\
-  Alpha & ---\\
-  Ann Return Net & \\
+  Max. Drawdown& 8.20\%\\
+  Turnover & 9.47\%\\
   \bottomrule
   \end{tabular}
 \end{mywraptable}
@@ -661,7 +635,7 @@ The asset allocation is aimed at minimizing volatility while variances/covarianc
 This portfolio still provides attractive returns and Sharpe ratio in spite of being oriented on variance minimization.
 
 \tikzsetnextfilename{pf_7}
-\begin{figure}[H]
+\begin{center}
 \begin{tikzpicture}
   \begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/minv_rob.txt}\closedcycle;
@@ -676,7 +650,7 @@ This portfolio still provides attractive returns and Sharpe ratio in spite of be
     \addplot[total] table[x=time, y=value] {plot-data/minv_rob_p.txt};
   \end{axis}
 \end{tikzpicture}
-\end{figure}
+\end{center}
 
 \begin{minipage}{0.5\textwidth}
 \paragraph{Portfolio Construction}
@@ -724,15 +698,15 @@ An attractive return with moderate volatility is the key characteristic of this 
   \end{sit}
 \end{minipage}
 
-\newpage\section*{JD Investments Fixed Weight Equity Fund}
+\newpage\section{JD Investments Fixed Weight Equity Fund}
 \begin{mywraptable}{r}{0pt}
 \begin{tabular}{lr}
 \toprule
-Ann. Return & 17.17\%\\
-Ann. Volatility & 12.00\%\\
-Sharpe Ratio & 1.48 \\
-Max. Drawdown & 8.92 \\
-Turnover & 0\\
+Ann. Return & 17.96\%\\
+Ann. Volatility & 12.61\%\\
+Sharpe Ratio & 1.42 \\
+Max. Drawdown & 9.08\%\\
+Turnover & 0.00\%\\
 \bottomrule
 \end{tabular}
 \end{mywraptable}
@@ -799,8 +773,50 @@ With a promising track record and a solid risk return profile as well as zero tu
   \end{sit}
 \end{minipage}
 
+\setlength{\intextsep}{\oldintextsep}
 \chapter{Conclusion \& Recommendation}
 To make an in-depth analysis of the performance of selected portfolios we take a look at their out-of-sample performance.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrrrr}
+\toprule
+                      & Sharpe & $\mu$[\%] &$\sigma$[\%]& MDD[\%]& T/O[\%] & TC[\%] & $\alpha$[\%] \\ 
+\midrule
+ Mean Variance+ & 1.39 & 11.61 & 8.35 & 5.88 & 10.34 & 0.05 & 0.38 \\
+ Equal Risk Contribution& 1.49 & 13.68 & 9.16 & 7.53 & 11.53 & 0.06 & 0.64 \\ 
+ Market View Optimized & 1.48 & 17.71 & 12.00 & 8.92 & 0.00 & 0.00 & 0.55 \\ 
+ Low Risk Robust & 1.47 & 18.10 & 12.32 & 8.20 & 9.47 & 0.05 & 0.44 \\ 
+ Fixed Weights & 1.42 & 17.96 & 12.61 & 9.08 & 0.00 & 0.00 & 0.62 \\ 
+%Minimum Variance & 1.37 & 10.92 & 7.99 & 5.29 & 11.56 & 0.06 & 0.28 \\ 
+ %Maximum Sharpe & 1.46 & 17.55 & 12.05 & 8.98 & 11.94 & 0.06 & 0.26 \\ 
+ %Fixed Weights Leveraged & 1.54 & 21.47 & 13.95 & 9.83 & 0.00 & 0.00 & 0.76 \\ 
+ %Maximum Sharpe Robust & 1.12 & 16.55 & 14.82 & 7.70 & 44.45 & 0.22 & 0.26 \\ 
+ %MV Max Allocation & 1.40 & 5.18 & 3.70 & 2.50 & 4.65 & 0.02 & 0.19 \\ 
+ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}
+\tikzsetnextfilename{comparison}
+\begin{tikzpicture}
+  \begin{axis}[w={0}{180}, stack plots = false,xmin={2013-01-01}, xmax={2015-06-30}, ymin = 95, legend columns = 1]
+    \addplot[total, red] table[x=time, y=value] {plot-data/fw_p.txt};
+    \addlegendentry{Fixed Weights}
+    \addplot[total, blue] table[x=time, y=value] {plot-data/bl_p.txt};
+    \addlegendentry{Market View Optimized}
+    \addplot[total, green] table[x=time, y=value] {plot-data/erc_p.txt};
+    \addlegendentry{Equal Risk Contribution}
+    \addplot[total, orange] table[x=time, y=value] {plot-data/minv_rob_p.txt};
+    \addlegendentry{Low Risk Robust}
+    \addplot[total, black] table[x=time, y=value] {plot-data/mvo_p.txt};
+    \addlegendentry{Mean Variance+}
+    \addplot[total, gray] table[x=time, y=value] {plot-data/msci.txt};
+    \addlegendentry{MSCI}
+  \end{axis}
+\end{tikzpicture}
+\end{figure}
+
 
 Compared to the \textit{JD Investments Black Litterman Equity Fund} our \textit{JD Investments Fixed Weight Equity Fund} has with 17.96\% a higher rate of return. However, its sharpe ratio is lower. The maximum drawdown is also higher lying at 9.08\%. Both have a turnover of 0\% due to their static asset allocation.
 
@@ -808,7 +824,7 @@ The \textit{JD Investments Equal Risk Contribution Equity Fund} has with 13.68\%
 
 Of the five portfolios introduced the \textit{JD Investments Robust Minimum Variance Equity Fund} has the highest attainable performance. The \textit{JD Investments Robust Minimum Variance Equity Fund} has a higher sharpe ratio than the \textit{JD Investments Fixed Weight Equity Fund} but it is lower than for the \textit{JD Investments Equal Risk Contribution Equity Fund} and \textit{JD Investments Black Litterman Equity Fund}. The maximum drawdown is lower than for \textit{JD Investments Black Litterman Equity Fund} and \textit{JD Investments Fixed Weight Equity Fund} but higher than the equal risk portfolio. The turnover is higher than for \textit{JD Investments Black Litterman Equity Fund} and \textit{JD Investments Fixed Weight Equity Fund} but lower than the \textit{JD Investments Robust Minimum Variance Equity Fund}. Transaction costs amount to 0.05\%.
 
-The \textit{JD Investments Mean Variance with Maximum Allocation and Shortsale Constraint Equity Fund} has the lowest return compared to the other four funds and the lowest sharpe ratio. Respectively, it also has the lowest volatility and maximum drawdown. Turnover is 12.10\% and transaction costs are 0.06\%. Given the discussion above, it can be seen that choosing an optimal portfolio is not a straightforward task as it might look on first sight. The decision for the optimal portfolio is based on investor’s constraints and implied risk aversion. 
+The \textit{JD Investments Mean Variance+ Equity Fund} has the lowest return compared to the other four funds and the lowest sharpe ratio. Respectively, it also has the lowest volatility and maximum drawdown. Turnover is 12.10\% and transaction costs are 0.06\%. Given the discussion above, it can be seen that choosing an optimal portfolio is not a straightforward task as it might look on first sight. The decision for the optimal portfolio is based on investor’s constraints and implied risk aversion. 
 
 After comparing the performance metrics of the five portfolios we believe that the \textit{JD Investments Equal Risk Contribution Equity Fund} is the best portfolio choice for you. Even though it has a lower performance than the \textit{JD Investments Fixed Weight Equity Fund}, \textit{JD Investments Black Litterman Equity Fund} and \textit{JD Investments Robust Minimum Variance Equity Fund} we believe it fits best to your investment needs. Of the five portfolios it has the highest sharpe ratio which means that it gives you the highest risk-return trade-off. Secondly, it is the only portfolio that generates a statistically significant positive alpha. This means that it is evident that you are benefiting from us as we proved to make solid investment decisions.
 
@@ -817,36 +833,36 @@ After comparing the performance metrics of the five portfolios we believe that t
 \centering
 \begin{tabular}{lrrrrrr}
   \toprule
- & Sharpe & $\mu$ & $\sigma$ & Inf. Ratio\\
+ & Sharpe & $\mu$[\%] & $\sigma$[\%]& Inf. Ratio & Appraisal Ratio\\
   \midrule
-Minimum Variance & -1.32 & -15.51 & 11.76 & 0.93\\ 
-  Maximum Sharpe & -1.14 & -21.09 & 18.51 & -0.42\\ 
-  Fixed Weights & -1.20 & -22.38 & 18.64 & -0.82\\ 
-  Fixed Weights Leveraged & -1.27 & -25.50 & 20.02 & -0.94\\ 
-  Black Litterman & -1.20 & -22.38 & 18.64 & -0.79\\ 
-  Equal Risk & -0.81 & -11.30 & 13.90 & 0.62\\ 
-  Min Variance Robust & -1.38 & -25.32 & 18.34 & -0.58\\ 
-  Max Sharpe Robust & -1.21 & -22.29 & 18.38 & -0.58\\ 
-  MV Max Allocation & -1.03 & -3.87 & 3.74 & 1.52\\ 
-  MV Max Allocation \& Short-Constraint & -1.03 & -3.93 & 3.80 & 0.69\\ 
+   Mean Variance+ & -1.03 & -3.93 & 3.80 & -1.08 & 0.16\\ 
+   Equal Risk Contribution & -0.81 & -11.30 & 13.90 & -0.81 & 0.14\\ 
+   Market View Optimized & -1.20 & -22.38 & 18.64 & -2.11 & 0.11\\ 
+   Low Risk Robust& -1.38 & -25.32 & 18.34 & -2.24 & 0.12\\ 
+   Fixed Weights & -1.20 & -22.38 & 18.64 & -2.04 & 0.12\\ 
+%Minimum Variance & -1.32 & -15.51 & 11.76 & 0.93\\ 
+  %Maximum Sharpe & -1.14 & -21.09 & 18.51 & -0.42\\ 
+  %Fixed Weights Leveraged & -1.27 & -25.50 & 20.02 & -0.94\\ 
+  %Max Sharpe Robust & -1.21 & -22.29 & 18.38 & -0.58\\ 
+  %MV Max Allocation & -1.03 & -3.87 & 3.74 & 1.52\\ 
    \bottomrule
 \end{tabular}
 \end{table}
 
 \tikzsetnextfilename{comparison_bonus}
 \begin{tikzpicture}
-  \begin{axis}[w={80}{110}, stack plots = false, xtick={2015-07-01, 2015-08-01, 2015-09-01, 2015-10-01, 2015-11-01}, xticklabel={\pgfcalendar{tickcal}{\tick}{\tick}{\pgfcalendarshorthand{m}{.}}}, legend columns = 3]
+  \begin{axis}[w={80}{110}, stack plots = false, xtick={2015-07-01, 2015-08-01, 2015-09-01, 2015-10-01, 2015-11-01}, xticklabel={\pgfcalendar{tickcal}{\tick}{\tick}{\pgfcalendarshorthand{m}{.}}}, legend columns = 1]
     \addplot[total, red] table[x=time, y=value.Fixed.Weights] {plot-data/comparison_bonus.txt};
     \addlegendentry{Fixed Weights}
     \addplot[total, blue] table[x=time, y=value.Black.Litterman] {plot-data/comparison_bonus.txt};
-    \addlegendentry{Black Litterman}
-    \addplot[total, orange] table[x=time, y=value.Min.Variance.Robust] {plot-data/comparison_bonus.txt};
-    \addlegendentry{Minimum Variance Robust}
-    \addplot[total, black] table[x=time, y=value.MV.Max.Allocation...Short.Constraint] {plot-data/comparison_bonus.txt};
-    \addlegendentry{Max Allocation No Short Sale}
+    \addlegendentry{Market View Optimized}
     \addplot[total, green] table[x=time, y=value.Equal.Risk] {plot-data/comparison_bonus.txt};
-    \addlegendentry{Equal Risk}
-    \addplot[total, gray] table[x=time, y=value.MSCI] {plot-data/comparison_bonus.txt};
+    \addlegendentry{Equal Risk Contribution}
+    \addplot[total, orange] table[x=time, y=value.Min.Variance.Robust] {plot-data/comparison_bonus.txt};
+    \addlegendentry{Low Risk Robust}
+    \addplot[total, black] table[x=time, y= value.Mean.Variance..Equity.Fund] {plot-data/comparison_bonus.txt};
+    \addlegendentry{Mean Variance+}
+    \addplot[total, gray] table[x=time, y=value.msci] {plot-data/comparison_bonus.txt};
     \addlegendentry{MSCI}
   \end{axis}
 \end{tikzpicture}
@@ -854,48 +870,30 @@ Minimum Variance & -1.32 & -15.51 & 11.76 & 0.93\\
 
 
 
-\chapter{Out Of Sample: 2013-01-01 --- 2015-06-30}
-\begin{table}[ht]
-\centering
-\begin{tabular}{lrrrrrrr}
-\toprule
-                      & Sharpe & $\mu$ &$\sigma$& MDD & T/O & TC & $\alpha$ \\ 
-\midrule
-Minimum Variance & 1.37 & 10.92 & 7.99 & 5.29 & 11.56 & 0.06 & -0.56 \\ 
-  Maximum Sharpe & 1.46 & 17.55 & 12.05 & 8.98 & 11.94 & 0.06 & -0.65 \\ 
-  Fixed Weights & 1.42 & 17.96 & 12.61 & 9.08 & 0.00 & 0.00 &  \\ 
-  Fixed Weights Leveraged & 1.54 & 21.47 & 13.95 & 9.83 & 0.00 & 0.00 &  \\ 
-  Black Litterman & 1.48 & 17.71 & 12.00 & 8.92 & 0.00 & 0.00 &  \\ 
-  Equal Risk & 1.49 & 13.68 & 9.16 & 7.53 & 11.53 & 0.06 & 0.33 \\ 
-  Min Variance Robust & 1.47 & 18.10 & 12.32 & 8.20 & 9.47 & 0.05 & -0.66 \\ 
-  Max Sharpe Robust & 1.12 & 16.55 & 14.82 & 7.70 & 44.45 & 0.22 & -0.49 \\ 
-  MV Max Allocation & 1.31 & 4.12 & 3.15 & 3.05 & 10.41 & 0.05 & -0.45 \\ 
-  MV Max Allocation \& Short-Constraint & 1.40 & 12.34 & 8.79 & 6.09 & 12.10 & 0.06 & -0.67 \\ 
-\bottomrule
-\end{tabular}
-\end{table}
-
-\tikzsetnextfilename{comparison}
-\begin{tikzpicture}
-  \begin{axis}[w={0}{180}, stack plots = false, ymin = 95, legend columns = 3]
-    \addplot[total, red] table[x=time, y=value] {plot-data/fw_p.txt};
-    \addlegendentry{Fixed Weights}
-    \addplot[total, blue] table[x=time, y=value] {plot-data/bl_p.txt};
-    \addlegendentry{Black Litterman}
-    \addplot[total, green] table[x=time, y=value] {plot-data/erc_p.txt};
-    \addlegendentry{Equal Risk}
-    \addplot[total, orange] table[x=time, y=value] {plot-data/minv_rob_p.txt};
-    \addlegendentry{Minimum Variance Robust}
-    \addplot[total, black] table[x=time, y=value] {plot-data/mvo_p.txt};
-    \addlegendentry{Max Allocation No Short Sale}
-    \addplot[total, gray] table[x=time, y=value] {plot-data/msci.txt};
-    \addlegendentry{MSCI}
-  \end{axis}
-\end{tikzpicture}
+%\chapter{Out Of Sample: 2013-01-01 --- 2015-06-30}
+%\begin{table}[ht]
+%\centering
+%\begin{tabular}{lrrrrrrr}
+%\toprule
+                      %& Sharpe & $\mu$ &$\sigma$& MDD & T/O & TC & $\alpha$ \\ 
+%\midrule
+%Minimum Variance & 1.37 & 10.92 & 7.99 & 5.29 & 11.56 & 0.06 & -0.56 \\ 
+  %Maximum Sharpe & 1.46 & 17.55 & 12.05 & 8.98 & 11.94 & 0.06 & -0.65 \\ 
+  %Fixed Weights & 1.42 & 17.96 & 12.61 & 9.08 & 0.00 & 0.00 &  \\ 
+  %Fixed Weights Leveraged & 1.54 & 21.47 & 13.95 & 9.83 & 0.00 & 0.00 &  \\ 
+  %Black Litterman & 1.48 & 17.71 & 12.00 & 8.92 & 0.00 & 0.00 &  \\ 
+  %Equal Risk & 1.49 & 13.68 & 9.16 & 7.53 & 11.53 & 0.06 & 0.33 \\ 
+  %Min Variance Robust & 1.47 & 18.10 & 12.32 & 8.20 & 9.47 & 0.05 & -0.66 \\ 
+  %Max Sharpe Robust & 1.12 & 16.55 & 14.82 & 7.70 & 44.45 & 0.22 & -0.49 \\ 
+  %MV Max Allocation & 1.31 & 4.12 & 3.15 & 3.05 & 10.41 & 0.05 & -0.45 \\ 
+  %MV Max Allocation \& Short-Constraint & 1.40 & 12.34 & 8.79 & 6.09 & 12.10 & 0.06 & -0.67 \\ 
+%\bottomrule
+%\end{tabular}
+%\end{table}
 
 \newpage
 \chapter{Appendix}
-\section*{1 -- JD Investments Minimum Variance Equity Fund}
+\section{1 -- JD Investments Minimum Variance Equity Fund}
 \textit{JD Investments Minimum Variance Equity} fund invests in American, German and Japanese equity market together with 6M Euribor to substantially reduce risk.
 The asset allocation is oriented on volatility minimization while disregarding expected returns.
 This portfolio is particularly suitable for the clients with strong risk-aversion, since it does not try to speculate on expected returns but rather cares just about reducing variance.
@@ -989,7 +987,7 @@ Losses possible in case unhedged currency position develop against exposure buil
 \end{table}
 
 
-\newpage\section*{2 -- Max Sharpe}
+\newpage\section{2 -- Max Sharpe}
 The Maximum Sharpe Ratio portfolio is constructed with the use of sophisticated mathematical techniques. The objective of the fund is to deliver significant risk adjusted return, and to outperform any other portfolio within a similar investment universe. 
 At any point in time, assets of the portfolio are invested fully into risky assets. It is suitable for enthusiastic risk seekers than are willing to take high risk to achieve significant returns. As shown in the figure below, majority of funds are invested into US market and the rest is allocated in Germany and Japan. From the beginning of 2013 to the middle of 2015, MSR portfolio delivered return of over 17\% annually, while volatility was moderate and amounted to 12.05\%. 
 
@@ -1062,7 +1060,7 @@ Due to 100\% allocation in risky assets, investor exposed to liquidity shock in 
 \end{tabularx}
 \end{table}
 
-\newpage\section*{4 -- Equal Weight Leveraged}
+\newpage\section{4 -- Equal Weight Leveraged}
 EWL portfolio offers investor asset allocation into three different markets, namely US, German and Japanese. Weights in the portfolio are equally distributed with each asset class consisting of 36\% of total portfolio value. Furthermore, investor’s return will be enhanced by shorting VXX index that is predicted to have a bear run in the near future. Portfolio has no holdings in riskless assets, and invests heavily into diversified market indices. As shown in the figure below, portfolio has performed extremely well over the past two years. In this period EWL portfolio achieved return of more than 21\% with considerably lower volatility. 
 
 \tikzsetnextfilename{pf_4}
@@ -1134,7 +1132,7 @@ Maximal drawdown has to be carefully monitored due to the running of short posit
 \end{tabularx}
 \end{table}
 
-%\newpage\section*{8 --- Max Sharpe Robust}
+%\newpage\section{8 --- Max Sharpe Robust}
 %\begin{tikzpicture}
   %\begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
     %\addplot table[x=time, y=value.DAX] {plot-data/msr_rob.txt}\closedcycle;
@@ -1161,7 +1159,7 @@ Maximal drawdown has to be carefully monitored due to the running of short posit
   %\end{axis}
 %\end{tikzpicture}
 
-\newpage\section*{9 --- Mean Variance with Maximum Allocation Constraint}
+\newpage\section{9 --- Mean Variance with Maximum Allocation Constraint}
 \begin{figure}[H]
 \begin{tikzpicture}
   \begin{axis}[w={-10}{120}, y filter/.expression={max(y,0)}]
