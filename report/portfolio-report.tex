@@ -16,6 +16,10 @@
 
 \usepackage{xparse}
 
+\usepackage{footnote}
+\makesavenoteenv{tabular}
+\makesavenoteenv{table}
+
 \newlength{\oldintextsep}
 \setlength{\oldintextsep}{\intextsep}
 
@@ -58,6 +62,10 @@
 \pagestyle{scrheadings}
 \chead[\headmark]{\headmark}
 \cfoot[\pagemark]{\pagemark}
+\ohead{\includegraphics[height=5mm]{jdlogo.jpg}}
+\ihead{\includegraphics[height=5mm]{jdlogo.jpg}}
+\ofoot{\includegraphics[height=5mm]{jdlogo.jpg}}
+\ifoot{\includegraphics[height=5mm]{jdlogo.jpg}}
 
 \RedeclareSectionCommands[
   afterskip = 1.35\baselineskip plus .09\baselineskip minus .15\baselineskip,%
@@ -784,13 +792,16 @@ With a promising track record and a solid risk return profile as well as zero tu
 
 \setlength{\intextsep}{\oldintextsep}
 \chapter{Conclusion \& Recommendation}
-To make an in-depth analysis of the performance of selected portfolios we take a look at their out-of-sample performance.
+Our recommendation to you, as our investor, is: \textbf{JD Investments Equal Risk Contribution Equity Fund}. 
+In the following paragraphs we will explain and detail the rationale behind our proposal.
+
+To make an in-depth analysis of the performance of selected portfolios we take a look at their out-of-sample performance, based on a simulation of the proposed portfolio from the January 1, 2013 until June 30, 2015.
 
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrrrrr}
 \toprule
-                      & Sharpe & $\mu$[\%] &$\sigma$[\%]& MDD[\%]& T/O[\%] & TC[\%] & $\alpha$[\%] \\ 
+                      & Sharpe & $\mu$[\%] &$\sigma$[\%]& MDD[\%]& T/O[\%] & TC[\%] & $\alpha$\footnote{Based on an enhanced Fama-French-3-factor model including American, European and Japanese factors}[\%] \\ 
 \midrule
  Mean Variance+ & 1.39 & 11.61 & 8.35 & 5.88 & 10.34 & 0.05 & 0.38 \\
  Equal Risk Contribution& 1.49 & 13.68 & 9.16 & 7.53 & 11.53 & 0.06 & 0.64 \\ 
@@ -806,7 +817,7 @@ To make an in-depth analysis of the performance of selected portfolios we take a
 \end{tabular}
 \end{table}
 
-\begin{figure}
+\begin{figure}[h]
 \tikzsetnextfilename{comparison}
 \begin{tikzpicture}
   \begin{axis}[w={0}{180}, stack plots = false,xmin={2013-01-01}, xmax={2015-06-30}, ymin = 95, legend columns = 1]
@@ -837,7 +848,9 @@ The \textit{JD Investments Mean Variance+ Equity Fund} has the lowest return com
 
 After comparing the performance metrics of the five portfolios we believe that the \textit{JD Investments Equal Risk Contribution Equity Fund} is the best portfolio choice for you. Even though it has a lower performance than the \textit{JD Investments Fixed Weight Equity Fund}, \textit{JD Investments Black Litterman Equity Fund} and \textit{JD Investments Robust Minimum Variance Equity Fund} we believe it fits best to your investment needs. Of the five portfolios it has the highest sharpe ratio which means that it gives you the highest risk-return trade-off. Secondly, it is the only portfolio that generates a statistically significant positive alpha. This means that it is evident that you are benefiting from us as we proved to make solid investment decisions.
 
-\chapter{Bonus: 2015-06-30 --- 2015-11-01}
+\chapter{Compensation}
+In order to measure the performance of our active portfolio strategies in the bonus period, in particular of \textit{JD Investmnets Equal Risk Contribution Equity Fund}, we evaluated our implemented portfolio proposals from July 1, 2015 until Oct 31, 2015. As performance indicators, we use both the information ratio and the appraisal ratio with respect to the \textit{MSCI world index}, which is a market capitalization weighted index constructed of developed countries’ stocks. Currently, the index includes medium and large capitalization stocks of 23 developed markets. Since we invest in indices of developed countries around the world the \textit{MSCI world index} is appropriate as benchmark. 
+
 \begin{table}[ht]
 \centering
 \begin{tabular}{lrrrrrr}
@@ -858,6 +871,7 @@ After comparing the performance metrics of the five portfolios we believe that t
 \end{tabular}
 \end{table}
 
+\begin{figure}
 \tikzsetnextfilename{comparison_bonus}
 \begin{tikzpicture}
   \begin{axis}[w={80}{110}, stack plots = false, xmin={2015-06-30}, xmax={2015-10-31}, xtick={2015-07-01, 2015-08-01, 2015-09-01, 2015-10-01, 2015-11-01}, xticklabel={\pgfcalendar{tickcal}{\tick}{\tick}{\pgfcalendarshorthand{m}{.}}}, legend columns = 1]
@@ -875,6 +889,14 @@ After comparing the performance metrics of the five portfolios we believe that t
     \addlegendentry{MSCI}
   \end{axis}
 \end{tikzpicture}
+\end{figure}
+
+The information ratio measures return and risk relative to that of our benchmark. Hence, it is the ratio between expected tracking error and volatility of tracking error. By contrast, the appraisal ratio measures the ratio between risk-adjusted excess return based on a factor model and the volatility of tracking error. As factor-model we use an enhanced Fama-French-3-factor model including American, European and Japanese factors. 
+
+For our recommendation, \textit{JD Investmnets Equal Risk Contribution Equity Fund}, we can conclude that the performance of our active portfolio strategy with respect to \textit{MSCI world index} did not fulfill our investor’s expectation in the bonus period based on the information ratio of -0.81. While the appraisal ratio is positive with a value of 0.14 we have to mention that the risk-adjusted excess return based on our adjusted Fama-French-3-factor model is not statistically significant different from zero. This means that we cannot state that we either out- or underperformed the \textit{MSCI world index} as benchmark in the bonus period. 
+
+In general bonus payments in the fund industry often also depend on the assets under management. Many products offered by the fund industry are sold as they have a valid sales story although they actually continually underperform their benchmark, especially after management and administration costs. In our bonus computation we measured the active returns after transaction costs created by the portfolio solutions and not assume management or administration costs at that stage. 
+
 
 
 
@@ -918,12 +940,7 @@ After comparing the performance metrics of the five portfolios we believe that t
 The asset allocation is oriented on volatility minimization while disregarding expected returns.
 This portfolio is particularly suitable for the clients with strong risk-aversion, since it does not try to speculate on expected returns but rather cares just about reducing variance.
 
-\paragraph{Portfolio Construction}
-\begin{sit}
-\item Long only equity exposure
-\item High concentration in risk-free investment (45\% of portfolio)
-\item No assumption on expected returns
-\end{sit}
+
 
 \tikzsetnextfilename{pf_1}
 \begin{figure}[H]
@@ -954,6 +971,19 @@ This portfolio is particularly suitable for the clients with strong risk-aversio
 \end{tikzpicture}
 \end{figure}
 
+
+
+This portfolio is suitable for very risk-averse clients who are ready to sacrifice potential returns and have lower Sharpe ratio just to reduce volatility.
+
+\begin{minipage}{0.5\textwidth}
+  \paragraph{Portfolio Construction}
+\begin{sit}
+\item Long only equity exposure
+\item High concentration in risk-free investment (45\% of portfolio)
+\item No assumption on expected returns
+\end{sit}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
 \tikzsetnextfilename{pf_1w}
 \begin{tikzpicture}
   \begin{axis}[relw={0}{1}, y filter/.expression={max(y,0)}]
@@ -975,30 +1005,41 @@ This portfolio is particularly suitable for the clients with strong risk-aversio
     \addplot table[x=time, y=value.mixed] {plot-data/minv_relw.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
+\end{minipage}
 
+\begin{minipage}[t]{0.49\textwidth}
+  \paragraph{Opportunities}
+  \begin{sit}
+    \item Possibility to gain attractive returns through participation American, German and Japanese stock markets.
+    \item Risks of indexes are substantially reduced with the help of mixture with risk-free asset.
+  \end{sit}
+\end{minipage}
+~~
+\begin{minipage}[t]{0.49\textwidth}
+  \paragraph{Risk}
+  \begin{sit}
+    \item Risks of obtaining very low returns in the periods of high concentration in Euribor since  return on short-term Euribor is often 0 and sometimes even negative. 
+    \item Losses possible in case unhedged currency position develop against exposure built up in the portfolio.
+  \end{sit}
+\end{minipage}
 
-This portfolio is suitable for very risk-averse clients who are ready to sacrifice potential returns and have lower Sharpe ratio just to reduce volatility.
-
-\begin{table}[H]
-\begin{tabularx}{\textwidth}{XX}
-  \toprule
-  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
-  \midrule
-Possibility to gain attractive returns through participation American, German and Japanese stock markets.&
-Risks of obtaining very low returns in the periods of high concentration in Euribor since  return on short-term Euribor is often 0 and sometimes even negative. \\[1em]
-Risks of indexes are substantially reduced with the help of mixture with risk-free asset. &
-Losses possible in case unhedged currency position develop against exposure built up in the portfolio.\\
-  \bottomrule
-\end{tabularx}
-\end{table}
-
-
-\newpage\section{2 -- Max Sharpe}
-The Maximum Sharpe Ratio portfolio is constructed with the use of sophisticated mathematical techniques. The objective of the fund is to deliver significant risk adjusted return, and to outperform any other portfolio within a similar investment universe. 
+\newpage\section{JD Investments Maximum Sharpe Equity Fund}
+\begin{wraptable}{r}{0pt}
+  \begin{tabular}{lr}
+\toprule
+Ann. Return & 17.55\%\\
+Ann. Volatility & 12.05\%\\
+Sharpe Ratio & 1.46 \\
+Max. Drawdown & 8.92\% \\
+Turnover & 11.94\%\\
+\bottomrule
+\end{tabular}
+\end{wraptable}
+The \textit{JD Investments Maximum Sharpe Equity Fund} is constructed with the use of sophisticated mathematical techniques. The objective of the fund is to deliver significant risk adjusted return, and to outperform any other portfolio within a similar investment universe. 
 At any point in time, assets of the portfolio are invested fully into risky assets. It is suitable for enthusiastic risk seekers than are willing to take high risk to achieve significant returns. As shown in the figure below, majority of funds are invested into US market and the rest is allocated in Germany and Japan. From the beginning of 2013 to the middle of 2015, MSR portfolio delivered return of over 17\% annually, while volatility was moderate and amounted to 12.05\%. 
 
 \tikzsetnextfilename{pf_2}
-\begin{figure}[H]
+\begin{center}
 \begin{tikzpicture}
   \begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/ms.txt}\closedcycle;
@@ -1018,7 +1059,7 @@ At any point in time, assets of the portfolio are invested fully into risky asse
     \addplot table[x=time, y=value.Nikkei] {plot-data/ms.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
-\end{figure}
+\end{center}
 
 \tikzsetnextfilename{pf_2w}
 \vspace{\abovedisplayskip}
@@ -1039,35 +1080,36 @@ At any point in time, assets of the portfolio are invested fully into risky asse
   \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\begin{minipage}{0.35\textwidth}
-\begin{tabular}{lr}
-\toprule
-Ann. Return & 17.55\%\\
-Ann. Volatility & 12.05\%\\
-Sharpe Ratio & 1.46 \\
-Max. Drawdown & 8.92\% \\
-Turnover & 11.94\%\\
-\bottomrule
-\end{tabular}
+
+\begin{minipage}[t]{0.49\textwidth}
+  \paragraph{Opportunities}
+  \begin{sit}
+    \item Active participation in the growth of US, German and Japanese stock market. Investor profits from momentum in the stock market.
+    \item Portfolio rebalanced and optimized on yearly basis. By optimizing, investor achieves “best” asset allocation given investment set.
+  \end{sit}
+\end{minipage}
+~~
+\begin{minipage}[t]{0.49\textwidth}
+  \paragraph{Risk}
+  \begin{sit}
+    \item Portfolio exposed to sudden increase in volatility.
+    \item Due to 100\% allocation in risky assets, investor exposed to liquidity shock in the market.
+  \end{sit}
 \end{minipage}
 
-
-
-\begin{table}[H]
-\begin{tabularx}{\textwidth}{XX}
-  \toprule
-  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
-  \midrule
-Active participation in the growth of US, German and Japanese stock market. Investor profits from momentum in the stock market. &
-Portfolio exposed to sudden increase in volatility. \\[1em]
-Portfolio rebalanced and optimized on yearly basis. By optimizing, investor achieves “best” asset allocation given investment set. &
-Due to 100\% allocation in risky assets, investor exposed to liquidity shock in the market.\\
-  \bottomrule
-\end{tabularx}
-\end{table}
-
-\newpage\section{4 -- Equal Weight Leveraged}
-EWL portfolio offers investor asset allocation into three different markets, namely US, German and Japanese. Weights in the portfolio are equally distributed with each asset class consisting of 36\% of total portfolio value. Furthermore, investor’s return will be enhanced by shorting VXX index that is predicted to have a bear run in the near future. Portfolio has no holdings in riskless assets, and invests heavily into diversified market indices. As shown in the figure below, portfolio has performed extremely well over the past two years. In this period EWL portfolio achieved return of more than 21\% with considerably lower volatility. 
+\newpage\section{JD Investments Fixed Weight Leveraged}
+\begin{wraptable}{r}{0pt}
+  \begin{tabular}{lr}
+\toprule
+Ann. Return & 21.47\%\\
+Ann. Volatility & 13.95\%\\
+Sharpe Ratio & 1.54 \\
+Max. Drawdown & 9.83\% \\
+Turnover & 0\\
+\bottomrule
+\end{tabular}
+\end{wraptable}
+\textit{JD Investments Fixed Weight Leveraged} portfolio offers investor asset allocation into three different markets, namely US, German and Japanese. Weights in the portfolio are equally distributed with each asset class consisting of 36\% of total portfolio value. Furthermore, investor’s return will be enhanced by shorting VXX index that is predicted to have a bear run in the near future. Portfolio has no holdings in riskless assets, and invests heavily into diversified market indices. As shown in the figure below, portfolio has performed extremely well over the past two years. In this period EWL portfolio achieved return of more than 21\% with considerably lower volatility. 
 
 \tikzsetnextfilename{pf_4}
 \begin{figure}[H]
@@ -1113,30 +1155,22 @@ EWL portfolio offers investor asset allocation into three different markets, nam
   \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\begin{minipage}{0.35\textwidth}
-\begin{tabular}{lr}
-\toprule
-Ann. Return & 21.47\%\\
-Ann. Volatility & 13.95\%\\
-Sharpe Ratio & 1.54 \\
-Max. Drawdown & 9.83\% \\
-Turnover & 0\\
-\bottomrule
-\end{tabular}
-\end{minipage}
 
-\begin{table}[H]
-\begin{tabularx}{\textwidth}{XX}
-  \toprule
-  \textbf{\textsf{Opportunities}} & \textbf{\textsf{Risks}} \\
-  \midrule
-Active participation in the growth of US, German and Japanese stock market. Investor profits low volatility in the stock market. &
-Portfolio is extremely exposed to sudden increase in volatility, since it is short volatility index.\\[1em]
-Portfolio is not rebalanced and thus there are no extra fees for buying or selling securities. &
-Maximal drawdown has to be carefully monitored due to the running of short position.\\
-  \bottomrule
-\end{tabularx}
-\end{table}
+\begin{minipage}[t]{0.49\textwidth}
+  \paragraph{Opportunities}
+  \begin{sit}
+    \item Active participation in the growth of US, German and Japanese stock market. Investor profits low volatility in the stock market.
+    \item Portfolio is not rebalanced and thus there are no extra fees for buying or selling securities.
+  \end{sit}
+\end{minipage}
+~~
+\begin{minipage}[t]{0.49\textwidth}
+  \paragraph{Risk}
+  \begin{sit}
+    \item Portfolio is extremely exposed to sudden increase in volatility, since it is short volatility index.
+    \item Maximum drawdown has to be carefully monitored due to the running of short position.
+  \end{sit}
+\end{minipage}
 
 %\newpage\section{8 --- Max Sharpe Robust}
 %\begin{tikzpicture}
@@ -1165,50 +1199,50 @@ Maximal drawdown has to be carefully monitored due to the running of short posit
   %\end{axis}
 %\end{tikzpicture}
 
-\newpage\section{9 --- Mean Variance with Maximum Allocation Constraint}
-\begin{figure}[H]
-\begin{tikzpicture}
-  \begin{axis}[w={-10}{120}, y filter/.expression={max(y,0)}]
-    \addplot table[x=time, y=value.DAX] {plot-data/mva.txt}\closedcycle;
-    \addlegendentry{DAX}
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/mva.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
-    \addplot table[x=time, y=value.Nikkei] {plot-data/mva.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-    \addplot table[x=time, y=value.VXX] {plot-data/mva.txt}\closedcycle;
-    \addlegendentry{VXX}
-    \addplot table[x=time, y=value.mixed] {plot-data/mva.txt}\closedcycle;
-    \addlegendentry{Euribor}
-    \addlegendimage{total} \addlegendentry{Total Value}
-  \end{axis}
-  \begin{axis}[w={-10}{120}]
-    \addplot[total] table[x=time, y=value] {plot-data/mva_p.txt};
-  \end{axis}
-  \begin{axis}[w={-10}{120}, bottom, y filter/.expression={min(y,0)}]
-    \pgfplotsset{cycle list shift=3}
-    \addplot table[x=time, y=value.VXX] {plot-data/mva.txt}\closedcycle;
-  \end{axis}
-\end{tikzpicture}
-\end{figure}
+%\newpage\section{9 --- Mean Variance with Maximum Allocation Constraint}
+%\begin{figure}[H]
+%\begin{tikzpicture}
+  %\begin{axis}[w={-10}{120}, y filter/.expression={max(y,0)}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/mva.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/mva.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/mva.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addplot table[x=time, y=value.VXX] {plot-data/mva.txt}\closedcycle;
+    %\addlegendentry{VXX}
+    %\addplot table[x=time, y=value.mixed] {plot-data/mva.txt}\closedcycle;
+    %\addlegendentry{Euribor}
+    %\addlegendimage{total} \addlegendentry{Total Value}
+  %\end{axis}
+  %\begin{axis}[w={-10}{120}]
+    %\addplot[total] table[x=time, y=value] {plot-data/mva_p.txt};
+  %\end{axis}
+  %\begin{axis}[w={-10}{120}, bottom, y filter/.expression={min(y,0)}]
+    %\pgfplotsset{cycle list shift=3}
+    %\addplot table[x=time, y=value.VXX] {plot-data/mva.txt}\closedcycle;
+  %\end{axis}
+%\end{tikzpicture}
+%\end{figure}
 
-\begin{tikzpicture}
-  \begin{axis}[relw={-0.1}{1.1}, y filter/.expression={max(y,0)}]
-    \addplot table[x=time, y=value.DAX] {plot-data/mva_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
-    \addplot table[x=time, y=value.Dow.Jones] {plot-data/mva_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
-    \addplot table[x=time, y=value.Nikkei] {plot-data/mva_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-    \addplot table[x=time, y=value.VXX] {plot-data/mva_relw.txt}\closedcycle;
-    \addlegendentry{VXX}
-    \addplot table[x=time, y=value.mixed] {plot-data/mva_relw.txt}\closedcycle;
-    \addlegendentry{Euribor}
-  \end{axis}
-  \begin{axis}[relw={-0.1}{1.1}, bottom, y filter/.expression={min(y,0)}]
-    \pgfplotsset{cycle list shift=3}
-    \addplot table[x=time, y=value.VXX] {plot-data/mva_relw.txt}\closedcycle;
-  \end{axis}
-\end{tikzpicture}
+%\begin{tikzpicture}
+  %\begin{axis}[relw={-0.1}{1.1}, y filter/.expression={max(y,0)}]
+    %\addplot table[x=time, y=value.DAX] {plot-data/mva_relw.txt}\closedcycle;
+    %\addlegendentry{DAX}
+    %\addplot table[x=time, y=value.Dow.Jones] {plot-data/mva_relw.txt}\closedcycle;
+    %\addlegendentry{Dow Jones}
+    %\addplot table[x=time, y=value.Nikkei] {plot-data/mva_relw.txt}\closedcycle;
+    %\addlegendentry{Nikkei}
+    %\addplot table[x=time, y=value.VXX] {plot-data/mva_relw.txt}\closedcycle;
+    %\addlegendentry{VXX}
+    %\addplot table[x=time, y=value.mixed] {plot-data/mva_relw.txt}\closedcycle;
+    %\addlegendentry{Euribor}
+  %\end{axis}
+  %\begin{axis}[relw={-0.1}{1.1}, bottom, y filter/.expression={min(y,0)}]
+    %\pgfplotsset{cycle list shift=3}
+    %\addplot table[x=time, y=value.VXX] {plot-data/mva_relw.txt}\closedcycle;
+  %\end{axis}
+%\end{tikzpicture}
 
 
 \chapter{Code}
