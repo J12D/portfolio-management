@@ -801,7 +801,7 @@ To make an in-depth analysis of the performance of selected portfolios we take a
 \centering
 \begin{tabular}{lrrrrrrr}
 \toprule
-                      & Sharpe & $\mu$[\%] &$\sigma$[\%]& MDD[\%]& T/O[\%] & TC[\%] & $\alpha$\footnote{Based on an enhanced Fama-French-3-factor model including American, European and Japanese factors}[\%] \\ 
+                      & Sharpe & $\mu$[\%] &$\sigma$[\%]& MDD[\%]& T/O[\%] & TC[\%] & $\alpha$\footnote{Based on an enhanced Fama-French-3-factor model including American, European and Japanese factors.}\footnote{Our analysis shows that none of the $\alpha$ are statistically significantly different from zero, hence we cannot conclude whether we outperformed the market based on this factor.}[\%] \\ 
 \midrule
  Mean Variance+ & 1.39 & 11.61 & 8.35 & 5.88 & 10.34 & 0.05 & 0.38 \\
  Equal Risk Contribution& 1.49 & 13.68 & 9.16 & 7.53 & 11.53 & 0.06 & 0.64 \\ 
@@ -947,14 +947,14 @@ This portfolio is particularly suitable for the clients with strong risk-aversio
 \begin{tikzpicture}
   \begin{axis}[w={0}{140}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/minv.txt}\closedcycle;
-    \addlegendentry{DAX}
+    %\addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
+    %\addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/minv.txt}\closedcycle;
-    \addlegendentry{Nikkei}
+    %\addlegendentry{Nikkei}
     \pgfplotsset{cycle list shift=1}
     \addplot table[x=time, y=value.mixed] {plot-data/minv.txt}\closedcycle;
-    \addlegendentry{Euribor}
+    %\addlegendentry{Euribor}
     \addlegendimage{total} \addlegendentry{Total Value}
   \end{axis}
   \begin{axis}[w={0}{140}, stack plots = false]
@@ -988,14 +988,14 @@ This portfolio is suitable for very risk-averse clients who are ready to sacrifi
 \begin{tikzpicture}
   \begin{axis}[relw={0}{1}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/minv_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
+    %\addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
+    %\addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/minv_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
+    %\addlegendentry{Nikkei}
     \pgfplotsset{cycle list shift=1}
     \addplot table[x=time, y=value.mixed] {plot-data/minv_relw.txt}\closedcycle;
-    \addlegendentry{Euribor}
+    %\addlegendentry{Euribor}
   \end{axis}
   \begin{axis}[relw={0}{1},  y filter/.expression={min(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/minv_relw.txt}\closedcycle;
@@ -1043,12 +1043,12 @@ At any point in time, assets of the portfolio are invested fully into risky asse
 \begin{tikzpicture}
   \begin{axis}[w={0}{170}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/ms.txt}\closedcycle;
-    \addlegendentry{DAX}
+    %\addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/ms.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
+    %\addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/ms.txt}\closedcycle;
-    \addlegendentry{Nikkei}
-    \addlegendimage{total} \addlegendentry{Total Value}
+    %\addlegendentry{Nikkei}
+    %\addlegendimage{total} \addlegendentry{Total Value}
   \end{axis}
   \begin{axis}[w={0}{170}]
     \addplot[total] table[x=time, y=value] {plot-data/ms_p.txt};
@@ -1067,11 +1067,11 @@ At any point in time, assets of the portfolio are invested fully into risky asse
   \begin{tikzpicture}
   \begin{axis}[relw={0}{1}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/ms_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
+    %\addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/ms_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
+    %\addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/ms_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
+    %\addlegendentry{Nikkei}
   \end{axis}
   \begin{axis}[relw={0}{1}, y filter/.expression={min(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/ms_relw.txt}\closedcycle;
@@ -1116,14 +1116,14 @@ Turnover & 0\\
 \begin{tikzpicture}
   \begin{axis}[w={-20}{190}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/fw_lev.txt}\closedcycle;
-    \addlegendentry{DAX}
+    %\addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/fw_lev.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
+    %\addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/fw_lev.txt}\closedcycle;
-    \addlegendentry{Nikkei}
+    %\addlegendentry{Nikkei}
     \addplot table[x=time, y=value.VXX] {plot-data/fw_lev.txt}\closedcycle;
-    \addlegendentry{VXX}
-    \addlegendimage{total} \addlegendentry{Total Value}
+    %\addlegendentry{VXX}
+    %\addlegendimage{total} \addlegendentry{Total Value}
   \end{axis}
   \begin{axis}[w={-20}{190}]
     \addplot[total] table[x=time, y=value] {plot-data/fw_lev_p.txt};
@@ -1141,13 +1141,13 @@ Turnover & 0\\
 \begin{tikzpicture}
   \begin{axis}[relw={-0.1}{1.2}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/fw_lev_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
+    %\addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/fw_lev_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
+    %\addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/fw_lev_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
+    %\addlegendentry{Nikkei}
     \addplot table[x=time, y=value.VXX] {plot-data/fw_lev_relw.txt}\closedcycle;
-    \addlegendentry{VXX}
+    %\addlegendentry{VXX}
   \end{axis}
   \begin{axis}[relw={-0.1}{1.2}, bottom, y filter/.expression={min(y,0)}]
     \pgfplotsset{cycle list shift=3}
