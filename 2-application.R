@@ -1,6 +1,6 @@
 source("2-analysis.R")
 
-PARTY <- F
+PARTY <- T
 my_time <- "2012-12-30/2015-11-01"
 
 run_job <- function(job) {
@@ -122,17 +122,17 @@ msr_rob_res %>% portfolio_party("msr_rob")
 
 ## ---- 9-MVP Max Allocation ---------------
 mv_max_alloc <- eff_portfolio(mean = mean_returns(shrink = 0.5),
-                     cov = cov_returns(shrink = T), no_shorts = T, max.allocation = 0.5)
+                     cov = cov_returns(shrink = T), no_shorts = F, max.allocation = 0.5)
 
-mv_max_alloc_res <- base %>% with_model(mv_max_alloc) %>% on_assets(assets_vxx) %>% with_allocation(0.75) %>% run_job
-mv_max_alloc_res %>% portfolio_party("mvo")
+mv_max_alloc_res <- annual_base %>% with_model(mv_max_alloc) %>% on_assets(assets_vxx) %>% with_allocation(0.75) %>% run_job
+mv_max_alloc_res %>% portfolio_party("mva")
 
 ## ---- 10-MVP Max Allocation No Short ---------------
 mv_max_alloc_no_short <- eff_portfolio(mean = mean_returns(shrink = 0.5),
-                     cov = cov_returns(shrink = T), no_shorts = F, max.allocation = 0.5)
+                     cov = cov_returns(shrink = T), no_shorts = T, max.allocation = 0.5)
 
 mv_max_alloc_no_short_res <- annual_base %>% with_model(mv_max_alloc_no_short) %>% on_assets(assets_vxx) %>% with_allocation(0.35) %>% run_job
-mv_max_alloc_no_short_res %>% portfolio_party("mva")
+mv_max_alloc_no_short_res %>% portfolio_party("mvo")
 
 
 ## ---- Produce Tables -----------

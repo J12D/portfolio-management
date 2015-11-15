@@ -391,7 +391,7 @@ model_res
 eu_factor_return <- predict(models$EU, eu_factors) %>% as.xts
 us_factor_return <- predict(models$US, us_factors) %>% as.xts
 jp_factor_return <- predict(models$JP, jp_factors) %>% as.xts
-factor_returns <- merge.xts(eu_factor_return, us_factor_return, jp_factor_return) %>% lag(1) %>% na.omit %>% as.xts
+factor_returns <- merge.xts(eu_factor_return, us_factor_return, jp_factor_return) %>% na.omit %>% .[-1,] %>% as.xts
 index(factor_returns) <- returns_monthly %>% index
 
 fact <- returns_monthly[,1:3] - factor_returns
