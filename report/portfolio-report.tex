@@ -29,6 +29,20 @@
   \setlength{\intextsep}{\oldintextsep}%  Defaults to 0pt \plus 0pt \minus 0pt
 }
 
+\let\oldcenter\center
+\let\oldendcenter\endcenter
+\renewenvironment{center}{\setlength\topsep{0pt}\oldcenter}{\oldendcenter}
+
+\makeatletter
+\newcolumntype{i}[1]{%
+    >{\minipage[t]{\linewidth}\let\\\tabularnewline
+      \itemize
+      \addtolength{\rightskip}{0pt plus 50pt}% for raggedright
+      \setlength{\itemsep}{-\parsep}}%
+    p{#1}%
+    <{\@finalstrut\@arstrutbox\enditemize\endminipage}}
+\makeatother
+
 \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{float}
@@ -85,6 +99,23 @@
 \end{center}
 \endgroup}
 
+\usepackage[skins,many]{tcolorbox}
+\newtcolorbox{mybox}[1]{
+   freelance,
+   breakable,
+   title=#1,
+   left=0pt,
+   right=0pt,
+   width=.48\textwidth,
+   enlarge left by=.02\textwidth,
+   coltitle=black,
+   frame code={},
+   interior titled code={
+     \draw[dbblue,ultra thick] 
+       ([yshift=5pt]frame.south west) |- ([xshift=60pt,yshift=-4pt]title.south west);
+   }
+}
+
 \title{Portfolios for a safe future}
 \author{JD POWER}
 \begin{document}
@@ -110,7 +141,6 @@
       xticklabel=\year,
       xtick={2008-01-01,2009-01-01,2010-01-01,2011-01-01,2012-01-01, 2013-01-01, 2014-01-01, 2015-01-01},
       yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
-      legend pos = north west,
       every axis plot/.append style={thick, smooth},
       legend columns=5,
       every axis legend/.append style={at={(0.5,1.03)}, anchor=south},
@@ -120,6 +150,7 @@
       area style,
       every axis/.append style={font=\footnotesize},
       legend style={font=\footnotesize},
+      legend pos=north west,
   },
   total/.style={red, ultra thick, line legend},
    relw/.style 2 args={
@@ -135,12 +166,12 @@
     },
    w/.style 2 args={
       gen,
-      ylabel=,
+      ylabel=Performance,
       yticklabel=\pgfmathparse{\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
       ymin=#1, ymax=#2,
-      legend pos=outer north east
+      legend pos=outer north east,
       width=0.8\textwidth,
-      height=0.4\textwidth,
+      height=0.35\textwidth,
       %legend pos=outher north east,
     },
   bottom/.style={axis y line = none},
@@ -334,7 +365,7 @@ For clients requesting investments without currency exposure hedged share classe
 
 \chapter{Portfolios}
 
-\newpage\section*{JD Investments Low Risk Low Allocation Fund}
+\newpage\section*{Mean Variance+ Equity Fund}
 \begin{mywraptable}{r}{0pt}
   \begin{tabular}{lr}
   \toprule
@@ -348,15 +379,15 @@ For clients requesting investments without currency exposure hedged share classe
   \bottomrule
 \end{tabular}
 \end{mywraptable}
-\textit{JD Investments Low Risk Low Allocation Fund} has long exposure to the American, German and Japanese equity markets as well as implied volatility of the US market.
+\textit{Mean Variance+ Equity Fund} has long exposure to the American, German and Japanese equity markets as well as implied volatility of the US market.
 The asset allocation is aimed at minimizing volatility while not having more than 50\% exposure to a single market and not allowing for short sales.
 Returns are shrunk in order to reduce errors in expected return assumptions.
-The portfolio is very immune against stressed market conditions; risk free asset as well as long position in volatility additionally enhances diversification in the portfolio.
+The portfolio is very immune against stressed market conditions, as we also include the risk-free asset into our portfolio.% We further enhance diversification due to long positions in volatility.
 %
 \begin{center}
 \tikzsetnextfilename{pf_10}  
 \begin{tikzpicture}
-  \begin{axis}[w={0}{120}, y filter/.expression={max(y,0)}, legend columns=1]
+  \begin{axis}[w={0}{150}, y filter/.expression={max(y,0)}, legend columns=1]
     \addplot table[x=time, y=value.DAX] {plot-data/mvo.txt}\closedcycle;
     \addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/mvo.txt}\closedcycle;
@@ -369,18 +400,14 @@ The portfolio is very immune against stressed market conditions; risk free asset
     \addlegendentry{Euribor}
     \addlegendimage{total} \addlegendentry{Total Value}
   \end{axis}
-  \begin{axis}[w={0}{120}]
+  \begin{axis}[w={0}{150}]
     \addplot[total] table[x=time, y=value] {plot-data/mvo_p.txt};
-  \end{axis}
-  \begin{axis}[w={0}{120}, bottom, y filter/.expression={min(y,0)}]
-    \pgfplotsset{cycle list shift=3}
-    \addplot table[x=time, y=value.VXX] {plot-data/mvo.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
 \end{center}
 %
 The portfolio has a well performing and smooth track record without any significant drawdowns over the period from 2013 to the middle of 2015.
-The portfolio is managed for very risk averse investors that are willing to give up some expected return in order to maintain a very low level of volatility in their position.
+The portfolio is managed for very risk averse investors that are willing to give up some expected return in order to maintain a very low level of volatility.
 
 \begin{minipage}[t]{0.5\textwidth}
   \textbf{Portfolio Construction}
@@ -389,8 +416,10 @@ The portfolio is managed for very risk averse investors that are willing to give
 \item	Fixed part invested in risk-free asset
 \item	Yearly rebalanced
 \item	Optimized for minimal risk
-\item Shrinkage of returns
-\item	Maximum Allocation/No Short-sales constraint
+\item	Max. Allocation constraint
+\item Hayashi-Yoshida Adjustment
+\item Shrinkage of covariance estimates
+\item Shrinkage of return estimates
 \end{sit}
 \end{minipage}
 %
@@ -408,16 +437,46 @@ The portfolio is managed for very risk averse investors that are willing to give
 \end{tikzpicture}
 \end{minipage}
 
-\begin{minipage}[t]{0.49\textwidth}
-  \paragraph{Opportunities}
-  \begin{sit}
-    \item Prospect of positive return through participation in American, German and Japanese stock markets
-    \item Prospect of positive returns due to unhedged currency exposure.
-    \item Reduced equity market exposure and protection to downturns due to risk free investments.
-    \item Prospect of positive return through exploiting inefficiencies on equity option markets.
-  \end{sit}
-\end{minipage}
-~~
+\begin{tcolorbox}[
+colframe=blue!25,
+colback=blue!10,
+coltitle=blue!20!black,  
+fonttitle=\bfseries,
+width=0.48\textwidth,
+adjusted title=Opportunities]
+\begin{itemize}
+\item In the \textit{first step}, circularly polarized X-rays generate photoelectrons with a spin and/or orbital momentum from a localized atomic inner shell.
+\item In the \textit{second step}, the 3d shell serves as the detector of the spin or orbital momentum of the photoelectron. For maximum effect, the photon spin needs to be aligned with the magnetization direction.
+\end{itemize}
+\end{tcolorbox}
+\begin{tcolorbox}[
+colframe=blue!25,
+colback=blue!10,
+coltitle=blue!20!black,  
+fonttitle=\bfseries,
+width=0.48\textwidth,
+adjusted title=Opportunities]
+\begin{itemize}
+\item In the \textit{first step}, circularly polarized X-rays generate photoelectrons with a spin and/or orbital momentum from a localized atomic inner shell.
+\item In the \textit{second step}, the 3d shell serves as the detector of the spin or orbital momentum of the photoelectron. For maximum effect, the photon spin needs to be aligned with the magnetization direction.
+\end{itemize}
+\end{tcolorbox}
+
+  %\begin{mybox}{Opportunities}
+  %\begin{sit}
+    %\item Prospect of positive return through participation in American, German and Japanese stock markets.
+    %\item Prospect of positive returns due to unhedged currency exposure.
+    %\item Reduced equity market exposure and protection to downturns due to risk free investments.
+    %\item Prospect of positive return through exploiting inefficiencies on equity option markets.
+  %\end{sit}
+  %\end{mybox}
+  %\paragraph{Opportunities}
+  %\begin{sit}
+    %\item Prospect of positive return through participation in American, German and Japanese stock markets.
+    %\item Prospect of positive returns due to unhedged currency exposure.
+    %\item Reduced equity market exposure and protection to downturns due to risk free investments.
+    %\item Prospect of positive return through exploiting inefficiencies on equity option markets.
+  %\end{sit}
 \begin{minipage}[t]{0.49\textwidth}
   \paragraph{Risk}
   \begin{sit}
