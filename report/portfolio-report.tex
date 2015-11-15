@@ -69,7 +69,7 @@
 \pagestyle{scrheadings}
 \clearscrheadfoot
 \automark[section]{chapter}
-\chead{\headmark}
+\chead[\headmark]{\headmark}
 \cfoot[\pagemark]{\pagemark}
 
 \newcommand*{\FSfont}[1]{}
@@ -893,19 +893,6 @@ Minimum Variance & 1.37 & 10.92 & 7.99 & 5.29 & 11.56 & 0.06 & -0.56 \\
   \end{axis}
 \end{tikzpicture}
 
-
-
-
-%\chapter{M Squared}
-%Because our portfolios have different volatilities compared to the benchmark we use Modigliani Squared formula to obtain risk-adjusted returns of our portfolios. Afterwards, we could directly compare returns of our portfolios to those of the index and confirm that our portfolios outperform the benchmark not because of higher risks but because of high-level analysis and research that we conduct in order to find best – way solutions. To obtain $M^2$ returns, we scale Sharpe ratios of our portfolios by volatility of the benchmark and add risk-free rate. Since our risk-free rate is Euribor 6M, for this period of time it averaged to zero, so we need just scaling to obtain risk-adjusted return of our portfolios. In formula terms, it looks as follows:
-
-%\begin{align*}
-  %M^2 = S \cdot \sigma_{MSCI} = \mu_P \cdot \frac{\sigma_{MSCI}}{\sigma_P}
-%\end{align*}
-
-%$M^2$ has many benefits in comparison to Sharpe ratio as performance criteria.  First reason is that it could be difficult to compare portfolios with different Sharpe ratios, since the difference between them is not easily interpretable (we know that one Sharpe ratio is larger than another, but is this difference significant?). Secondly, it is hard to explain negative Sharpe ratios. Since we are always transparent to our clients we use M squared risk-adjusted returns, so that clients could compare returns of our portfolios directly to a benchmark and decide what suits them the best.
-
-
 \newpage
 \chapter{Appendix}
 \section*{1 -- JD Investments Minimum Variance Equity Fund}
@@ -916,7 +903,7 @@ This portfolio is particularly suitable for the clients with strong risk-aversio
 \paragraph{Portfolio Construction}
 \begin{sit}
 \item Long only equity exposure
-\item Risk reduction through investments in Euribor
+
 \item High concentration in risk-free investment (45\% of portfolio)
 \item No assumption on expected returns
 \end{sit}
