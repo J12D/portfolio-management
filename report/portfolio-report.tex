@@ -31,7 +31,7 @@
 
 \let\oldcenter\center
 \let\oldendcenter\endcenter
-\renewenvironment{center}{\setlength\topsep{0pt}\oldcenter}{\oldendcenter}
+\renewenvironment{center}{\setlength\topsep{6pt}\oldcenter}{\oldendcenter}
 
 \makeatletter
 \newcolumntype{i}[1]{%
@@ -60,6 +60,7 @@
 \definecolor{orange}{RGB}{255,161,0}
 \definecolor{green}{RGB}{122,184,0}
 \definecolor{palegrey}{RGB}{224,230,230}
+\definecolor{midgrey}{RGB}{137,150,160}
 
 \renewcommand{\familydefault}{\sfdefault}
 \setlength{\textfloatsep}{8pt plus 1.0pt minus 2.0pt}
@@ -101,20 +102,24 @@
 
 \usepackage[skins,many]{tcolorbox}
 \newtcolorbox{mybox}[1]{
-   freelance,
-   breakable,
-   title=#1,
-   left=0pt,
-   right=0pt,
-   width=.48\textwidth,
-   enlarge left by=.02\textwidth,
-   coltitle=black,
-   frame code={},
-   interior titled code={
-     \draw[dbblue,ultra thick] 
-       ([yshift=5pt]frame.south west) |- ([xshift=60pt,yshift=-4pt]title.south west);
-   }
-}
+colframe=midgrey,
+colback=palegrey,
+coltitle=white,
+fonttitle=\bfseries,
+width=\textwidth,
+left=0mm,
+sharp corners,
+adjusted title=#1
+}%\newtcolorbox{mybox}[1]{
+   %title=#1,
+   %width=\textwidth,
+   %coltitle=black,
+   %frame code={},
+   %interior titled code={
+     %\tikz{\draw[dbblue,ultra thick] 
+       %([yshift=5pt]frame.south west) |- ([xshift=60pt,yshift=-4pt]title.south west);}
+   %}
+%}
 
 \title{Portfolios for a safe future}
 \author{JD POWER}
@@ -169,6 +174,7 @@
       ylabel=Performance,
       yticklabel=\pgfmathparse{\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
       ymin=#1, ymax=#2,
+      legend columns=1,
       legend pos=outer north east,
       width=0.8\textwidth,
       height=0.35\textwidth,
@@ -411,7 +417,7 @@ The portfolio is managed for very risk averse investors that are willing to give
 
 \begin{minipage}[t]{0.5\textwidth}
   \textbf{Portfolio Construction}
-\begin{sit}
+\begin{sit}\small
 \item	Long-only equity exposure
 \item	Fixed part invested in risk-free asset
 \item	Yearly rebalanced
@@ -437,72 +443,47 @@ The portfolio is managed for very risk averse investors that are willing to give
 \end{tikzpicture}
 \end{minipage}
 
-\begin{tcolorbox}[
-colframe=blue!25,
-colback=blue!10,
-coltitle=blue!20!black,  
-fonttitle=\bfseries,
-width=0.48\textwidth,
-adjusted title=Opportunities]
-\begin{itemize}
-\item In the \textit{first step}, circularly polarized X-rays generate photoelectrons with a spin and/or orbital momentum from a localized atomic inner shell.
-\item In the \textit{second step}, the 3d shell serves as the detector of the spin or orbital momentum of the photoelectron. For maximum effect, the photon spin needs to be aligned with the magnetization direction.
-\end{itemize}
-\end{tcolorbox}
-\begin{tcolorbox}[
-colframe=blue!25,
-colback=blue!10,
-coltitle=blue!20!black,  
-fonttitle=\bfseries,
-width=0.48\textwidth,
-adjusted title=Opportunities]
-\begin{itemize}
-\item In the \textit{first step}, circularly polarized X-rays generate photoelectrons with a spin and/or orbital momentum from a localized atomic inner shell.
-\item In the \textit{second step}, the 3d shell serves as the detector of the spin or orbital momentum of the photoelectron. For maximum effect, the photon spin needs to be aligned with the magnetization direction.
-\end{itemize}
-\end{tcolorbox}
-
-  %\begin{mybox}{Opportunities}
-  %\begin{sit}
-    %\item Prospect of positive return through participation in American, German and Japanese stock markets.
-    %\item Prospect of positive returns due to unhedged currency exposure.
-    %\item Reduced equity market exposure and protection to downturns due to risk free investments.
-    %\item Prospect of positive return through exploiting inefficiencies on equity option markets.
-  %\end{sit}
-  %\end{mybox}
-  %\paragraph{Opportunities}
-  %\begin{sit}
-    %\item Prospect of positive return through participation in American, German and Japanese stock markets.
-    %\item Prospect of positive returns due to unhedged currency exposure.
-    %\item Reduced equity market exposure and protection to downturns due to risk free investments.
-    %\item Prospect of positive return through exploiting inefficiencies on equity option markets.
-  %\end{sit}
-\begin{minipage}[t]{0.49\textwidth}
-  \paragraph{Risk}
+\begin{minipage}[t]{0.5\textwidth}
+\begin{mybox}{Opportunities}
+\begin{sit}
+    \item Prospect of positive return through participation in American, German and Japanese stock markets.
+    \item Prospect of positive returns due to unhedged currency exposure.
+    \item Reduced equity market exposure and protection to downturns due to risk free investments.
+    \item Prospect of positive return through exploiting inefficiencies on equity option markets.
+\end{sit}
+\end{mybox}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+  \begin{mybox}{Risks}
   \begin{sit}
     \item Losses possible in case stock markets develops against exposure built up in the portfolio.
     \item Losses possible in case unhedged currency position develop against exposure built up in the portfolio.
     \item Underperformance due to risk free investments possible.
-    \item Significant losses possible due to inefficiencies on equity option markets. The volatility of the price of portfolio units might be increased.
+    \item Significant losses possible due to inefficiencies on equity option markets.% The volatility of the price of portfolio units might be increased.    
   \end{sit}
+  \end{mybox}
 \end{minipage}
 
-\newpage\section*{JD Investments Equal Risk Insurance Fund}
-\textit{JD Investments Equal Risk Insurance} Fund invests in the American, German and Japanese equity markets as well as a fixed proportion of the assets into the risk free rate.
+\newpage\section*{JD Investments Equal Risk Contribution Fund}
+\begin{mywraptable}{r}{0pt}
+\begin{tabular}{lr}
+\toprule
+Ann. Return & 13.68\%\\
+Ann. Volatility & 9.16\%\\
+Sharpe Ratio & 1.49 \\
+Max. Drawdown & 7.53\% \\
+Turnover & 11.53\\
+\bottomrule
+\end{tabular}
+\end{mywraptable}
+\textit{JD Investments Equal Risk Contribution Fund} invests in the American, German and Japanese equity markets as well as a fixed proportion of the assets into the risk free rate.
 Exposure is built such that each asset contributes to the risk of a portfolio in the same proportion.
 The portfolio is rebalanced every month in order to carefully monitor risk contributions to the portfolio.
+
 This portfolio is especially appealing to risk averse investors who care more about risk aversion than high returns.
 An appealing feature of the portfolios investment process is that expected returns are not used which reduces likelihood of wrong assumptions.
 Investors can profit from higher than anticipated returns on less risky assets in the portfolio.
  
-
-\paragraph{Portfolio Construction}
-\begin{sit}
-\item	Long-only equity exposure
-\item	Investments in risk free assets
-\item	Monthly rebalanced
-\item	Risk parity optimization
-\end{sit}
 
 \tikzsetnextfilename{pf_6}
 \begin{figure}[H]
@@ -525,34 +506,36 @@ Investors can profit from higher than anticipated returns on less risky assets i
 \end{tikzpicture}
 \end{figure}
 
+\begin{minipage}[t]{0.5\textwidth}
+  \textbf{Portfolio Construction}
+\begin{sit}\small
+\item	Long-only equity exposure
+\item	Investments in risk free assets
+\item	Monthly rebalanced
+\item	Risk parity optimization
+\item Hayashi-Yoshida Adjustment
+\item	Shrinkage of covariance estimates
+\end{sit}
+\end{minipage}
+%
+\begin{minipage}[t]{0.5\textwidth}
+\textbf{Weights in Portfolio}\\
 \tikzsetnextfilename{pf_6w}
-\vspace{\abovedisplayskip}
-\begin{minipage}{0.65\textwidth}
 \begin{tikzpicture}
   \begin{axis}[relw={0}{1}]
     \addplot table[x=time, y=value.DAX] {plot-data/erc_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
+    %\addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/erc_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
+    %\addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/erc_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
+    %\addlegendentry{Nikkei}
     \pgfplotsset{cycle list shift=1}
     \addplot table[x=time, y=value.mixed] {plot-data/erc_relw.txt}\closedcycle;
-    \addlegendentry{Euribor}
+    %\addlegendentry{Euribor}
   \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\begin{minipage}{0.35\textwidth}
-\begin{tabular}{lr}
-\toprule
-Ann. Return & 13.68\%\\
-Ann. Volatility & 9.16\%\\
-Sharpe Ratio & 1.49 \\
-Max. Drawdown & 7.53\% \\
-Turnover & 11.53\\
-\bottomrule
-\end{tabular}
-\end{minipage}
+
 
 The portfolio has a well performing and smooth track record without any significant drawdowns over the period from 2013 to the middle of 2015.
 It delivers an attractive return and low volatility due to the main attributes of this portfolio solution; regular optimization and risk free investments.
@@ -581,19 +564,23 @@ The portfolio is an attractive solution for risk averse investors looking for gl
 \end{minipage}
 
 \newpage\section*{JD Investments Market View Optimized Fund}
-\textit{JD Investments Market View Optimized} Fund invests in American, German and Japanese equity markets.
+\begin{mywraptable}{r}{0pt}
+\begin{tabular}{lr}
+\toprule
+Ann. Return & 17.71\%\\
+Ann. Volatility & 12.00\%\\
+Sharpe Ratio & 1.48\\
+Max. Drawdown & 8.92\% \\
+Turnover & 0\%\\
+\bottomrule
+\end{tabular}
+\end{mywraptable}
+\textit{JD Investments Market View Optimized Fund} invests in American, German and Japanese equity markets.
 The fund seeks to minimize volatility while maximizing returns.
 For this the average over the forward looking target prices of our assets was incorporated by using estimates made by analysts of 43 leading banks\footnote{In the beginning of 2013 the following expectations were used: German Market increases by 4.2\%, American Market 3.5\% and the Japanese Market by 2.00\%}.
 The mix of fundamental analysis and systematic optimization makes this fund an attractive investment.
 
-\paragraph{Portfolio Construction}
-\begin{sit}
-\item Long only and full equity exposure
-\item Fixed asset allocation
-\item Optimized for Sharpe Ratio
-\item Covariance shrinkage based on market views (using Black-Litterman)
-\item No short-sales
-\end{sit}
+
 
 \tikzsetnextfilename{pf_5}
 \begin{figure}[H]
@@ -613,9 +600,18 @@ The mix of fundamental analysis and systematic optimization makes this fund an a
 \end{tikzpicture}
 \end{figure}
 
+\begin{minipage}{0.5\textwidth}
+\paragraph{Portfolio Construction}
+\begin{sit}
+\item Long only and full equity exposure
+\item Fixed asset allocation
+\item Optimized for Sharpe Ratio
+\item Covariance estimator adjusted based on market views (using Black-Litterman)
+\item No short-sales
+\end{sit}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
 \tikzsetnextfilename{pf_5w}
-\vspace{\abovedisplayskip}
-\begin{minipage}{0.65\textwidth}
 \begin{tikzpicture}
   \begin{axis}[relw={0}{1}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/bl_relw.txt}\closedcycle;
@@ -626,17 +622,6 @@ The mix of fundamental analysis and systematic optimization makes this fund an a
     \addlegendentry{Nikkei}
   \end{axis}
 \end{tikzpicture}
-\end{minipage}
-\begin{minipage}{0.35\textwidth}
-\begin{tabular}{lr}
-\toprule
-Ann. Return & 17.71\%\\
-Ann. Volatility & 12.00\%\\
-Sharpe Ratio & 1.48\\
-Max. Drawdown & 8.92\% \\
-Turnover & 0\%\\
-\bottomrule
-\end{tabular}
 \end{minipage}
 
 The out of sample track record of the portfolio has is characterized by an attractive sharp ratio.
@@ -659,19 +644,21 @@ The fund is an appealing solution for moderate risk taking investors looking for
 \end{minipage}
 
 \newpage\section*{JD Investments Low Risk Robust Fund}
-
+\begin{mywraptable}{r}{0pt}
+  \begin{tabular}{lr}
+  \toprule
+  Ann. Return & 18.10\%\\
+  Ann. Volatility & 12.32\%\\
+  Sharpe & 1.47\\
+  Max. Drawdown& 8.2\%\\
+  Alpha & ---\\
+  Ann Return Net & \\
+  \bottomrule
+  \end{tabular}
+\end{mywraptable}
 \textit{JD Investments Low Risk Robust} Fund has full exposure to the American, German and Japanese equity markets.
 The asset allocation is aimed at minimizing volatility while variances/covariance matrix is estimated using robust covariance-shrinkage method.
-This portfolio still provides attractive returns and Sharp ratio in spite of being oriented on variance minimization.
-
-\paragraph{Portfolio Construction}
-\begin{sit}
-\item Long only and full equity exposure
-\item Yearly rebalanced
-\item Optimized for Minimum Risk
-\item Robust for different market environments
-\item No short-sales
-\end{sit}
+This portfolio still provides attractive returns and Sharpe ratio in spite of being oriented on variance minimization.
 
 \tikzsetnextfilename{pf_7}
 \begin{figure}[H]
@@ -691,8 +678,19 @@ This portfolio still provides attractive returns and Sharp ratio in spite of bei
 \end{tikzpicture}
 \end{figure}
 
+\begin{minipage}{0.5\textwidth}
+\paragraph{Portfolio Construction}
+\begin{sit}
+\item Long only and full equity exposure
+\item Yearly rebalanced
+\item Robust estimate of covariance
+\item Optimized for Minimum Risk
+\item Robust for different market environments
+\item No short-sales
+\end{sit}
+\end{minipage}
 \tikzsetnextfilename{pf_7w}
-\begin{minipage}{0.65\textwidth}
+\begin{minipage}{0.5\textwidth}
 \begin{tikzpicture}
 \begin{axis}[relw={0}{1}]
   \addplot table[x=time, y=value.DAX] {plot-data/minv_rob_relw.txt}\closedcycle;
@@ -704,18 +702,7 @@ This portfolio still provides attractive returns and Sharp ratio in spite of bei
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\begin{minipage}{0.5\textwidth}
-\begin{tabular}{lr}
-  \toprule
-  Ann. Return & 18.10\%\\
-  Ann. Volatility & 12.32\%\\
-  Sharpe & 1.47\\
-  Max. Drawdown& 8.2\%\\
-  Alpha & ---\\
-  Ann Return Net & \\
-  \bottomrule
-\end{tabular}
-\end{minipage}
+
 
 The portfolio has a well performing and smooth track record without any significant drawdowns over the period from 2013 to the middle of 2015.
 An attractive return with moderate volatility is the key characteristic of the fund.
@@ -737,19 +724,23 @@ An attractive return with moderate volatility is the key characteristic of the f
   \end{sit}
 \end{minipage}
 
-\newpage\section*{JD Investments Fixed Weight Equity Fund }
+\newpage\section*{JD Investments Fixed Weight Equity Fund}
+\begin{mywraptable}{r}{0pt}
+\begin{tabular}{lr}
+\toprule
+Ann. Return & 17.17\%\\
+Ann. Volatility & 12.00\%\\
+Sharpe Ratio & 1.48 \\
+Max. Drawdown & 8.92 \\
+Turnover & 0\\
+\bottomrule
+\end{tabular}
+\end{mywraptable}
 \textit{JD Investments Fixed Weight Equity Fund} invests in American, German and Japanese equity markets. The asset allocation is static and most diversified while disregarding expected returns and variances/covariance’s. This portfolio is especially appealing since it is resistant against errors in true variance/covariance and expected return estimation.
 
-\paragraph{Portfolio Construction}
-\begin{sit}
-\item	Long only and full equity exposure
-\item	Fixed asset allocation
-\item	Strong diversification
-\item	No assumption on expected returns and variances/covariances
-\end{sit}
 
+\begin{center}
 \tikzsetnextfilename{pf_3}
-\begin{figure}[H]
 \begin{tikzpicture}
   \begin{axis}[w={0}{170}]
     \addplot table[x=time, y=value.DAX] {plot-data/fw.txt}\closedcycle;
@@ -764,11 +755,19 @@ An attractive return with moderate volatility is the key characteristic of the f
     \addplot[total] table[x=time, y=value] {plot-data/fw_p.txt};
   \end{axis}
 \end{tikzpicture}
-\end{figure}
+\end{center}
 
+\begin{minipage}{0.5\textwidth}
+\paragraph{Portfolio Construction}
+\begin{sit}
+\item	Long only and full equity exposure
+\item	Fixed asset allocation
+\item	Strong diversification
+\item	No assumption on expected returns and variances/covariances
+\end{sit}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
 \tikzsetnextfilename{pf_3w}
-\vspace{\abovedisplayskip}
-\begin{minipage}{0.65\textwidth}
 \begin{tikzpicture}
   \begin{axis}[relw={0}{1}]
     \addplot table[x=time, y=value.DAX] {plot-data/fw_relw.txt}\closedcycle;
@@ -780,18 +779,7 @@ An attractive return with moderate volatility is the key characteristic of the f
   \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\begin{minipage}{0.35\textwidth}
-\begin{tabular}{lr}
-\toprule
-Ann. Return & 17.17\%\\
-Ann. Volatility & 12.00\%\\
-Sharpe Ratio & 1.48 \\
-Max. Drawdown & 8.92 \\
-Turnover & 0\\
-\bottomrule
-\end{tabular}
-\end{minipage}
-\vspace{\belowdisplayskip}
+
 
 With a promising track record and a solid risk return profile as well as zero turnover and therefore very appealing net cost return the \textit{JD Investments Fixed Weight Equity Fund} is an attractive investment for the investor willing to take on higher risks in exchange for higher returns. 
 
@@ -908,14 +896,14 @@ Minimum Variance & 1.37 & 10.92 & 7.99 & 5.29 & 11.56 & 0.06 & -0.56 \\
 
 
 
-\chapter{M Squared}
-Because our portfolios have different volatilities compared to the benchmark we use Modigliani Squared formula to obtain risk-adjusted returns of our portfolios. Afterwards, we could directly compare returns of our portfolios to those of the index and confirm that our portfolios outperform the benchmark not because of higher risks but because of high-level analysis and research that we conduct in order to find best – way solutions. To obtain $M^2$ returns, we scale Sharpe ratios of our portfolios by volatility of the benchmark and add risk-free rate. Since our risk-free rate is Euribor 6M, for this period of time it averaged to zero, so we need just scaling to obtain risk-adjusted return of our portfolios. In formula terms, it looks as follows:
+%\chapter{M Squared}
+%Because our portfolios have different volatilities compared to the benchmark we use Modigliani Squared formula to obtain risk-adjusted returns of our portfolios. Afterwards, we could directly compare returns of our portfolios to those of the index and confirm that our portfolios outperform the benchmark not because of higher risks but because of high-level analysis and research that we conduct in order to find best – way solutions. To obtain $M^2$ returns, we scale Sharpe ratios of our portfolios by volatility of the benchmark and add risk-free rate. Since our risk-free rate is Euribor 6M, for this period of time it averaged to zero, so we need just scaling to obtain risk-adjusted return of our portfolios. In formula terms, it looks as follows:
 
-\begin{align*}
-  M^2 = S \cdot \sigma_{MSCI} = \mu_P \cdot \frac{\sigma_{MSCI}}{\sigma_P}
-\end{align*}
+%\begin{align*}
+  %M^2 = S \cdot \sigma_{MSCI} = \mu_P \cdot \frac{\sigma_{MSCI}}{\sigma_P}
+%\end{align*}
 
-$M^2$ has many benefits in comparison to Sharpe ratio as performance criteria.  First reason is that it could be difficult to compare portfolios with different Sharpe ratios, since the difference between them is not easily interpretable (we know that one Sharpe ratio is larger than another, but is this difference significant?). Secondly, it is hard to explain negative Sharpe ratios. Since we are always transparent to our clients we use M squared risk-adjusted returns, so that clients could compare returns of our portfolios directly to a benchmark and decide what suits them the best.
+%$M^2$ has many benefits in comparison to Sharpe ratio as performance criteria.  First reason is that it could be difficult to compare portfolios with different Sharpe ratios, since the difference between them is not easily interpretable (we know that one Sharpe ratio is larger than another, but is this difference significant?). Secondly, it is hard to explain negative Sharpe ratios. Since we are always transparent to our clients we use M squared risk-adjusted returns, so that clients could compare returns of our portfolios directly to a benchmark and decide what suits them the best.
 
 
 \newpage
@@ -1233,6 +1221,17 @@ Maximal drawdown has to be carefully monitored due to the running of short posit
 
 
 \chapter{Code}
+We developed our asset allocation algorithms in R. In the following section, we would like to briefly explain the basic rationaly behind each module of our software. Each module fulfills a disinct function:
+\begin{description}
+  \item[0-helper] Support of data visualization and export
+  \item[1-save data] Download of historic data from Yahoo Finance, Quandl and other sources
+  \item[1-data] Basic data preparation tasks
+  \item[2-analysis] Model specification, regularization techniques, Evaluation logic
+  \item[2-application] Composition of portfolios through abstraction of portfolio models and parameters into a ``job'' data structure; Data structure is passed into a ``run job'' function which returns a data structure containing, (a) individual asset weights, (b) overall portfolio value (c) generated portfolio weights (d) computed performance measures (e) original job specification\\ This data structure can then be processed/evaluated appropriately. The way in which the models and job processing is structured, allows the specification and evaluation of a portfolio by means of composition of idempotent functions.
+  \item[3-analysis2] Numerical optimization algorithm to incorporate maximum allocation/short-sale constraints
+  \item[mdd] Algorithm for calculating the maximum drawdown of a given timeseries
+\end{description}
+
 \lstinputlisting[language=R, basicstyle=\scriptsize]{../0-helper.R}
 
 \lstinputlisting[language=R, basicstyle=\scriptsize]{../1-save_data.R}
