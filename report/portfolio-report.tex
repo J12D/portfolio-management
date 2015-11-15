@@ -1,4 +1,4 @@
-\documentclass[11pt, parskip=full, DIV=14, headsepline]{scrreprt}
+\documentclass[11pt, parskip=full, DIV=14, headings=small, footsepline, footinclude=false, headsepline]{scrreprt}
 
 \usepackage{jdcommands}
 \jdfontsetup{}
@@ -55,10 +55,14 @@
 
 \usepackage{scrlayer-scrpage}
 \automark[section]{chapter}
-%\renewcommand{\chapterpagestyle}{scrheadings}
 \pagestyle{scrheadings}
-\chead{\headmark}
+\chead[\headmark]{\headmark}
 \cfoot[\pagemark]{\pagemark}
+
+\RedeclareSectionCommands[
+  afterskip = 1.35\baselineskip plus .09\baselineskip minus .15\baselineskip,%
+  beforeskip = 0.5\baselineskip%
+]{chapter}
 
 \newcommand*{\FSfont}[1]{}
 \newcommand*{\plogo}{\includegraphics[width=6cm]{jdlogo.jpg}}
@@ -105,6 +109,7 @@ adjusted title=#1
 \begin{document}
 \titleBC
 
+\renewcommand{\chapterpagestyle}{scrheadings}
 \pgfplotsset{y label style={at={(axis description cs:-0.08,.5)}, text depth=0.25ex, anchor=south,}}
 
 \pgfplotsset{
@@ -132,6 +137,8 @@ adjusted title=#1
       stack plots=y,
       cycle list name=exotic,
       area style,
+      xmin={2013-01-01},
+      xmax={2015-06-30},
       every axis/.append style={font=\footnotesize},
       legend style={font=\footnotesize},
       legend pos=north west,
@@ -166,6 +173,8 @@ adjusted title=#1
     date coordinates in = x,
     xticklabel = \year,
     xtick = {2009-01-01,2011-01-01,2013-01-01,2015-01-01},
+    xmin = {2009-01-01},
+    xmax = {2015-10-30},
     yticklabel style = {/pgf/number format/fixed, /pgf/number format/precision=3},
     yticklabel = \pgfmathparse{\tick}\pgfmathprintnumber{\pgfmathresult}\,\%,
     width = 0.5\textwidth,
@@ -279,11 +288,11 @@ Therefore, when markets fall, long position in VIX futures should increase in va
 All this is also true for VXX, but compared to futures strategies (with constant rolling over), here we just take long or short position of VXX in our portfolio and slightly adjust it with time.
 
 
-\section{Our Benchmark: MSCI}
-In order to show that we have a good performance we need to compare our performance with a benchmark.
-Since we invest in indices of developed countries, the MSCI world index can be used as a benchmark.
-The MSCI world is an index  which includes medium and large capitalization stocks of 23 developed markets.
-Concerning the performance of the index in our out-of-sample period starting from 1st January 2013 till 30th June 2015 the annual return of the index was 20.597\%, annual volatility -17.867\% and corresponding Sharpe ratio –1.15.
+%\section{Our Benchmark: MSCI}
+%In order to show that we have a good performance we need to compare our performance with a benchmark.
+%Since we invest in indices of developed countries, the MSCI world index can be used as a benchmark.
+%The MSCI world is an index  which includes medium and large capitalization stocks of 23 developed markets.
+%Concerning the performance of the index in our out-of-sample period starting from 1st January 2013 till 30th June 2015 the annual return of the index was 20.597\%, annual volatility -17.867\% and corresponding Sharpe ratio –1.15.
 
 \chapter{Investment Philosophy \& Investment Approach}
 \section{Our Philosophy}
@@ -590,11 +599,11 @@ The mix of fundamental analysis and systematic optimization makes this fund an a
 \begin{tikzpicture}
   \begin{axis}[relw={0}{1}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/bl_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
+    %\addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/bl_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
+    %\addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/bl_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
+    %\addlegendentry{Nikkei}
   \end{axis}
 \end{tikzpicture}
 \end{minipage}
@@ -624,7 +633,7 @@ The fund is an appealing solution for moderate risk taking investors looking for
   \toprule
   Ann. Return & 18.10\%\\
   Ann. Volatility & 12.32\%\\
-  Sharpe & 1.47\\
+  Sharpe Ratio & 1.47\\
   Max. Drawdown& 8.20\%\\
   Turnover & 9.47\%\\
   \bottomrule
@@ -668,11 +677,11 @@ This portfolio still provides attractive returns and Sharpe ratio in spite of be
 \begin{tikzpicture}
 \begin{axis}[relw={0}{1}]
   \addplot table[x=time, y=value.DAX] {plot-data/minv_rob_relw.txt}\closedcycle;
-  \addlegendentry{DAX}
+  %\addlegendentry{DAX}
   \addplot table[x=time, y=value.Dow.Jones] {plot-data/minv_rob_relw.txt}\closedcycle;
-  \addlegendentry{Dow Jones}
+  %\addlegendentry{Dow Jones}
   \addplot table[x=time, y=value.Nikkei] {plot-data/minv_rob_relw.txt}\closedcycle;
-  \addlegendentry{Nikkei}
+  %\addlegendentry{Nikkei}
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
@@ -745,11 +754,11 @@ Turnover & 0.00\%\\
 \begin{tikzpicture}
   \begin{axis}[relw={0}{1}]
     \addplot table[x=time, y=value.DAX] {plot-data/fw_relw.txt}\closedcycle;
-    \addlegendentry{DAX}
+    %\addlegendentry{DAX}
     \addplot table[x=time, y=value.Dow.Jones] {plot-data/fw_relw.txt}\closedcycle;
-    \addlegendentry{Dow Jones}
+    %\addlegendentry{Dow Jones}
     \addplot table[x=time, y=value.Nikkei] {plot-data/fw_relw.txt}\closedcycle;
-    \addlegendentry{Nikkei}
+    %\addlegendentry{Nikkei}
   \end{axis}
 \end{tikzpicture}
 \end{minipage}
@@ -851,7 +860,7 @@ After comparing the performance metrics of the five portfolios we believe that t
 
 \tikzsetnextfilename{comparison_bonus}
 \begin{tikzpicture}
-  \begin{axis}[w={80}{110}, stack plots = false, xtick={2015-07-01, 2015-08-01, 2015-09-01, 2015-10-01, 2015-11-01}, xticklabel={\pgfcalendar{tickcal}{\tick}{\tick}{\pgfcalendarshorthand{m}{.}}}, legend columns = 1]
+  \begin{axis}[w={80}{110}, stack plots = false, xmin={2015-06-30}, xmax={2015-10-31}, xtick={2015-07-01, 2015-08-01, 2015-09-01, 2015-10-01, 2015-11-01}, xticklabel={\pgfcalendar{tickcal}{\tick}{\tick}{\pgfcalendarshorthand{m}{.}}}, legend columns = 1]
     \addplot[total, red] table[x=time, y=value.Fixed.Weights] {plot-data/comparison_bonus.txt};
     \addlegendentry{Fixed Weights}
     \addplot[total, blue] table[x=time, y=value.Black.Litterman] {plot-data/comparison_bonus.txt};
@@ -893,7 +902,18 @@ After comparing the performance metrics of the five portfolios we believe that t
 
 \newpage
 \chapter{Appendix}
-\section{1 -- JD Investments Minimum Variance Equity Fund}
+\section{JD Investments Minimum Variance Equity Fund}
+\begin{wraptable}{r}{0pt}
+  \begin{tabular}{lr}
+  \toprule
+  Ann. Return & 10.92\%\\
+  Ann. Volatility & 7.99\%\\
+  Sharpe Ratio & 1.37\\
+  Max. Drawdown & 5.92\% \\
+  Turnover & 11.56\%\\
+  \bottomrule
+  \end{tabular}
+\end{wraptable}
 \textit{JD Investments Minimum Variance Equity} fund invests in American, German and Japanese equity market together with 6M Euribor to substantially reduce risk.
 The asset allocation is oriented on volatility minimization while disregarding expected returns.
 This portfolio is particularly suitable for the clients with strong risk-aversion, since it does not try to speculate on expected returns but rather cares just about reducing variance.
@@ -901,7 +921,6 @@ This portfolio is particularly suitable for the clients with strong risk-aversio
 \paragraph{Portfolio Construction}
 \begin{sit}
 \item Long only equity exposure
-
 \item High concentration in risk-free investment (45\% of portfolio)
 \item No assumption on expected returns
 \end{sit}
@@ -936,8 +955,6 @@ This portfolio is particularly suitable for the clients with strong risk-aversio
 \end{figure}
 
 \tikzsetnextfilename{pf_1w}
-\vspace{\abovedisplayskip}
-\begin{minipage}{0.65\textwidth}
 \begin{tikzpicture}
   \begin{axis}[relw={0}{1}, y filter/.expression={max(y,0)}]
     \addplot table[x=time, y=value.DAX] {plot-data/minv_relw.txt}\closedcycle;
@@ -958,18 +975,7 @@ This portfolio is particularly suitable for the clients with strong risk-aversio
     \addplot table[x=time, y=value.mixed] {plot-data/minv_relw.txt}\closedcycle;
   \end{axis}
 \end{tikzpicture}
-\end{minipage}
-\begin{minipage}{0.35\textwidth}
-\begin{tabular}{lr}
-\toprule
-Ann. Return & 10.92\%\\
-Ann. Volatility & 7.99\%\\
-Sharpe Ratio & 1.37\\
-Max. Drawdown & 5.92\% \\
-Turnover & 11.56\%\\
-\bottomrule
-\end{tabular}
-\end{minipage}
+
 
 This portfolio is suitable for very risk-averse clients who are ready to sacrifice potential returns and have lower Sharpe ratio just to reduce volatility.
 
